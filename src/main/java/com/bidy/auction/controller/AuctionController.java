@@ -20,7 +20,7 @@ class AuctionController {
         this.auctionService = auctionService;
     }
 
-    @GetMapping("/bidy/auction_detail")
+    @GetMapping("/auction/auction_detail")
     public String readDetail(@RequestParam("productId") int productId, Model model) {
         try{
             // 1. 홈페이지에서 productId를 넘겨 받아 해당 상품을 조회
@@ -33,7 +33,7 @@ class AuctionController {
             model.addAttribute("product", product);
             model.addAttribute("recentBids", recentBids);
 
-            return "bidy/auction_detail";
+            return "auction/auction_detail";
 
         } catch (NoSuchElementException e){
             return "redirect:/error/404";
