@@ -29,8 +29,14 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	// WebSocket 설정
+  // WebSocket 설정
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+  //타임리프
+  implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+  //Validation 의존성
+  implementation 'org.springframework.boot:spring-boot-starter-validation'
+  //암호화
+  implementation 'org.springframework.security:spring-security-crypto'
 	// jsp 설정
 	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
 	// jstl 설정
