@@ -29,7 +29,7 @@ public class MyPageController {
         Member loginMember = (Member) session.getAttribute("member");
         
         //로그인 안되있으면 로그인 페이지로
-        if(loginMember == null) return "redirect:login";
+        if(loginMember == null) return "redirect:/login";
 
         //DB에서 다시 아이디로 조회해서 새로 갖고옴(수정된 경우를 반영하기위함)
         Member member = memberRepository.findById(loginMember.getMemberId())
