@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>물건 판매하기</title>
+    <style>
+        .wrapper {
+        display: flex; /* 부모를 Flexbox 컨테이너로 만듦 */
+        flex-direction: column; /* 자식 요소들을 세로로 쌓음 (위에서 아래로) */
+        align-items: center;    /* 자식 요소들을 가로 방향 중앙 정렬 */
+        margin: 20px auto;      /* 화면 가운데 배치 */
+        }
+
+        .container {
+        width: 100%;            /* 부모 전체 너비 사용 */
+        display: flex;
+        justify-content: flex-end; /* 오른쪽 끝으로 배치 */
+        margin-bottom: 20px;
+        }
+
+        .submit_btn{
+        width: 100px;
+        height: 40px;
+        background-color: #ccc; /* 버튼 배경색 */
+        border: none;           /* 버튼 테두리 제거 */
+        border-radius: 20px;    /* 둥글게 */
+        justify-content: flex-end; /* 오른쪽 끝 정렬 */
+        }
+
+        input[type="text"], [type="number"] {
+        width: 250px;
+        height: 25px;
+        border: none; /* 모든 테두리 제거 */
+        border-bottom:1px solid #ccc; /*밑줄 라인*/
+        outline: none; /* 클릭 시 외곽선 제거 */
+        padding: 2px;
+        }
+
+        input[type="radio"] {
+        width: 16px;   /* 버튼 가로 */
+        height: 16px;  /* 버튼 세로 */
+        margin: 0 5px 0 0; /* 오른쪽 간격 5px */
+        vertical-align: middle; /* 라벨과 세로 맞춤 */
+        }
+
+        .file {
+        display: flex;               /* td를 플렉스 컨테이너로 변환 */
+        justify-content: flex-end;   /* 가로 방향 오른쪽 정렬 */
+        align-items: flex-end;       /* 세로 방향 아래 정렬 */
+        height: 200px;               /* td 높이 필요에 맞게 지정 */
+        }
+
+        #set_day{
+        width: 50px;
+        height: 25px;
+        border: none; /* 모든 테두리 제거 */
+        border-bottom:1px solid #ccc; /*밑줄 라인*/
+        outline: none; /* 클릭 시 외곽선 제거 */
+        padding: 2px;
+        }
+
+    table{
+        border-collapse: collapse;
+    }
+         #preview {
+            width: 150px;       /* 가로 크기 */
+            height: 150px;      /* 세로 크기 */
+            border: 1px solid #ccc;
+            display: block;
+            margin-top: 10px;
+            object-fit: cover;  /* 이미지 비율 유지하며 박스에 맞춤 */
+            background-color: #f8f8f8;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <form action="/product/save" method="post" enctype="multipart/form-data">
+
+<div class="container">
+            <input class="submit_btn" type = "submit" name="submit" value ="등록하기">
+        </div>
+        <table>
+            <tr>
+                <td>
+                    상품명<br><br>
+                    카테고리<br><br>
+                    최저가<br><br>
+                    거래방법<br><br>
+                    기간<br><br>
+                </td>
+
+                <td>
+                    <div>
+                        <input type="text" name="postName" size="10"><br><br>
+                        <select name="category" style="width:250px;">
+                            <option value="1" selected>그림</option>
+                            <option value="2">뜨개</option>
+                            <option value="3" >자수</option>
+                            <option value="4" >기타</option>
+                        </select><br><br>
+                        <input type="number" name="minPrice" size="10"> 원<br><br>
+
+                        <input type="radio" name="deliveryMethod" value="일반택배">일반 택배
+                        <input type="radio" name="deliveryMethod" value="편의점택배">편의점 택배
+                        <br><br>
+
+                        <input id="set_day" type="number" name="durationDays" size="3">일
+                        <input id="set_day" type="number" name="durationHours" size="3">시
+                        <input id="set_day" type="number" name="durationMinutes" size="3">분 까지<br><br>
+                    </div>
+                </td>
+
+                <td class="file">
+<!--                    <input type="file" id="imageUrl" name="imageUrl" accept="image/*">-->
+<!--                    <img id="preview">-->
+
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="3">
+                    <div>
+                        <textarea name="description" rows="30" cols="100" style="color: grey;">상품 정보를 입력해주세요</textarea>
+                    </div>
+                </td>
+            </tr>
+
+        </table>
+
+    </form>
+</div>
+</body>
+</html>
