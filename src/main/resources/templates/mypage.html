@@ -36,10 +36,19 @@
         }
         .profile{
             display:flex; flex-direction:column; align-items:center; gap:10px;
-            padding-bottom:16px; border-bottom:1px solid var(--line);
+            padding-bottom:13px; border-bottom:1px solid var(--line);
             text-align:center;
         }
-        .nick{font-weight:700}
+        .profile-img{
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 6px;
+            border: 1px solid var(--line);
+            background: #f0f0f0;
+        }
+        .nick{font-weight:700; padding-bottom:0px;}
         .email{font-size:12px; color:var(--muted);}
 
         .stats{
@@ -49,7 +58,17 @@
         .num{font-size:22px; font-weight:800; color:var(--brand);}
         .label{font-size:13px; color:var(--muted);}
 
-        .menu{list-style:none; margin:14px 0 0; padding:0; display:flex; flex-direction:column; gap:8px;}
+        .menu{
+           /* width: fit-content;*/
+
+            margin: 14px auto 0;
+
+            list-style:none;
+            padding:30px 0 0 80px;
+            display:flex;
+            flex-direction:column;
+            gap:30px;
+        }
         .menu li::before{
             content:"• ";
             color:var(--muted);
@@ -85,7 +104,7 @@
         .title{font-weight:600; margin:0 0 6px}
         .meta{display:flex; justify-content:space-between; align-items:center; font-size:14px}
         .price{font-weight:700}
-        .status{font-size:12px; padding:0 0 0 8px; color:var(--muted)}
+        .status{font-size:14px; padding:0 0 0 10px; color:var(--muted)}
 
         @media (max-width: 960px){
             .layout{ grid-template-columns: 1fr; }
@@ -105,6 +124,7 @@
         <!-- 사이드바 -->
         <aside class="sidebar">
             <div class="profile">
+                <img class="profile-img" th:src="${member.profileImageUrl} ?: @{/images/profile_temp.png}">
                 <div class="nick" th:text="${member.memberNickname} ?: ${member.memberName}">닉네임</div>
                 <div class="email" th:text="${member.memberEmail}">email</div>
             </div>
@@ -113,7 +133,6 @@
                 <div class="num" th:text="${tradeCount}">0</div>
                 <div class="label">거래횟수</div>
             </div>
-
             <ul class="menu">
                 <li><a th:href="@{/mypage}" th:classappend="${activeTab}=='sales' ? ' active'">판매내역</a></li>
                 <li><a th:href="@{/mypage/purchases}" th:classappend="${activeTab}=='purchases' ? ' active'">구매내역</a></li>
@@ -129,9 +148,9 @@
 
             <div class="grid">
                 <div class="card" th:each="s : ${sales}">
-                    <img class="thumb" th:src="${s.imageUrl} ?: @{/images/placeholder.png}" alt="">
+                    <img class="thumb" th:src="${s.imageUrl} ?: @{/images/product_null.png}">
                     <div class="card-body">
-                        <p class="title" th:text="${s.title} ?: ${s.name}">상품명</p>
+                       <p class="title" th:text="${s.title} ?: ${s.name}">상품명</p>
                         <div class="meta">
                             <span class="price" th:text="${#numbers.formatInteger(s.price, 3, 'COMMA')} + '원'">0원</span>
                             <span class="status" th:text="${s.status} ?: '판매중'">판매중</span>
@@ -139,7 +158,7 @@
                     </div>
                 </div>
 
-                <div th:if="${sales == null or #lists.isEmpty(sales)}" style="grid-column:1/-1; color:var(--muted);">
+                <div th:if="${sales == null or #lists.isEmpty(sales)}" style="grid-column:1/-1; color:var(&#45;&#45;muted);">
                     아직 판매내역이 없습니다.
                 </div>
             </div>
