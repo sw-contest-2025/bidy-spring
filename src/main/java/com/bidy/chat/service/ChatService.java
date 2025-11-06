@@ -17,7 +17,7 @@ public class ChatService {
     private final ChatMessageRepository chatMessageRepository;
 
     public ChatRoomEntity getOrCreateRoom(Long auctionId, Long sellerId, Long buyerId) {
-        return chatRoomRepository.findByAuctionIdAndBuyerId(auctionId, sellerId, buyerId)
+        return chatRoomRepository.findByAuctionIdAndBuyerIdAndSellerId(auctionId, sellerId, buyerId)
                 .orElseGet(() -> chatRoomRepository.save(ChatRoomEntity.builder()
                         .auctionId(auctionId)
                         .sellerId(sellerId)
