@@ -15,3 +15,15 @@ spring:
     properties:
       hibernate:
         format_sql: true # SQL 보기 좋게 출력
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USER}
+    password: ${MAIL_PASS}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
