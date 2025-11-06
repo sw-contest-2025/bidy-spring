@@ -10,10 +10,10 @@ import jakarta.persistence.*;
  */
 @Entity(name = "item_tag")
 public class ItemTag {
-    // 1. item_tag_id: LONG, PK, Auto Increment
+    // 1. product_tag_id: LONG, PK, Auto Increment
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long itemTagId;
+    private Long productTagId;
 
     // 2. item_id: INTEGER, FK(Product -> product_id), Not Null
     @ManyToOne(fetch = FetchType.LAZY)
