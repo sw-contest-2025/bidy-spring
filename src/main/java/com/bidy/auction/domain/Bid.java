@@ -1,8 +1,12 @@
 package com.bidy.auction.domain;
 
-import com.bidy.home.domain.Member;
 import com.bidy.home.domain.Product;
+import com.bidy.member.domain.Member;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 /*
@@ -11,15 +15,19 @@ import java.time.LocalDateTime;
 * 외래키 (Product, Member)
  */
 @Entity(name = "bid")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Bid {
     // 1. bid_id: LONG, PK, Auto Increment
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bidId;
 
-    // 2. item_id: INTEGER, FK(Product -> product_id), Not NULL
+    // 2. product_id: INTEGER, FK(Product -> product_id), Not NULL
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id", nullable = false)
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
     // 3. bidder_id: LONG, FK(Member -> member_id), Not Null
