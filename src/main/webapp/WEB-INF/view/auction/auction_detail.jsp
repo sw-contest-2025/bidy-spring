@@ -8,33 +8,20 @@
 <title>경매 상세</title>
 </head>
 <body>
-    <h2>최근 입찰 기록 (Scriptlet)</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>입찰자 ID</th>
-                <th>입찰 금액</th>
-                <th>입찰 시간</th>
-            </tr>
-        </thead>
-        <tbody>
-            <%
-                List<Bid> recentBids = (List<Bid>) request.getAttribute("recentBids");
+    <div>
+        <button disabled>
+            <span id="timer">로딩중</span>
+        </button>
+    </div>
+    <script src="/js/timer.js"></script>
 
-                if (recentBids != null) {
-                    for (Bid bid : recentBids) {
-            %>
-                <tr>
-                    <td><%= bid.getBidder().getId() %></td>
-                    <td><%= bid.getBidPrice() %></td>
-                    <td><%= bid.getBidTime() %></td>
-                </tr>
-            <%
-                    } // for 루프 닫기
-                }
-            %>
-        </tbody>
-    </table>
-    <a href="/">메인으로 돌아가기</a>
+    <script>
+        const serverEndTimerStr = '${endTime}';
+        startTimer(serverEndTimerStr);
+    </script>
+
+    <form action="/auction/bid" method="POST">
+        <button type="submit">입찰 요청</button>
+    </form>
 </body>
 </html>

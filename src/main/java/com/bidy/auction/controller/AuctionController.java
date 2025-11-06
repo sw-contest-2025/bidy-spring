@@ -29,6 +29,9 @@ class AuctionController {
         try{
             // 1. 홈페이지에서 productId를 넘겨 받아 해당 상품을 조회
             Product product = auctionService.findProductById(productId);
+            if (product == null) {
+                throw new NoSuchElementException("Product not found");
+            }
 
             // 2. 최신 입찰 기록(가장 높은 입찰 가격) 5개 조회
             List<Bid> recentBids = auctionService.getRecentBids(product);
@@ -36,6 +39,7 @@ class AuctionController {
             // 3. 데이터를 JSP로 전달
             model.addAttribute("product", product);
             model.addAttribute("recentBids", recentBids);
+            model.addAttribute("endTime", product.calculateEndTime().toString());
 
             return "auction/auction_detail";
 
