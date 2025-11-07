@@ -3,7 +3,7 @@ package com.bidy.auction.controller;
 import com.bidy.auction.domain.Bid;
 import com.bidy.auction.dto.BidRequestDto;
 import com.bidy.auction.service.AuctionService;
-import com.bidy.home.domain.Product;
+import com.bidy.post.domain.Product;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,6 +1,6 @@
 package com.bidy.auction.domain;
 
-import com.bidy.home.domain.Product;
+import com.bidy.post.domain.Product;
 import jakarta.persistence.*;
 
 /*

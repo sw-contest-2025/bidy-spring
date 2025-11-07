@@ -23,10 +23,10 @@ public class LoginController {
     }
 
     //일단 처음 시작을 로그인으로 설정함
-    @GetMapping("/")
-    public String home() {
-        return "redirect:/login";
-    }
+//    @GetMapping("/")
+//    public String home() {
+//        return "redirect:/login";
+//    }
 
     //로그이니 페이지
     @GetMapping("/login")

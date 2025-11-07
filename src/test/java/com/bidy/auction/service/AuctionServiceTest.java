@@ -2,7 +2,7 @@ package com.bidy.auction.service;
 
 import com.bidy.auction.dto.BidRequestDto;
 import com.bidy.auction.repository.BidRepository;
-import com.bidy.home.domain.Product;
+import com.bidy.post.domain.Product;
 import com.bidy.home.repository.ProductRepository;
 import com.bidy.member.domain.Member;
 import com.bidy.member.repository.MemberRepository;
@@ -31,7 +31,7 @@ public class AuctionServiceTest {
     @Autowired
     private MemberRepository memberRepository;
 
-    private int TEST_PRODUCT_ID;
+    private Long TEST_PRODUCT_ID;
     private Long TEST_BIDDER_ID = 1L;
     private int INIT_CURRENT_PRICE = 10000;
 
@@ -39,10 +39,11 @@ public class AuctionServiceTest {
     void setUp(){
         // 1. Product 초기화
         Product product = new Product();
+        product.setUser(null);
         product.setCurrentPrice(INIT_CURRENT_PRICE);
-        product.setCreatedAt(LocalDateTime.now().minusDays(1));
+       // product.setCreatedAt(LocalDateTime.now().minusDays(1)); 알아서 자동생성 필요없음
         product.setDurationDays(2);
-        product.setName("test product");
+        product.setPostName("test product");
         product.setCategory("test category");
         product.setMinPrice(INIT_CURRENT_PRICE);
         product.setDurationHours(13);
@@ -51,7 +52,7 @@ public class AuctionServiceTest {
         product.setDeliveryMethod("택배");
         product.setImageUrl(null);
         productRepository.save(product);
-        TEST_PRODUCT_ID = product.getProductId();
+        TEST_PRODUCT_ID = (long) product.getProductId().intValue();
 
         // 2. Member 초기화
         if(memberRepository.findByMemberNickname("테스터").isEmpty()) {
@@ -84,7 +85,7 @@ public class AuctionServiceTest {
 
         // then
         // 현재 최고가가 갱신되었는지 확인
-        Product updatedProduct = productRepository.findById(TEST_PRODUCT_ID).orElseThrow();
+        Product updatedProduct = productRepository.findById((long)TEST_PRODUCT_ID).orElseThrow();
         assertThat(updatedProduct.getCurrentPrice()).isEqualTo(newBidPrice);
 
         // Bid 기록이 하나 추가되었는지 확인

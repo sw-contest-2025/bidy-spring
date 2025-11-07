@@ -1,7 +1,7 @@
 package com.bidy.auction.repository;
 
 import com.bidy.auction.domain.Bid;
-import com.bidy.home.domain.Product;
+import com.bidy.post.domain.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
