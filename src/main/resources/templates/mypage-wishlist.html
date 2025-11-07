@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>마이페이지</title></head>
+<body>
+<h2>마이페이지</h2>
+<div>
+    <p>이메일: <span th:text="${member.memberEmail}"></span></p>
+    <p>이름: <span th:text="${member.memberName}"></span></p>
+    <p>닉네임: <span th:text="${member.memberNickname}"></span></p>
+    <p>생년월일: <span th:text="${member.memberBirthday}"></span></p>
+</div>
+<a th:href="@{/mypage/edit}">계정 수정</a>
+</body>
+</html>

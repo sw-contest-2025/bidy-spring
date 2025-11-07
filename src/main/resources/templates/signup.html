@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffe668 0%, #e6891e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .signup-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="date"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #e67c25;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-danger {
+            background-color: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #fdd855 0%, #e6891e 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-small{
+            padding:12px 18px;
+            background-color:#e6891e;
+            border:none;
+            border-radius:8px;
+            color:white;
+            font-weight:bold;
+            cursor:pointer;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(129, 57, 4, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .text-center {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .text-center a {
+            color: #bd6b0e;
+            text-decoration: none;
+        }
+
+        .text-center a:hover {
+            text-decoration: underline;
+        }
+
+        .email-row { display:flex; gap:8px; align-items:center; }
+
+        .email-row input { flex:1; }
+    </style>
+</head>
+<body>
+<div class="signup-container">
+    <h1>회원가입</h1>
+
+    <!-- 에러 메시지 -->
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+    <form th:action="@{/signup}" th:object="${memberSignupDto}" method="post">
+        <div class="form-group">
+            <label for="memberEmail">이메일 *</label>
+
+            <!-- 이메일 -->
+            <div class="email-row">
+                <input type="email"
+                       id="memberEmail"
+                       th:field="*{memberEmail}"
+                       placeholder="bidy@email.com"
+                       required>
+
+                <!--인증 버튼 -->
+                <button type="submit"
+                        th:formaction="@{/signup/email/send}"
+                        formmethod="post" formnovalidate
+                        class="btn-small">
+                    인증
+                </button>
+            </div>
+
+            <span class="error-message" th:if="${#fields.hasErrors('memberEmail')}"
+                  th:errors="*{memberEmail}"></span>
+        </div>
+
+        <!-- 서버가 codeSent=true 를 주면 인증번호 입력칸 띄우기 -->
+        <div class="form-group" th:if="${codeSent}">
+            <div class="email-row">
+                <input type="text" name="code" placeholder="인증번호 6자리"
+                       required>
+
+                <button type="submit"
+                        th:formaction="@{/signup/email/verify}"
+                        formmethod="post" formnovalidate
+                        class="btn-small">
+                    확인
+                </button>
+            </div>
+
+            <!-- 결과 메시지 -->
+            <div class="error-message" th:if="${verifyError}" th:text="${verifyError}"></div>
+            <div class="alert" th:if="${verifyOk}" style="background:#eefdee; color:#217a21; border:1px solid #bde5bd;"
+                 th:text="${verifyOk}">
+            </div>
+        </div>
+
+        <!-- 인증 완료 시 이메일/버튼 비활성화 -->
+        <input type="hidden" name="emailVerified" th:value="${emailVerified} ?: false">
+        <script th:inline="none"></script>
+        <div th:if="${emailVerified}">
+            <small style="color:green; font-weight:bold;">이메일 인증 완료</small>
+        </div>
+
+        <!-- 비밀번호 -->
+        <div class="form-group">
+            <label for="memberPw">비밀번호 *</label>
+            <input type="password"
+                   id="memberPw"
+                   th:field="*{memberPw}"
+                   placeholder="8자 이상, 영문/숫자/특수문자 2가지 이상 조합"
+                   pattern="^(?=.{8,})((?=.*[A-Za-z])(?=.*\\d)|(?=.*[A-Za-z])(?=.*[^A-Za-z\\d])|(?=.*\\d)(?=.*[^A-Za-z\\d])).*$"
+                   title="비밀번호는 8자 이상, 영문/숫자/특수문자 중 2가지 이상을 포함해야 합니다."
+                   required>
+            <span class="error-message" th:if="${#fields.hasErrors('memberPw')}"
+                  th:errors="*{memberPw}"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="memberPwConfirm">비밀번호 확인*</label>
+            <input type="password"
+                   id="memberPwConfirm"
+                   th:field="*{memberPwConfirm}"
+                   placeholder="비밀번호를 다시 입력해주세요"
+                   required>
+            <span class="error-message" th:if="${#fields.hasErrors('memberPwConfirm')}"
+                  th:errors="*{memberPwConfirm}"></span>
+        </div>
+
+        <!-- 이름 -->
+        <div class="form-group">
+            <label for="memberName">이름 *</label>
+            <input type="text"
+                   id="memberName"
+                   th:field="*{memberName}"
+                   placeholder="이름을 입력해주세요"
+                   required>
+            <span class="error-message" th:if="${#fields.hasErrors('memberName')}"
+                  th:errors="*{memberName}"></span>
+        </div>
+
+        <!-- 닉네임 -->
+        <div class="form-group">
+            <label for="memberNickname">닉네임 *</label>
+            <input type="text"
+                   id="memberNickname"
+                   th:field="*{memberNickname}"
+                   placeholder="닉네임을 입력해주세요"
+                   required>
+            <span class="error-message" th:if="${#fields.hasErrors('memberNickname')}"
+                  th:errors="*{memberNickname}"></span>
+        </div>
+
+        <!-- 생년월일 -->
+        <div class="form-group">
+            <label for="memberBirthday">생년월일 *</label>
+            <input type="date"
+                   id="memberBirthday"
+                   th:field="*{memberBirthday}"
+                   required>
+            <span class="error-message" th:if="${#fields.hasErrors('memberBirthday')}"
+                  th:errors="*{memberBirthday}"></span>
+        </div>
+
+        <!-- 제출 버튼 -->
+        <button type="submit" class="btn">가입하기</button>
+    </form>
+
+    <div class="text-center">
+        <a th:href="@{/login}">로그인</a>
+    </div>
+
+</div>
+</body>
+</html>
+

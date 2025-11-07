@@ -1,60 +1,239 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-
-    <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>홈페이지</title>
     <style>
-        .search-box{
-        width:600px;
-        height:30px;
-        background: white;
-        border-radius: 40px;
-        padding:10px;
-        border: 1px solid black;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    .search-txt {
-        border: none;
-        background: none;
-        outline: none;
-        float: left;
-        padding: Opx;
-        color: #797979;
-        font-size: 16px;
-        line-height: 30px; width: 200px;
-    }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #fffef5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-    .search-btn{
-        float: right;
-        width: 40px; height: 100%;
-        border-radius: 50%;
-        background: white;
-        border: none;
-        font-size: 16px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-        .searchDiv{
-        margin: 0 auto;
+        /* 상단 헤더 */
+        header {
+            padding: 15px 30px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-icon {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 8px 14px;
+            color: #333;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-icon:hover {
+            background: #f5f5f5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 메인 컨텐츠 영역 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        /* 로고/타이틀 */
+        .logo {
+            color: #333;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        /* 검색창 */
+        .search-container {
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 35px;
+        }
+
+        .search-box {
+            width: 100%;
+            display: flex;
+            background: white;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .search-button {
+            padding: 12px 25px;
+            background: #ffd93d;
+            border: none;
+            color: #333;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .search-button:hover {
+            background: #ffcc00;
+        }
+
+        /* 네비게이션 박스들 */
+        .nav-boxes {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            max-width: 550px;
+            width: 100%;
+        }
+
+        .nav-box {
+            aspect-ratio: 1;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-box:hover {
+            background: #fffbeb;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .nav-boxes {
+                grid-template-columns: repeat(2, 1fr);
+                max-width: 400px;
+            }
+
+            .logo {
+                font-size: 36px;
+            }
+
+            header {
+                padding: 15px 20px;
+                gap: 15px;
+            }
+
+            .header-icon {
+                padding: 10px 15px;
+                font-size: 12px;
+            }
         }
     </style>
 </head>
 <body>
+<!-- 상단 헤더 -->
+<header>
+    <a href="cart.html" class="header-icon">
+        <span>🛒</span>
+        <span>장바구니</span>
+    </a>
+    <a href="notifications.html" class="header-icon">
+        <span>🔔</span>
+        <span>알림</span>
+    </a>
+    <a href="mypage.html" class="header-icon">
 
-<div id="searchDiv">
-    <form class = "search-box" action="" method="get">
-        <input class="search-txt" type="text" name="" placeholder="  검색어를 입력하세요">
-        <button class="search-btn" type="submit">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        </button>
-    </form>
+        <span>마이페이지</span>
+    </a>
+</header>
+
+<!-- 메인 컨텐츠 -->
+<div class="main-content">
+    <div class="logo"></div>
+
+    <!-- 검색창 -->
+    <div class="search-container">
+        <form class="search-box" onsubmit="handleSearch(event)">
+            <input
+                    type="text"
+                    class="search-input"
+                    placeholder="검색어를 입력하세요"
+                    id="searchInput"
+            >
+            <button type="submit" class="search-button">검색</button>
+        </form>
+    </div>
+
+    <!-- 네비게이션 박스 -->
+    <div class="nav-boxes">
+        <a href="category1.html" class="nav-box">
+            <div class="nav-icon">📱</div>
+            <div>카테고리 1</div>
+        </a>
+        <a href="category2.html" class="nav-box">
+            <div class="nav-icon">💼</div>
+            <div>카테고리 2</div>
+        </a>
+        <a href="category3.html" class="nav-box">
+            <div class="nav-icon">🎮</div>
+            <div>카테고리 3</div>
+        </a>
+        <a href="category4.html" class="nav-box">
+            <div class="nav-icon">⚙️</div>
+            <div>카테고리 4</div>
+        </a>
+    </div>
 </div>
 
+<script>
+    function handleSearch(event) {
+        event.preventDefault();
+        const searchTerm = document.getElementById('searchInput').value;
+        if (searchTerm.trim()) {
+            // 검색 결과 페이지로 이동 (실제 구현 시 수정 필요)
+            alert(`검색어: ${searchTerm}`);
+            // window.location.href = `search.html?q=${encodeURIComponent(searchTerm)}`;
+        }
+    }
+</script>
 </body>
 </html>

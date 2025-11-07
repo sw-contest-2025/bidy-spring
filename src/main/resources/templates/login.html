@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg,  #ffe668 0%, #e6891e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color:#e67c25;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-danger {
+            background-color: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #fdd855 0%, #e6891e 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 20px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(129, 57, 4, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .links {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .links a {
+            color: #bd6b0e;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <h1>로그인</h1>
+
+    <!-- 에러 메시지 -->
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+    <form th:action="@{/login}" th:object="${loginDto}" method="post">
+        <!-- 이메일(ID) -->
+        <div class="form-group">
+            <label for="memberEmail">이메일(ID) *</label>
+            <input type="email"
+                   id="memberEmail"
+                   th:field="*{memberEmail}"
+                   placeholder="이메일을 입력해주세요"
+                   required>
+            <span class="error-message" th:if="${#fields.hasErrors('memberEmail')}"
+                  th:errors="*{memberEmail}"></span>
+        </div>
+
+        <!-- 비밀번호 -->
+        <div class="form-group">
+            <label for="memberPw">비밀번호 *</label>
+            <input type="password"
+                   id="memberPw"
+                   th:field="*{memberPw}"
+                   placeholder="비밀번호를 입력해주세요"
+                   required>
+            <span class="error-message" th:if="${#fields.hasErrors('memberPw')}"
+                  th:errors="*{memberPw}"></span>
+        </div>
+
+        <!-- 로그인 버튼 -->
+        <button type="submit" class="btn">확인</button>
+    </form>
+
+    <!-- 링크들 -->
+    <div class="links">
+        <a th:href="@{/auth/find-email}">이메일(ID) 찾기</a>
+        <a th:href="@{/signup}">회원가입</a>
+        <a th:href="@{/auth/find-password}">비밀번호 찾기</a>
+    </div>
+</div>
+</body>
+</html>
+
+
