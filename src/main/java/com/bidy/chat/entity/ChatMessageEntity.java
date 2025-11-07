@@ -1,5 +1,6 @@
 package com.bidy.chat.entity;
 
+import com.bidy.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,7 +21,10 @@ public class ChatMessageEntity {
     @JoinColumn(name = "room_id")
     private ChatRoomEntity chatRoom;
 
-    private Long senderId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sender_id")
+    private Member sender;
+
     private String message;
     private LocalDateTime createdAt;
     private Boolean isRead;
