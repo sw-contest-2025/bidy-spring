@@ -39,7 +39,6 @@ public class EmailWebController {
                          @ModelAttribute MemberSignupDto dto,
                          HttpSession session,
                          RedirectAttributes ra) {
-
         if (dto.getMemberEmail() == null || dto.getMemberEmail().isBlank()) {
             ra.addAttribute("codeSent", true);
             ra.addFlashAttribute("verifyError", "이메일을 먼저 입력하세요.");
