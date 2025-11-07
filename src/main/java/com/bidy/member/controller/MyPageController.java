@@ -27,7 +27,7 @@ public class MyPageController {
 
         //세션에서 로그인 된 멤버 꺼냄
         Member loginMember = (Member) session.getAttribute("member");
-        
+
         //로그인 안되있으면 로그인 페이지로
         if(loginMember == null) return "redirect:/login";
 

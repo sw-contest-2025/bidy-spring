@@ -3,7 +3,7 @@ package com.bidy.auction.service;
 import com.bidy.auction.domain.Bid;
 import com.bidy.auction.dto.BidRequestDto;
 import com.bidy.auction.repository.BidRepository;
-import com.bidy.home.domain.Product;
+import com.bidy.post.domain.Product;
 import com.bidy.home.repository.ProductRepository;
 import com.bidy.member.domain.Member;
 import com.bidy.member.repository.MemberRepository;
@@ -34,7 +34,7 @@ public class AuctionService {
      * @return id에 해당하는 상품
      */
     public Product findProductById(int productId) {
-        return productRepository.findById(productId)
+        return productRepository.findById((long)productId)
                 .orElseThrow(() -> new NoSuchElementException("Product not found"));
     }
 
@@ -54,8 +54,8 @@ public class AuctionService {
      */
     @Transactional
     public void createBid(BidRequestDto dto){
-         //유효성 검증 (Product, Member)
-        Product product = productRepository.findById(Math.toIntExact(dto.getProductId()))
+        //유효성 검증 (Product, Member)
+        Product product = productRepository.findById((long)Math.toIntExact(dto.getProductId()))
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 상품입니다."));
 
         Member bidder = memberRepository.findById(dto.getBidderId())
