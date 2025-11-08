@@ -1,22 +1,32 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>홈페이지</title>
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+<!--    서치 픽토그램 참고링크-->
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+         :root {
+          --line: #ddd;
+          --muted: #666;
+        }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #fffef5;
+            background: linear-gradient(to bottom, #ffffff, #fedf54);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            margin: 0;
         }
 
         /* 상단 헤더 */
@@ -27,6 +37,18 @@
             align-items: center;
             gap: 2px;
         }
+
+        /* 왼쪽 로고 */
+        .logo {
+            margin-right: auto; /*왼쪽 끝으로 이동 */
+        }
+        .logo img {
+          width: 150px;
+          height: 50px;
+          object-fit: contain;
+          display: block;
+        }
+
         .header-icon {
             color:#494949;
             text-decoration: none;
@@ -40,8 +62,8 @@
             height: 50px;
             border-radius: 50px;
             padding: 15px 20px 10px 30px;   /* 버튼 안 여백 */
-            background-color: #fde067; /* 버튼 배경색 */
-            color: white;              /* 글자색 */
+            background-color:#fedf54; /* 버튼 배경색 */
+            color: #494949;            /* 글자색 */
             font-size: 16px;           /* 글자 크기 */
             font-weight: bold;         /* 글자 굵기 */
             border: none;              /* 테두리 제거 */
@@ -52,68 +74,67 @@
             }
 
             .header-post:hover {  /* 글쓰기 마우스 올렸을 때 색 변화 */
-            background-color: #ffd822;
+            background-color: rgb(231, 109,11);
             transform: translateY(-2px);
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             }
 
-        /* 메인 컨텐츠 영역 */
+        /* 메인 컨텐츠 영역  서치창과 카테고리들*/
         .main-content {
-            flex: 1;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            align-items: center; /* 가로 가운데 정렬 */
+            justify-content: flex-start; /* 세로는 위쪽으로 붙임 */
             padding: 40px 20px;
         }
 
         /* 검색창 */
-        .search-container {
-            width: 100%;
-            max-width: 500px;
-            margin-bottom: 35px;
-        }
-
-        .search-box {
-            width: 100%;
-            display: flex;
+            .search-box{
+            width:700px;
+            height:50px;
             background: white;
-            border-radius: 25px;
-            overflow: hidden;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e0e0e0;
+            border-radius: 40px;
+            padding:10px;
+            border: 1px solid rgba(0,0,0,0.06);
+            background: #fff;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+            transition: box-shadow 0.25s ease, transform 0.15s ease;
+             display: flex;             /* input이 꽉 차게 정렬 */
+            align-items: center;
         }
 
-        .search-input {
-            flex: 1;
-            padding: 12px 20px;
+        .search-txt {
+            flex: 1;                   /*버튼 제외한 나머지 공간 전부 클릭가능하도록 */
+            box-sizing: border-box;
             border: none;
+            background: none;
             outline: none;
-            font-size: 14px;
+            float: left;
+            padding: 15px;
+            color: #797979;
+            font-size: 16px;
+            line-height: 30px; width: 200px;
         }
-
-        .search-button {
-            padding: 12px 25px;
-            background: #ffd93d;
+        .search-button{
+            float: right;
+            width: 40px; height: 100%;
+            border-radius: 50%;
+            background: white;
             border: none;
-            color: #333;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s ease;
+            font-size: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        .search-button:hover {
-            background: #ffcc00;
-        }
-
-        /* 네비게이션 박스들 */
+        /* 카테고리 박스들 */
         .nav-boxes {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(4, 90px); /*  각 박스 가로 크기 줄이기 */
             gap: 15px;
             max-width: 550px;
             width: 100%;
+            justify-content: center; /* 중앙 정렬 */
         }
 
         .nav-box {
@@ -135,7 +156,7 @@
         }
 
         .nav-box:hover {
-            background: #fffbeb;
+            background: rgb(231, 109,11);
             transform: translateY(-3px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
@@ -155,18 +176,81 @@
             .logo {
                 font-size: 36px;
             }
+            }
+
+<!--        하단 박스들-->
+.grid-wrapper {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: block; /* flex 영향 제거 */
+}
+
+   .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr); /*한줄에 4개씩*/
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      gap: 16px;
+    }
+
+    .card {
+       width: 100%; /* 그리드 셀 폭 채우기 */
+
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      transition: transform 0.2s ease;
+   }
+.card:hover {
+      transform: translateY(-4px);
+    }
+
+  .thumb {
+      width: 100%;
+      aspect-ratio: 1/1; /* 정사각형 유지 */
+      object-fit: cover;
+      background: #f3f3f3;
+    }
+
+  .card-body { padding: 12px; }
+
+  .title { font-weight: 600; margin: 0 0 6px; }
+
+  .meta { display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+
+  .price { font-weight: 700; }
+
+  .status { font-size: 14px; padding-left: 10px; color: var(--muted); }
+
+     /* 반응형: 화면이 좁아질수록 줄 개수 줄이기 */
+    @media (max-width: 960px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 560px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
     </style>
 </head>
 <body>
 <!-- 상단 헤더 -->
 <header>
+    <div class="logo">
+        <img src="/images/bidy_logo.png" alt="로고">
+    </div>
     <a href="post.html" class="header-post">
         <span>글쓰기</span>
     </a>
-<!--    <a href="cart.html" class="header-icon">-->
-<!--        <span>🛒</span>-->
-<!--        <span>장바구니</span>-->
-<!--    </a>-->
     <a href="notifications.html" class="header-icon">
         <span>🔔</span>
         <span>알림</span>
@@ -181,37 +265,61 @@
     <div class="logo"></div>
 
     <!-- 검색창 -->
-    <div class="search-container">
-        <form class="search-box" onsubmit="handleSearch(event)">
-            <input
-                    type="text"
-                    class="search-input"
-                    placeholder="검색어를 입력하세요"
-                    id="searchInput"
-            >
-            <button type="submit" class="search-button">검색</button>
-        </form>
-    </div>
+    <form class = "search-box" action="" method="get">
+        <input class="search-txt" type="text" name="" placeholder="  검색어를 입력하세요">
+        <button class="search-button" type="submit">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+    </form><br><br>
 
     <!-- 네비게이션 박스 -->
     <div class="nav-boxes">
         <a href="category1.html" class="nav-box">
-            <div class="nav-icon">📱</div>
-            <div>카테고리 1</div>
+            <div class="nav-icon">🎨</div>
+            <div>그림</div>
         </a>
         <a href="category2.html" class="nav-box">
-            <div class="nav-icon">💼</div>
-            <div>카테고리 2</div>
+            <div class="nav-icon">🧶</div>
+            <div>뜨개</div>
         </a>
         <a href="category3.html" class="nav-box">
-            <div class="nav-icon">🎮</div>
-            <div>카테고리 3</div>
+            <div class="nav-icon">🧵</div>
+            <div>자수</div>
         </a>
         <a href="category4.html" class="nav-box">
-            <div class="nav-icon">⚙️</div>
-            <div>카테고리 4</div>
+            <div class="nav-icon">🔨</div>
+            <div>공예</div>
         </a>
     </div>
+</div>
+<!-- 메인 컨텐츠 끝-->
+
+<!--하단 상품 설명, 상품이 추가되면 증가하도록-->
+<div class="grid-wrapper">
+
+    <div class="grid" th:if="${sales != null}">
+        <div class="card" th:each="s : ${sales}">
+            <img class="thumb"
+                 th:src="${s.imageUrl != null} ? @{${s.imageUrl}} : @{/images/product_null.png}"
+                 alt="상품 이미지">
+            <div class="card-body">
+                <p class="title" th:text="${s.postName}">상품명</p>
+                <div class="meta">
+                <span class="price"
+                      th:text="${#numbers.formatInteger(s.currentPrice, 3, 'COMMA')} + '원'">0원</span>
+                    <span class="status"
+                          th:text="${s.calculateEndTime() != null and s.calculateEndTime().isBefore(T(java.time.LocalDateTime).now()) ? '판매완료' : '판매중'}">
+                    상태
+                </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!--&lt;!&ndash;    테스트용&ndash;&gt;-->
+<!--    <div class="card" th:each="product : ${products}">-->
+<!--        <p th:text="${product.postName}">상품명</p>-->
+<!--    </div>-->
 </div>
 
 <script>
