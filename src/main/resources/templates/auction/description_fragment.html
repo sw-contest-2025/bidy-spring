@@ -1,0 +1,37 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<section th:fragment="descriptionDetail" class="bid-status-box-section">
+    <div class="bid-status-box">
+        <section class="description-section">
+            <h2>상품 상세 설명</h2>
+            <div th:text="${product.description}">여기에 상품의 상세 정보가 길게 들어갑니다.</div>
+        </section>
+
+        <section class="bid-status-box-section">
+        <h2>입찰 현황 (최신 5개)</h2>
+
+        <th:block th:with="maxPrice=${#lists.isEmpty(recentBids) ? product.currentPrice : #aggregates.max(recentBids.![bidPrice])}">
+
+            <div th:if="${#lists.isEmpty(recentBids)}" style="text-align: center; color: #777; padding: 20px;">
+                아직 입찰 기록이 없습니다. 최저가로 입찰해 보세요!
+            </div>
+
+            <div th:each="bid : ${recentBids}" class="bid-graph-item">
+
+                <span class="bid-label" th:text="${bid.bidder.memberNickname}">닉네임</span>
+
+                <div class="bid-bar-container">
+                    <div class="bid-bar"
+                         th:style="|width: ${ (bid.bidPrice / maxPrice) * 100 }%;|">
+                    </div>
+                </div>
+
+                <span class="bid-amount" th:text="${#numbers.formatInteger(bid.bidPrice, 0, 'COMMA')} + '원'">50,000원</span>
+                <span style="font-size: 12px; color: #aaa; margin-left: 10px;" th:text="${#temporals.format(bid.bidTime, 'HH:mm:ss')}">시간</span>
+            </div>
+        </th:block>
+        </section>
+    </div>
+
+
+</section>
+</html>
