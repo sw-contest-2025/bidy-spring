@@ -31,7 +31,7 @@ public class MemberController {
     //회원가입 폼 페이지
     @GetMapping("/signup")
     public String signupForm(Model model,
-                             @ModelAttribute("memberSignipDto") MemberSignupDto dto,  //폼에서 입력하던 값
+                             @ModelAttribute("memberSignupDto") MemberSignupDto dto,  //폼에서 입력하던 값
                              @RequestParam(value="codeSent", required=false) Boolean codeSent, //이메일 인증 버튼을 눌렀는가??
                              @RequestParam(value="verified", required=false) Boolean verified){ //이메일 인증 성공?
 
