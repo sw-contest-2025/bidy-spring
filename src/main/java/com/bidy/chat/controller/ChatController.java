@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.Model;
 
+import java.nio.file.attribute.UserPrincipal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -68,7 +69,7 @@ public class ChatController {
             @Payload ChatMessageDto dto) {
 
         // roomId 설정
-        dto.setId(roomId);
+        dto.setRoomId(roomId);
 
         // 메시지 저장, DTO 반환
         return chatService.saveMessage(dto);

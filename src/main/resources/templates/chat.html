@@ -11,6 +11,8 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         #chat-container {
+            display: flex;
+            flex-direction: column;
             border: 1px solid #ddd;
             border-radius: 10px;
             height: 400px;
@@ -20,14 +22,19 @@
             background-color: #f9f9f9;
         }
         .message {
+            display: inline-block;
+            width: 100px;
             margin-bottom: 10px;
             padding: 8px;
             border-radius: 5px;
             background-color: #e3f2fd;
         }
         .my-message {
+            width: 100px;
             background-color: #fff9c4;
             text-align: right;
+            align-self: flex-end;
+            margin-left: auto;
         }
         .input-container {
             display: flex;
@@ -58,7 +65,7 @@
     <!-- 이전 메시지 내역 -->
     <div id="chat-container">
         <div th:each="msg : ${messages}"
-             th:classappend="${msg.sender.memberId} == ${buyerId} ? 'my-message' : 'other-message'">
+             th:classappend="${msg.senderId} == ${buyerId} ? 'my-message' : 'other-message'">
             <span th:text="${msg.sender.memberNickname}"></span>
             <p th:text="${msg.message}"></p>
             <small th:text="${#temporals.format(msg.createdAt, 'HH:mm')}"></small>
@@ -106,13 +113,14 @@
 
             if(messageContent && stompClient) {
                 const chatMessage = {
+                    roomId: roomId,
                     senderId: buyerId,
                     message: messageContent,
                     messageType: 'TEXT'
                 };
 
                 stompClient.send("/app/chat/"+roomId, {}, JSON.stringify(chatMessage));
-                document.getElementById('message-input').valu='';
+                document.getElementById('message-input').value='';
             }
         }
 
@@ -120,7 +128,7 @@
             const chatArea = document.getElementById('chat-container');
             const messageElemnet = document.createElement('div');
 
-            const isMyMessage  = message.sender.id === buyerId;
+            const isMyMessage  = message.senderId === buyerId;
             messageElemnet.className = 'message' + (isMyMessage ? ' my-message' : '');
             // messageElemnet.classList.add('message');
             // messageElemnet.classList.add(isMine ? 'my-message' : 'other-message');
@@ -132,10 +140,10 @@
 
             messageElemnet.innerHTML = `
                 <div>
-                    <div class="sender">${message.sender.memberNickname}</div>
-                    <div>${message.message}</div>
-                    <div class="time">${time}</div>
+                    <strong>${message.senderName}</strong>
+                    <span style="font-size:0.8em;color:#666;margin-left:5px;">${time}</span>
                 </div>
+                <div>${message.message}</div>
             `;
 
             chatArea.appendChild(messageElemnet);

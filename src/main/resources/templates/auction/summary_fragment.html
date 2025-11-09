@@ -8,7 +8,7 @@
 
         <div class="product-actions">
             <button class="action-buttons chat-btn"
-                    th:onclick="|location.href='@{/chat/{productId}(productId=${product.productId}, buyerId=${session.memberId})}'|">
+                    th:onclick="|location.href='@{/chat/{productId}(productId=${product.productId}, buyerId=${session.member.memberId})}'|">
                 채팅
             </button>
             <div>
