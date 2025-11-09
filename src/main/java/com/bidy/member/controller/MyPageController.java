@@ -234,7 +234,7 @@ public class MyPageController {
         Member loginMember = (Member) session.getAttribute("member");
         if(loginMember == null) return "redirect:/";
 
-        // 1. 유효성 검사 실패
+        //유효성 검사 실패
         if (bindingResult.hasErrors()) {
             // 레이아웃에 필요한 정보 다시 모델에 추가
             Member member = memberRepository.findById(loginMember.getMemberId()).get(); // 이미 로그인된 회원이므로 Optional.get() 사용 가능

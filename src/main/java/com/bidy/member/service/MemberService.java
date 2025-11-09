@@ -84,22 +84,26 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("회원 정보를 찾을 수 없습니다"));
 
-        //현재 비밀번호 확인 먼저
-        if (!passwordEncoder.matches(updateDto.getCurrentPassword(), member.getMemberPw())) {
-            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다");
-        }
-
+        //닉네임만 변경할떈 비밀번호 확인 x
         //변경 닉네임 중복 확인. 닉네임이 변경되었고 닉네임이 존재하는가?
-        if (!member.getMemberNickname().equals(updateDto.getMemberNickname()) &&
-                memberRepository.existsByMemberNickname(updateDto.getMemberNickname())) {
-            throw new IllegalArgumentException("이미 사용중인 닉네임입니다");
+        if (!member.getMemberNickname().equals(updateDto.getMemberNickname())){
+            if(memberRepository.existsByMemberNickname(updateDto.getMemberNickname())){
+                throw new IllegalArgumentException("이미 사용중인 닉네임입니다");
+            }
+            //닉네임 업데이트
+            member.setMemberNickname(updateDto.getMemberNickname());
         }
-        //닉네임 업데이트
-        member.setMemberNickname(updateDto.getMemberNickname());
 
         //비밀번호 변경
         //비밀 번호 변경은 선택이기 때문에 여기시ㅓ null인지 아닌지 체크해야함..
+        //새 비밀번호가 입력되었다면
         if (updateDto.getNewPassword() != null && !updateDto.getNewPassword().isEmpty()) {
+
+            //현재 비밀번호 확인 먼저
+            if (!passwordEncoder.matches(updateDto.getCurrentPassword(), member.getMemberPw())) {
+                throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다");
+            }
+            //새 비밀번호와 비밀번호 확인 같은지
             if (!updateDto.getNewPassword().equals(updateDto.getNewPasswordConfirm())) {
                 throw new IllegalArgumentException("새 비밀번호가 일치하지 않습니다");
             }
