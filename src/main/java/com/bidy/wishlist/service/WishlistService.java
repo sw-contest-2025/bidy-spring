@@ -1,7 +1,7 @@
 package com.bidy.wishlist.service;
 
+import com.bidy.post.repository.PostProductRepository;
 import com.bidy.wishlist.domain.Wishlist;
-import com.bidy.home.repository.ProductRepository;
 import com.bidy.wishlist.repository.WishlistRepository;
 import com.bidy.member.domain.Member;
 import com.bidy.member.repository.MemberRepository;
@@ -17,12 +17,12 @@ import java.util.Optional;
 public class WishlistService {
     private final WishlistRepository wishlistRepository;
     private final MemberRepository memberRepository;
-    private final ProductRepository productRepository;
+    private final PostProductRepository postProductRepository;
 
-    public WishlistService(WishlistRepository wishlistRepository, MemberRepository memberRepository, ProductRepository productRepository) {
+    public WishlistService(WishlistRepository wishlistRepository, MemberRepository memberRepository, PostProductRepository postProductRepository) {
         this.wishlistRepository = wishlistRepository;
         this.memberRepository = memberRepository;
-        this.productRepository = productRepository;
+        this.postProductRepository = postProductRepository;
     }
 
     /**
@@ -43,7 +43,7 @@ public class WishlistService {
         else{
             // 3. 찜 기록이 없다면 생성
             Member member = memberRepository.findById(memberId).get();
-            Optional<Product> optionalProduct = productRepository.findById(productId);
+            Optional<Product> optionalProduct = postProductRepository.findById((long) productId);
             Product product = optionalProduct
                     .orElseThrow(() -> new NoSuchElementException("Product not found"));
             Wishlist newWish =  new Wishlist(member, product);
