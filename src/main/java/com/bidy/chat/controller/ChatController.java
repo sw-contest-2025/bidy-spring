@@ -72,6 +72,7 @@ public class ChatController {
         // 발신자(문의자) 조회
         Member sender = memberRepository.findById(senderId)
                 .orElseThrow(() -> new IllegalArgumentException("문의자를 찾을 수 없습니다."));
+
         // 메시지 엔티티 설정
         chatMessage.setChatRoom(room);
         chatMessage.setSender(sender);

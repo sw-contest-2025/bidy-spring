@@ -1,10 +1,90 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>채팅방</title>
 </head>
 <body>
+    <h2 th:text="${room.auction.title}"></h2>
 
+    <!-- 이전 메시지 내역 -->
+    <div id="chat-container">
+        <div th:each="msg : ${messages}"
+             th:classappend="${msg.sender.memberId} == ${buyerId} ? 'my-message' : 'other-message'">
+            <span th:text="${msg.sender.memberNickname}"></span>
+            <p th:text="${msg.message}"></p>html에 js 넣기
+            <small th:text="${#temporals.format(msg.createdAt, 'HH:mm')}"></small>
+        </div>
+    </div>
+
+    <!-- 메시지 입력 창 -->
+    <input type="text" id="message-input" />
+    <button onclick="sendMessage()">전송</button>
+
+    <!-- WebSocket 라이브러리 -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <script th:inline="javascript">
+        const roomId = /*[[${room.id}]]*/ 1;
+        const buyerId = /*[[${buyerId}]]*/ 2;
+
+        // WebSocket 연결
+        let stompClient = null;
+
+        function connect() {
+            // 1. SockJS로 WebSocket 연결 생성
+            const socket = new SockJS('/websocket');
+
+            // 2. STOMP 클라이언트 생성
+            stompClient = Stomp.over(socket);
+
+            // 3. 서버에 연결
+            stompClient.connect({}, function(frame) {
+                console.log('WebSocket 연결됨: ' + frame);
+
+                // 4. 채팅방 토픽 구독 (이 채팅방의 메시지만 받음)
+                stompClient.subscribe('/topic/public/' + roomId, function(message) {
+                    // 5. 새 메시지를 받으면 화면에 표시
+                    showMessage(JSON.parse(message.body));
+                });
+            });
+        }
+
+        function sendMessage() {
+            const messageContent = document.getElementById('message-input').value;
+
+            if(messageContent && stompClient) {
+                const chatMessage = {
+                    senderId: buyerId,
+                    message: messageContent,
+                    messageType: 'TEXT'
+                };
+
+                stompClient.send("/app/chat/"+roomId, {}, JSON.stringify(chatMessage));
+                document.getElementById('message-input').valu='';
+            }
+        }
+
+        function showMessage(message) {
+            const chatArea = document.getElementById('chat-container');
+            const messageElemnet = document.createElement('div');
+
+            const isMine = message.sender.id === buyerId;
+            messageElemnet.classList.add('message');
+            messageElemnet.classList.add(isMine ? 'my-message' : 'other-message');
+
+            messageElemnet.innerHTML = `
+                <div class="sender">${message.sender.memberNickname}</div>
+                <div>${message.message}</div>
+                <div class="time">${new Date(message.createdAt).toLocaleTimeString()}</div>
+            `;
+
+            chatArea.appendChild(messageElemnet);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        // 연결
+        connect();
+    </script>
 </body>
 </html>
