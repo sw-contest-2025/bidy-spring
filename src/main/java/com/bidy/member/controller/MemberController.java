@@ -1,8 +1,11 @@
 package com.bidy.member.controller;
 
+import com.bidy.member.domain.Member;
 import com.bidy.member.dto.MemberSignupDto;
 import com.bidy.member.service.EmailService;
 import com.bidy.member.service.MemberService;
+import com.bidy.session.SessionConst;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +55,7 @@ public class MemberController {
     public String signup(@Valid MemberSignupDto memberSignupDto, //@Valid는
                          BindingResult bindingResult,
                          Model model,
-                         HttpSession session){
+                         HttpServletRequest request){
 
         //요효성 검사 실패한 경우
         if(bindingResult.hasErrors()){
@@ -60,15 +63,27 @@ public class MemberController {
         }
 
         //이메일 인증 안됐을때
-        String verifiedEmail = (String) session.getAttribute("VERIFIED_EMAIL");
+        HttpSession session = request.getSession(false); //세션 없으면 null반환
+        String verifiedEmail = (session != null) ? (String)session.getAttribute("VERIFIED_EMAIL") : null;
         if(verifiedEmail == null || !verifiedEmail.equals(memberSignupDto.getMemberEmail())){
             model.addAttribute("errorMessage", "이메일 인증을 완료해주세요");
             return "signup";
         }
 
         try{
-            memberService.signup(memberSignupDto);
-            session.removeAttribute("VERIFIED_EMAIL"); //이메일 확인한 세션 제거
+            Member saved = memberService.signup(memberSignupDto);
+
+            //기존 세션 무효화
+            //새션 로테이션! 보안관련, 로그인 할때 로그인 전 세션 그대로 쓰면 안됨!!
+            if (session != null) session.invalidate();
+            HttpSession newSession = request.getSession(true);
+
+            //로그인 유지
+            newSession.setAttribute(SessionConst.LOGIN_MEMBER, saved);
+
+            //성공!
+            return "redirect:/signup/success";
+
         } catch(IllegalArgumentException e){
             //중복 등 실패
             if (e.getMessage().contains("이메일")) {
@@ -82,14 +97,15 @@ public class MemberController {
             }
             return "signup";
         }
-
-        //성공!
-        return "redirect:/signup/success";
     }
 
     //회원가입 성공 페이지
     @GetMapping("/signup/success")
-    public String signupSucess(){
+    public String signupSucess(HttpSession session, Model model){
+        Member loginMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (loginMember != null) {
+            model.addAttribute("memberNickname", loginMember.getMemberNickname());
+        }
         return "signup-success";
     }
 }
