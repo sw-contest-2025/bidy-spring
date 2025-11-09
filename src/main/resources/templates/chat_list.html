@@ -3,24 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <title>채팅방 목록</title>
+    <style>
+        body {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .chat-room-item {
+            width: 100%;
+
+        }
+    </style>
 </head>
 <body>
-    <div th:each="${rooms}" class="chat-room-item">
-<!--        <a th:href="@{/chat/{id}(id=${room.aution.id},-->
-<!--                                sellerId=${room.seller.id},-->
-<!--                                buyerId=${room.buyer.id})">-->
-<!--            <h3 th:text="${room.auction.title}">경매 제목</h3>-->
+    <div th:each="room : ${rooms}" class="chat-room-item">
+        <a th:href="@{/chat/{productId}(productId=${room.productId},
+                                        buyerId=${room.otherUserId})}">
+            <h3 th:text="${room.productPostName}">제목</h3>
 
-<!--            <p>-->
-<!--                <span th:text="${room.seller.username}">판매자</span>-->
-<!--                <span th:text="${room.buyer.username}">구매자</span>-->
-<!--            </p>-->
+            <p>
+                <span th:text"${room.otherUserNickName}>닉네임</span>
+            </p>
 
-<!--            <p class="last-message" th:text="${room.lastMessage}">마지막 메시지</p>-->
-<!--            <small th:text="${#temporals.format(room.lastMessageTime, 'yyyy-MM-dd HH:mm')}">-->
-<!--                시간-->
-<!--            </small>-->
-<!--        </a>-->
+            <p class="last-message" th:text="${room.lastMessage}"></p>
+            <small th:text="${#temporals.format(room.lastMessageTime, 'yyyy-MM-dd HH:mm')}">
+                시간
+            </small>
+        </a>
     </div>
 </body>
 </html>
