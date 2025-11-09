@@ -1,4 +1,4 @@
-package com.bidy.home.domain;
+package com.bidy.wishlist.domain;
 
 import com.bidy.member.domain.Member;
 import com.bidy.post.domain.Product;
@@ -6,8 +6,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Optional;
 
 @Entity
 @Getter @Setter

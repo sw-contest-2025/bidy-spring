@@ -1,6 +1,6 @@
-package com.bidy.home.controller;
+package com.bidy.wishlist.controller;
 
-import com.bidy.home.service.WishlistService;
+import com.bidy.wishlist.service.WishlistService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
