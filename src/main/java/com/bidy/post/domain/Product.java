@@ -22,8 +22,8 @@ public class Product {
     private Long productId; // 상품 아이디
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_email", referencedColumnName = "member_email", nullable = false)
-    private Member user; // 유저 아이디(이메일)
+    @JoinColumn(name = "member_id", nullable = false) // Product 테이블 컬럼 이름
+    private Member user; // Member PK(member_id) 참조
 
     @Column(nullable = false, length = 100)
     private String postName; // 작성글 제목

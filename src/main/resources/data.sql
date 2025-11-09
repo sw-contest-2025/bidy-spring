@@ -32,5 +32,5 @@ VALUES
      '2005-11-20',
      '2025-11-06');
 
-INSERT INTO product (user_email, post_name, category, min_price, delivery_method, description, image_url, duration_days, duration_hours, duration_minutes, views, current_price)
-VALUES ('5678@mail.com', '상품 A', '공예', 1000, '일반택배', '테스트 상품', null, 2, 1, 30, 0, 1000);
+INSERT INTO product (member_id, post_name, category, min_price, delivery_method, description, image_url, duration_days, duration_hours, duration_minutes, views, current_price)
+VALUES (2, '상품 A', '공예', 1000, '일반택배', '테스트 상품', null, 2, 1, 30, 0, 1000);
