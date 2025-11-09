@@ -116,9 +116,13 @@
         .btn-submit:hover{ background-color: #cc781a; }
         .success-message{ color: #5cb85c; font-weight: 500; margin-bottom: 20px; padding: 10px; background-color: #eaffea; border-radius: 4px; }
     </style>
-    </style>
+    <!--헤더 css-->
+    <link rel="stylesheet" th:href="@{/css/header.css}">
 </head>
 <body>
+
+<!-- 헤더 포함 -->
+<div th:replace="~{fragments/header :: header}"></div>
 <div class="wrap">
     <div class="layout">
 
