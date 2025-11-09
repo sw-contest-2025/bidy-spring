@@ -95,6 +95,27 @@
             .sidebar{ position:static; border-right:none; border-bottom:1px solid var(--line); padding:16px 0; }
             .content{ padding:16px 0; }
         }
+
+        /*수정 폼*/
+        .edit-form{ max-width: 500px; margin-top: 20px;}
+        .form-group{ margin-bottom: 20px; }
+        .form-group label{ display: block; font-weight: 600; margin-bottom: 5px; }
+        .form-group input[type="text"],
+        .form-group input[type="password"],
+        .form-group input[type="date"],
+        .form-group input[type="email"]{
+            width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 4px;
+        }
+        .form-group input[readonly]{ background-color: #f7f7f7; color: var(--muted); cursor: not-allowed; }
+        .error-message{ color: #d9534f; font-size: 13px; margin-top: 5px; display: block; }
+        .btn-submit{
+            background-color: var(--brand); color: #fff; padding: 12px 20px; border: none;
+            border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        .btn-submit:hover{ background-color: #cc781a; }
+        .success-message{ color: #5cb85c; font-weight: 600; margin-bottom: 20px; padding: 10px; background-color: #eaffea; border-radius: 4px; }
+    </style>
     </style>
 </head>
 <body>
@@ -126,12 +147,65 @@
             <h2>계정설정</h2>
             <div class="sub">내 정보 수정</div>
 
-            <p>이메일: <span th:text="${member.memberEmail}"></span></p>
-            <p>이름: <span th:text="${member.memberName}"></span></p>
-            <p>닉네임: <span th:text="${member.memberNickname}"></span></p>
-            <p>생년월일: <span th:text="${member.memberBirthday}"></span></p>
+            <div th:if="${param.success}" class="success-message">
+                회원 정보가 성공적으로 수정되었습니다.
+            </div>
+
+            <form th:action="@{/mypage/edit}" th:object="${updateDto}" method="post" class="edit-form">
+
+                <div class="form-group">
+                    <label>프로필 이미지</label>
+                    <input type="hidden" th:field="*{profileImageUrl}" />
+                    <img th:src="${member.profileImageUrl} ?: @{/images/profile_temp.png}"
+                         style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
+                </div>
+
+                <div class="form-group">
+                    <label for="memberEmail">이메일(ID)</label>
+                    <input type="email" id="memberEmail" th:value="${member.memberEmail}" readonly>
+                </div>
 
 
+
+                <div class="form-group">
+                    <label for="memberNickname">닉네임</label>
+                    <input type="text" id="memberNickname" th:field="*{memberNickname}" placeholder="닉네임을 입력하세요">
+                    <p th:errors="*{memberNickname}" class="error-message"></p>
+                </div>
+
+                <div class="form-group">
+                    <label for="memberBirthday">생년월일</label>
+                    <input type="text" id="memberBirthday" th:value="${member.memberBirthday}" readonly>
+                </div>
+
+                <hr style="margin: 30px 0; border-color: var(--line);">
+
+                <h3>비밀번호 변경</h3>
+                <!--현재 비밀번호 입력-->
+                <div class="form-group">
+                    <label for="currentPassword">현재 비밀번호</label>
+                    <input type="password" id="currentPassword" th:field="*{currentPassword}" placeholder="정보 수정을 위해 현재 비밀번호를 입력해주세요">
+                    <p th:errors="*{currentPassword}" class="error-message"></p>
+                </div>
+
+                <div class="form-group">
+                    <label for="newPassword">새 비밀번호</label>
+                    <input type="password" id="newPassword" th:field="*{newPassword}" placeholder="변경할 새 비밀번호">
+                </div>
+
+                <div class="form-group">
+                    <label for="newPasswordConfirm">새 비밀번호 확인</label>
+                    <input type="password" id="newPasswordConfirm" th:field="*{newPasswordConfirm}" placeholder="새 비밀번호 다시 입력">
+                    <p th:errors="*{newPasswordConfirm}" class="error-message"></p>
+                </div>
+
+                <hr style="margin: 30px 0; border-color: var(--line);">
+
+
+
+                <button type="submit" class="btn-submit">정보 수정</button>
+
+            </form>
         </main>
 
     </div>
