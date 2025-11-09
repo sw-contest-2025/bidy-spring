@@ -57,6 +57,8 @@ public class Product {
     @Column(nullable = false)
     private int currentPrice; // 현재가격
 
+    private boolean isEnded = false;
+
 
     /**
      * createdAt과 duration을 더하여
