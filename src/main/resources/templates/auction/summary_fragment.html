@@ -1,0 +1,58 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="productSummary" class="product-summary">
+    <h1 class="product-title" th:text="${product.postName}">경매 상품명</h1>
+    <div class="summary-left">
+        <div class="product-image">
+            <img th:src="${product.imageUrl ?: '[https://placehold.co/600x450/fdd855/000?text=NO+IMAGE](https://placehold.co/600x450/fdd855/000?text=NO+IMAGE)'}" alt="상품 이미지">
+        </div>
+
+        <div class="product-actions">
+            <button class="action-buttons chat-btn">채팅</button>
+            <div>
+                <span th:text="|조회수: ${product.views} |">조회수: 0</span>
+                <button class="action-buttons interest-btn" id="interest-btn">찜</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="summary-right">
+        <div class="status"
+             th:text="${product.calculateEndTime().isBefore(#temporals.createNow()) ? '상태: 경매 종료' : '상태: 경매 진행중'}">
+            상태: 경매 진행중
+        </div>
+
+        <div class="price-info">
+            <p>현재가:</p>
+            <strong id="current-price-display" th:text="${#numbers.formatInteger(product.currentPrice, 0, 'COMMA')} + '원'">50,000원</strong>
+        </div>
+
+        <div class="timer-box">
+            <p>마감까지 남은 시간:</p>
+            <span id="countdown-timer">시간 계산 중...</span>
+        </div>
+
+        <!-- 입찰 폼 -->
+        <form id="bidForm" th:action="@{/auction/bid}" method="post">
+            <div class="input-group">
+                <input type="number"
+                       id="bidAmount"
+                       name="bidPrice"
+                       required
+                       th:min="${product.currentPrice + 1}"
+                       th:placeholder="|제시 가격: ${#numbers.formatInteger(product.currentPrice + 1, 0, 'COMMA')}원 이상|"
+                       style="margin-bottom: 10px;">
+            </div>
+
+            <input type="hidden" name="productId" th:value="${product.productId}">
+            <input type="hidden" name="bidderId" value="1">
+
+            <button id="bidButton"
+                    class="bid-button"
+                    th:disabled="${product.calculateEndTime().isBefore(#temporals.createNow())}"
+                    type="submit"
+                    th:text="${product.calculateEndTime().isBefore(#temporals.createNow()) ? '경매 종료 (입찰 불가)' : '입찰 버튼'}">
+                입찰 버튼
+            </button>
+        </form>
+    </div>
+</div>

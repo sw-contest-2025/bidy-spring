@@ -14,11 +14,12 @@ import java.time.LocalDateTime;
 * JPA 활용
 * 외래키 (Product, Member)
  */
-@Entity(name = "bid")
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "bid")
 public class Bid {
     // 1. bid_id: LONG, PK, Auto Increment
     @Id
