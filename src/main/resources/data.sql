@@ -32,38 +32,6 @@ VALUES
      '2005-11-20',
      '2025-11-06');
 
-INSERT INTO member
-(member_email, member_pw, member_name, member_nickname, member_role, member_birthday, member_create)
-VALUES
-    ('kayubin27@gmail.com',
-     '$2a$10$.8Ab5N4rFLzECeZ5h2itkuNQMMhEIgBd/yJdHK1BCAvTBUCKMAc/W', ---- yubin@27
-     '가유빈',
-     '유빈',
-     'MEMBER',
-     '2004-02-07',
-     '2025-11-10');
-
-INSERT INTO product (member_id, post_name, category, min_price, delivery_method, description, image_url, duration_days, duration_hours, duration_minutes, views, current_price, created_at, is_ended)
-VALUES (2, '상품 A', '공예', 1000, '일반택배', '테스트 상품', null, 2, 1, 30, 0, 1000,  CURRENT_TIMESTAMP(),
-                                                                               FALSE);
-
-
-INSERT INTO product (member_id, post_name, category, min_price, delivery_method, description, image_url, duration_days, duration_hours, duration_minutes, views, current_price, created_at, is_ended)
-VALUES (2, '상품 1', '공예', 40000, '편의점택배', '테스트 상품', null, 2, 1, 30, 0, 40000, CURRENT_TIMESTAMP(),
-                                                                                 FALSE);
-
-INSERT INTO product (member_id, post_name, category, min_price, delivery_method, description, image_url, duration_days, duration_hours, duration_minutes, views, current_price, created_at, is_ended)
-VALUES (2, '상품 2', '공예', 60000, '일반택배', '테스트 상품', null, 2, 1, 30, 0, 60000, CURRENT_TIMESTAMP(),
-                                                                                FALSE);
-
-INSERT INTO product (member_id, post_name, category, min_price, delivery_method, description, image_url, duration_days, duration_hours, duration_minutes, views, current_price, created_at, is_ended)
-VALUES (2, '상품 3', '공예', 220000, '일반택배', '테스트 상품', null, 2, 1, 30, 0, 220000, CURRENT_TIMESTAMP(),
-                                                                                  FALSE);
-
-INSERT INTO product (member_id, post_name, category, min_price, delivery_method, description, image_url, duration_days, duration_hours, duration_minutes, views, current_price, created_at, is_ended)
-VALUES (2, '상품 4', '그림', 50000, '일반택배', '테스트 상품', null, 2, 1, 30, 0, 50000, CURRENT_TIMESTAMP(),
-                                                                                FALSE);
-
 INSERT INTO product
     (member_id, post_name, category, min_price, current_price, delivery_method, description, image_url,
      duration_days, duration_hours, duration_minutes, views, created_at, is_ended)
@@ -90,33 +58,3 @@ VALUES (
     10000,
     CURRENT_TIMESTAMP()
 );
-
-------- 채팅 테스트 데이터 ---------------
-INSERT INTO member ------- 판매자: member_id: 5
-(member_email, member_pw, member_name, member_nickname, member_role, member_birthday, member_create)
-VALUES
-    ('gildong@example.com',
-     '$2a$10$ExYVPy.cJxkl2w8Hjj8wj.Gz.ORdW8ZAEQBl5y2vNwoWZrMwEqTT6',
-     '홍길동',
-     '길동',
-     'MEMBER',
-     '2000-01-01',
-     CURRENT_TIMESTAMP());
-
-INSERT INTO product -- product_id: 2
-(member_id, post_name, category, min_price, current_price, delivery_method, description, image_url,
- duration_days, duration_hours, duration_minutes, views, created_at, is_ended)
-VALUES (
-           5,
-           '상품 B 판매합니다~',
-           '공예',
-           1000,
-           10000,
-           '택배',
-           '채팅 기능 테스트 하기',
-           null,
-           2, 1, 30,
-           0,
-           CURRENT_TIMESTAMP(),
-           FALSE
-       );
