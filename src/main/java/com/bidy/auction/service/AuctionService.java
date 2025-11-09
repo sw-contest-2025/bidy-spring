@@ -6,7 +6,6 @@ import com.bidy.auction.repository.BidRepository;
 import com.bidy.notification.domain.Notification;
 import com.bidy.notification.repository.NotificationRepository;
 import com.bidy.post.domain.Product;
-import com.bidy.home.repository.ProductRepository;
 import com.bidy.member.domain.Member;
 import com.bidy.member.repository.MemberRepository;
 import com.bidy.post.repository.PostProductRepository;
