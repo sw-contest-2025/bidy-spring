@@ -6,7 +6,8 @@ import jakarta.persistence.*;
  * Tag Table 작성(태그 보관)
  * JPA 활용
  */
-@Entity(name = "tag")
+@Entity
+@Table(name = "tag")
 public class Tag {
     // 1. tag_id: LONG, PK, Auto Increment
     @Id

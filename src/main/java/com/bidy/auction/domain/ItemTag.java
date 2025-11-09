@@ -8,7 +8,8 @@ import jakarta.persistence.*;
  * JPA 활용
  * 외래키 (Product, Tag)
  */
-@Entity(name = "item_tag")
+@Entity
+@Table(name = "item_tag")
 public class ItemTag {
     // 1. product_tag_id: LONG, PK, Auto Increment
     @Id
@@ -17,7 +18,7 @@ public class ItemTag {
 
     // 2. item_id: INTEGER, FK(Product -> product_id), Not Null
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id", nullable = false)
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
     // 3. tag_id: LONG, FK(Tag -> tag_id), Not Null

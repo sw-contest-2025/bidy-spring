@@ -33,10 +33,10 @@ VALUES
      '2025-11-06');
 
 INSERT INTO product
-    (user_email, post_name, category, min_price, current_price, delivery_method, description, image_url,
-     duration_days, duration_hours, duration_minutes, views, created_at)
+    (member_id, post_name, category, min_price, current_price, delivery_method, description, image_url,
+     duration_days, duration_hours, duration_minutes, views, created_at, is_ended)
 VALUES (
-    '1234@example.com',
+    1,
     '상품 A',
     '공예',
     1000,
@@ -46,5 +46,32 @@ VALUES (
     null,
     2, 1, 30,
     0,
+    CURRENT_TIMESTAMP(),
+    FALSE
+);
+INSERT INTO product
+    (member_id, post_name, category, min_price, current_price, delivery_method, description, image_url,
+     duration_days, duration_hours, duration_minutes, views, created_at, is_ended)
+VALUES (
+    1,
+    '상품 A',
+    '공예',
+    1000,
+    1000,
+    '택배',
+    '입찰 기능 테스트를 위한 상품입니다.',
+    null,
+    2, 1, 30,
+    0,
+    CURRENT_TIMESTAMP(),
+    FALSE
+);
+
+INSERT INTO bid
+    (product_id, bidder_id, bid_price, bid_time)
+VALUES (
+    1,
+    1,
+    10000,
     CURRENT_TIMESTAMP()
 );
