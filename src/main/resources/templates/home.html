@@ -22,7 +22,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to bottom, #ffffff, #fedf54);
+
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -32,6 +32,16 @@
         /* 상단 헤더 */
         header {
             padding: 15px 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2px;
+        }
+
+        /* 가운데에 내용 폭 제한 */
+        .header-container {
+            width: 100%;
+            max-width: 1200px;   /*최대 폭*/
             display: flex;
             justify-content: flex-end;
             align-items: center;
@@ -43,8 +53,8 @@
             margin-right: auto; /*왼쪽 끝으로 이동 */
         }
         .logo img {
-          width: 150px;
-          height: 50px;
+          width: 140px;
+          height: auto;
           object-fit: contain;
           display: block;
         }
@@ -58,23 +68,25 @@
             padding: 10px 15px;
         }
             .header-post{
-            width: 100px;
-            height: 50px;
+            width: 90px;
+            height: 45px;
             border-radius: 50px;
-            padding: 15px 20px 10px 30px;   /* 버튼 안 여백 */
-            background-color:#fedf54; /* 버튼 배경색 */
-            color: #494949;            /* 글자색 */
-            font-size: 16px;           /* 글자 크기 */
+            padding: 10px 20px; /* 버튼 안 여백 */
+            background-color: #ff9741; /* 버튼 배경색 */
+            color: #ffffff;            /* 글자색 */
+            font-size: 14px;           /* 글자 크기 */
             font-weight: bold;         /* 글자 굵기 */
             border: none;              /* 테두리 제거 */
             text-decoration: none; /* 밑줄 제거 */
             display: flex;         /* 텍스트 가운데 정렬 */
+            justify-content: center; /* 가로 가운데 정렬 */
+            align-items: center;     /* 세로 가운데 정렬 */
             cursor: pointer;           /* 마우스 올리면 손 모양 */
             transition: all 0.3s; /* 호버 시 부드럽게 변하도록 */
             }
 
             .header-post:hover {  /* 글쓰기 마우스 올렸을 때 색 변화 */
-            background-color: rgb(231, 109,11);
+            background-color: rgb(255, 118, 20);
             transform: translateY(-2px);
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             }
@@ -85,22 +97,31 @@
             flex-direction: column;
             align-items: center; /* 가로 가운데 정렬 */
             justify-content: flex-start; /* 세로는 위쪽으로 붙임 */
-            padding: 40px 20px;
+            padding: 30px 20px;
+        }
+        .slogan {
+            font-size: 25px;
+            font-weight: 600;
+            color: #4a4a4a;
+            margin-bottom: 50px;
+            text-align: center;
+            letter-spacing: -0.3px;
         }
 
         /* 검색창 */
             .search-box{
-            width:700px;
-            height:50px;
-            background: white;
-            border-radius: 40px;
-            padding:10px;
-            border: 1px solid rgba(0,0,0,0.06);
-            background: #fff;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-            transition: box-shadow 0.25s ease, transform 0.15s ease;
-             display: flex;             /* input이 꽉 차게 정렬 */
-            align-items: center;
+                width: 700px;
+                height: 50px;
+                border-radius: 40px;
+                padding: 10px;
+                display: flex;
+                align-items: center;
+                background:
+                        linear-gradient(white, white) padding-box,
+                        linear-gradient(to right, #ffa742 0%, #fa890f 20%, #fa890f 70%, #f380c5 100%) border-box;
+                border: 3px solid transparent;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+                transition: box-shadow 0.25s ease, transform 0.15s ease;
         }
 
         .search-txt {
@@ -130,17 +151,17 @@
         /* 카테고리 박스들 */
         .nav-boxes {
             display: grid;
-            grid-template-columns: repeat(4, 90px); /*  각 박스 가로 크기 줄이기 */
-            gap: 15px;
-            max-width: 550px;
-            width: 100%;
+            grid-template-columns: repeat(10, 80px); /*  각 박스 가로 크기 줄이기 */
+            gap: 4px;
+            max-width: 800px;
+            margin: 10px auto 0;
             justify-content: center; /* 중앙 정렬 */
         }
 
         .nav-box {
             aspect-ratio: 1;
             background: white;
-            border: 1px solid #e0e0e0;
+            /*border: 1px solid #e0e0e0;*/
             border-radius: 12px;
             display: flex;
             flex-direction: column;
@@ -148,17 +169,18 @@
             justify-content: center;
             text-decoration: none;
             color: #333;
-            font-weight: 500;
+            font-weight: 400;
             font-size: 13px;
             transition: all 0.3s ease;
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            /*box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);*/
         }
 
         .nav-box:hover {
-            background: rgb(231, 109,11);
-            transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            /*background: rgb(231, 109,11);*/
+            transform: translateY(-5px);
+            font-weight: 500;
+            /*box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);*/
         }
 
         .nav-icon {
@@ -178,11 +200,11 @@
             }
             }
 
-<!--        하단 박스들-->
+/*하단 박스들*/
 .grid-wrapper {
     width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: 1000px;
+    margin: 40px auto 80px;
     display: block; /* flex 영향 제거 */
 }
 
@@ -245,24 +267,28 @@
 <body>
 <!-- 상단 헤더 -->
 <header>
-    <div class="logo">
-        <img src="/images/bidy_logo.png" alt="로고">
+    <div class="header-container">
+        <div class="logo">
+            <img src="/images/bidy_logo.png" alt="로고">
+        </div>
+        <a href="post" class="header-post">
+            <span>글쓰기</span>
+        </a>
+        <a href="notifications" class="header-icon">
+            <span>🔔</span>
+            <span>알림</span>
+        </a>
+        <a href="mypage" class="header-icon">
+            <span>마이페이지</span>
+        </a>
     </div>
-    <a href="post" class="header-post">
-        <span>글쓰기</span>
-    </a>
-    <a href="notifications.html" class="header-icon">
-        <span>🔔</span>
-        <span>알림</span>
-    </a>
-    <a href="mypage" class="header-icon">
-        <span>마이페이지</span>
-    </a>
 </header>
 
 <!-- 메인 컨텐츠 -->
 <div class="main-content">
     <div class="logo"></div>
+
+    <p class="slogan">당신의 일상을 더 가치있게,</p>
 
     <!-- 검색창 -->
     <form class = "search-box" action="" method="get">
@@ -270,10 +296,14 @@
         <button class="search-button" type="submit">
             <i class="fa-solid fa-magnifying-glass"></i>
         </button>
-    </form><br><br>
+    </form><br>
 
     <!-- 네비게이션 박스 -->
     <div class="nav-boxes">
+        <a href="category4.html" class="nav-box">
+            <div class="nav-icon">🔅</div>
+            <div>전체보기</div>
+        </a>
         <a href="category1.html" class="nav-box">
             <div class="nav-icon">🎨</div>
             <div>그림</div>
@@ -290,6 +320,29 @@
             <div class="nav-icon">🔨</div>
             <div>공예</div>
         </a>
+        <a href="category4.html" class="nav-box">
+            <div class="nav-icon">🔨</div>
+            <div>공예</div>
+        </a>
+        <a href="category4.html" class="nav-box">
+            <div class="nav-icon">🔨</div>
+            <div>공예</div>
+        </a>
+        <a href="category4.html" class="nav-box">
+            <div class="nav-icon">🔨</div>
+            <div>공예</div>
+        </a>
+        <a href="category4.html" class="nav-box">
+            <div class="nav-icon">🔨</div>
+            <div>공예</div>
+
+        </a>
+            <a href="category4.html" class="nav-box">
+                <div class="nav-icon">🔨</div>
+                <div>공예</div>
+
+            </a>
+
     </div>
 </div>
 <!-- 메인 컨텐츠 끝-->
