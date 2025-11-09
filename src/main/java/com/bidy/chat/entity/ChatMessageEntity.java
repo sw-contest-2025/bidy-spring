@@ -1,6 +1,7 @@
 package com.bidy.chat.entity;
 
 import com.bidy.member.domain.Member;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,6 +19,7 @@ public class ChatMessageEntity {
     private Long id;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "room_id")
     private ChatRoomEntity chatRoom;
 

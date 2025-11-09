@@ -3,29 +3,35 @@ package com.bidy.auction.service;
 import com.bidy.auction.domain.Bid;
 import com.bidy.auction.dto.BidRequestDto;
 import com.bidy.auction.repository.BidRepository;
+import com.bidy.notification.domain.Notification;
+import com.bidy.notification.repository.NotificationRepository;
 import com.bidy.post.domain.Product;
 import com.bidy.home.repository.ProductRepository;
 import com.bidy.member.domain.Member;
 import com.bidy.member.repository.MemberRepository;
+import com.bidy.post.repository.PostProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly=true)
 public class AuctionService {
     private final BidRepository bidRepository;
-    private final ProductRepository productRepository;
+    private final PostProductRepository productRepository;
     private final MemberRepository memberRepository;
+    private final NotificationRepository notificationRepository;
 
     // 생성자 주입
-    public AuctionService(BidRepository bidRepository,  ProductRepository productRepository, MemberRepository memberRepository) {
+    public AuctionService(BidRepository bidRepository,  PostProductRepository productRepository, MemberRepository memberRepository,  NotificationRepository notificationRepository) {
         this.bidRepository = bidRepository;
         this.productRepository = productRepository;
         this.memberRepository = memberRepository;
+        this.notificationRepository = notificationRepository;
     }
 
     /**
@@ -53,7 +59,7 @@ public class AuctionService {
      * @return
      */
     @Transactional
-    public void createBid(BidRequestDto dto){
+    public String createBid(BidRequestDto dto){
         //유효성 검증 (Product, Member)
         Product product = productRepository.findById((long)Math.toIntExact(dto.getProductId()))
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 상품입니다."));
@@ -61,7 +67,7 @@ public class AuctionService {
         Member bidder = memberRepository.findById(dto.getBidderId())
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 입찰자 ID입니다."));
 
-
+        Optional<Bid> previousBid = bidRepository.findTopByProductOrderByBidTimeDesc(product);
 
         // 경매 유효성 검증
         // 1. 마감 시간 검증
@@ -75,6 +81,14 @@ public class AuctionService {
             throw new IllegalStateException("최고가보다 높게 입찰해야 합니다.");
         }
 
+        // 3. 연속 입찰 금지 검증
+        if(previousBid.isPresent()){
+            Long oldBidderId = previousBid.get().getBidder().getMemberId();
+            if(oldBidderId.equals(bidder.getMemberId())){
+                throw new IllegalStateException("현재 최고가 입찰자는 연속 입찰할 수 없습니다.");
+            }
+        }
+
         // 입찰 기록 저장
         Bid newBid = new Bid();
         newBid.setProduct(product);
@@ -86,5 +100,20 @@ public class AuctionService {
         // Product currentPrice 갱신
         product.setCurrentPrice(dto.getBidPrice());
         productRepository.save(product);
+
+        // 알림 생성 및 저장
+        if(previousBid.isPresent() && !previousBid.get().getBidder().getMemberId().equals(bidder.getMemberId())) {
+            Member oldBidder = previousBid.get().getBidder();
+
+            // Notification 객체 생성
+            Notification notification = new Notification();
+            notification.setRecipient(oldBidder);
+            notification.setProduct(product);
+            notification.setType(Notification.NotificationType.BID_CROSSED);
+            notification.setMessage(product.getPostName() + "상품의 최고가 입찰이 갱신되었습니다!");
+            notification.setCreatedAt(LocalDateTime.now());
+            notificationRepository.save(notification);
+        }
+        return "입찰이 성공적으로 완료되었습니다! 현재 당신이 최고가입니다.";
     }
 }
