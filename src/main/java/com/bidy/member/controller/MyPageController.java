@@ -4,6 +4,7 @@ import com.bidy.member.domain.Member;
 import com.bidy.member.dto.MemberUpdateDto;
 import com.bidy.member.repository.MemberRepository;
 import com.bidy.member.service.MemberService;
+import com.bidy.session.SessionConst;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -34,7 +35,7 @@ public class MyPageController {
     public String myPage(HttpSession session, Model model){
 
         //세션에서 로그인 된 멤버 꺼냄
-        Member loginMember = (Member) session.getAttribute("member");
+        Member loginMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
 
         //로그인 안되있으면 로그인 페이지로
         if(loginMember == null) return "redirect:/login";
@@ -51,7 +52,7 @@ public class MyPageController {
 
 
         //거래횟수 (판매 횟수+구매횟수)
-        int tradeCount = 3;  // <--- 계산해야함
+        int tradeCount = 3;  // TODO: <--- 계산해야함
         //List<Product> salesList = productRepository.findByMemberId(loginMember.getMemberId());
 
         //테스트용
@@ -87,7 +88,7 @@ public class MyPageController {
     public String myPagePurchases(HttpSession session, Model model){
 
         //세션에서 로그인 된 멤버 꺼냄
-        Member loginMember = (Member) session.getAttribute("member");
+        Member loginMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
 
         //로그인 안되있으면 홈 페이지로
         if(loginMember == null) return "redirect:/";
@@ -140,7 +141,7 @@ public class MyPageController {
     public String myPageWishList(HttpSession session, Model model){
 
         //세션에서 로그인 된 멤버 꺼냄
-        Member loginMember = (Member) session.getAttribute("member");
+        Member loginMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
 
         //로그인 안되있으면 홈 페이지로
         if(loginMember == null) return "redirect:/";
@@ -193,7 +194,7 @@ public class MyPageController {
     public String myPageEdit(HttpSession session, Model model){
 
         //세션에서 로그인 된 멤버 꺼냄
-        Member loginMember = (Member) session.getAttribute("member");
+        Member loginMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
 
         //로그인 안되있으면 홈 페이지로
         if(loginMember == null) return "redirect:/";
@@ -231,7 +232,7 @@ public class MyPageController {
                                HttpSession session,
                                Model model) {
 
-        Member loginMember = (Member) session.getAttribute("member");
+        Member loginMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
         if(loginMember == null) return "redirect:/";
 
         //유효성 검사 실패
@@ -249,7 +250,7 @@ public class MyPageController {
             Member updatedMember = memberService.updateMember(loginMember.getMemberId(), updateDto);
 
             //세션 정보 업데이트
-            session.setAttribute("member", updatedMember);
+            session.setAttribute(SessionConst.LOGIN_MEMBER, updatedMember);
 
             //성공 시 GET으로 리다이렉트 (success 쿼리 파라미터로 성공 메시지 표시)
             return "redirect:/mypage/edit?success";
