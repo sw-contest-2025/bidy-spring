@@ -31,6 +31,9 @@
 <div th:replace="fragments/layout_header :: header"></div> -->
 
 <div class="container">
+    <div th:if="${message}" class="alert alert-success" style="padding: 10px; background: #e6ffe6; color: green; text-align: center;">
+        <span th:text="${message}"></span>
+    </div>
 
     <!-- 상품 요약 및 입찰 폼-->
     <div th:insert="auction/summary_fragment :: productSummary"></div>
@@ -47,12 +50,19 @@
 
 <!-- JavaScript 파일 로드 및 실행 -->
 <script th:src="@{/js/timer.js}"></script>
+<script th:src="@{/js/wishlist.js}"></script>
 
 <script th:inline="javascript">
+    // 타이머용 문자열
     const serverEndTimeStr = /*[[${endTime}]]*/ '2025-11-15T10:00:00+0900';
     const currentProductId = /*[[${product.productId}]]*/ 1;
+    const currentMemberId = /*[[${currentMemberId}]]*/ null;
 
+    // 타이머 시작
     startAuctionFeatures(serverEndTimeStr, currentProductId);
+
+    // 위시리스트 토글 기능 초기화
+    initializeWishlistToggle(currentMemberId, currentProductId);
 </script>
 </body>
 </html>

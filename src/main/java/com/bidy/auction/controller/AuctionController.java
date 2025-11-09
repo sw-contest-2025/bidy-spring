@@ -38,6 +38,13 @@ class AuctionController {
             List<Bid> recentBids = auctionService.getRecentBids(product);
             LocalDateTime calculatedTime = product.calculateEndTime();
 
+            int maxBidPrice = recentBids.isEmpty()
+                    ? product.getCurrentPrice()
+                    : recentBids.stream()
+                    .mapToInt(Bid::getBidPrice)
+                    .max()
+                    .orElse(product.getCurrentPrice());
+
             String formattedEndTime = "";
             if (calculatedTime != null) {
                 ZonedDateTime endTimeKst = calculatedTime.atZone(KST_ZONE_ID);
@@ -51,6 +58,7 @@ class AuctionController {
             model.addAttribute("product", product);
             model.addAttribute("recentBids", recentBids);
             model.addAttribute("endTime", formattedEndTime);
+            model.addAttribute("maxBidPrice", maxBidPrice);
 
             return "auction/auction_detail";
 
@@ -63,9 +71,9 @@ class AuctionController {
     public String createBid(@ModelAttribute BidRequestDto bidRequestDto, RedirectAttributes rttr) {
         try {
             // 1. Service 호출: 입찰 기록 저장 및 가격 갱신
-            auctionService.createBid(bidRequestDto);
+            String successMessage = auctionService.createBid(bidRequestDto);
 
-            rttr.addFlashAttribute("message", "입찰이 성공적으로 완료되었습니다.");
+            rttr.addFlashAttribute("message", successMessage);
         }
         catch (IllegalStateException e){
             rttr.addFlashAttribute("error", e.getMessage());

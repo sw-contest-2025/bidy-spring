@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -36,6 +38,7 @@ public class AuctionServiceTest {
 
     private Long TEST_PRODUCT_ID;
     private Long TEST_BIDDER_ID = 1L;
+    private Long OTHER_BIDDER_ID;
     private int INIT_CURRENT_PRICE = 10000;
 
     @BeforeEach
@@ -89,7 +92,7 @@ public class AuctionServiceTest {
 
         // then
         // 현재 최고가가 갱신되었는지 확인
-        Product updatedProduct = productRepository.findById((long)TEST_PRODUCT_ID).orElseThrow();
+        Product updatedProduct = productRepository.findById(Math.toIntExact(TEST_PRODUCT_ID)).orElseThrow();
         assertThat(updatedProduct.getCurrentPrice()).isEqualTo(newBidPrice);
 
         // Bid 기록이 하나 추가되었는지 확인
@@ -139,5 +142,19 @@ public class AuctionServiceTest {
 
         assertThat(notifications.size()).isEqualTo(1);
         assertThat(notifications.get(0).getType()).isEqualTo(Notification.NotificationType.BID_CROSSED);
+    }
+
+    @Test
+    @DisplayName("실패: 존재하지 않는 상품 ID로 입찰 시 NoSuchElementException 발생")
+    void should_ThrowException_When_ProductNotFound() {
+        // given
+        Long NON_EXISTENT_ID = 99999L;
+        int newBidPrice = INIT_CURRENT_PRICE + 100;
+        BidRequestDto dto = new BidRequestDto(NON_EXISTENT_ID, newBidPrice, OTHER_BIDDER_ID);
+
+        // when, then
+        assertThrows(NoSuchElementException.class, () -> {
+            auctionService.createBid(dto);
+        }, "상품을 찾을 수 없습니다.");
     }
 }

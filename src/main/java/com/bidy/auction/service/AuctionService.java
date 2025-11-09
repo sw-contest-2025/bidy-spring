@@ -9,6 +9,7 @@ import com.bidy.post.domain.Product;
 import com.bidy.home.repository.ProductRepository;
 import com.bidy.member.domain.Member;
 import com.bidy.member.repository.MemberRepository;
+import com.bidy.post.repository.PostProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,12 +22,12 @@ import java.util.Optional;
 @Transactional(readOnly=true)
 public class AuctionService {
     private final BidRepository bidRepository;
-    private final ProductRepository productRepository;
+    private final PostProductRepository productRepository;
     private final MemberRepository memberRepository;
     private final NotificationRepository notificationRepository;
 
     // 생성자 주입
-    public AuctionService(BidRepository bidRepository,  ProductRepository productRepository, MemberRepository memberRepository,  NotificationRepository notificationRepository) {
+    public AuctionService(BidRepository bidRepository,  PostProductRepository productRepository, MemberRepository memberRepository,  NotificationRepository notificationRepository) {
         this.bidRepository = bidRepository;
         this.productRepository = productRepository;
         this.memberRepository = memberRepository;
@@ -58,7 +59,7 @@ public class AuctionService {
      * @return
      */
     @Transactional
-    public void createBid(BidRequestDto dto){
+    public String createBid(BidRequestDto dto){
         //유효성 검증 (Product, Member)
         Product product = productRepository.findById((long)Math.toIntExact(dto.getProductId()))
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 상품입니다."));
@@ -78,6 +79,14 @@ public class AuctionService {
         // 2. 금액 유효성 검증
         if(dto.getBidPrice() <= product.getCurrentPrice()){
             throw new IllegalStateException("최고가보다 높게 입찰해야 합니다.");
+        }
+
+        // 3. 연속 입찰 금지 검증
+        if(previousBid.isPresent()){
+            Long oldBidderId = previousBid.get().getBidder().getMemberId();
+            if(oldBidderId.equals(bidder.getMemberId())){
+                throw new IllegalStateException("현재 최고가 입찰자는 연속 입찰할 수 없습니다.");
+            }
         }
 
         // 입찰 기록 저장
@@ -105,5 +114,6 @@ public class AuctionService {
             notification.setCreatedAt(LocalDateTime.now());
             notificationRepository.save(notification);
         }
+        return "입찰이 성공적으로 완료되었습니다! 현재 당신이 최고가입니다.";
     }
 }

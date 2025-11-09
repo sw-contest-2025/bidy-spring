@@ -2,11 +2,11 @@ package com.bidy.auction.service;
 
 import com.bidy.auction.domain.Bid;
 import com.bidy.auction.repository.BidRepository;
-import com.bidy.home.repository.ProductRepository;
 import com.bidy.member.domain.Member;
 import com.bidy.notification.domain.Notification;
 import com.bidy.notification.repository.NotificationRepository;
 import com.bidy.post.domain.Product;
+import com.bidy.post.repository.PostProductRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +19,12 @@ import java.util.stream.Collectors;
 
 @Component
 public class AuctionScheduler {
-    private final ProductRepository productRepository;
+    private final PostProductRepository productRepository;
     private final NotificationRepository notificationRepository;
     private final BidRepository bidRepository;
 
     public AuctionScheduler(
-            ProductRepository productRepository,
+            PostProductRepository productRepository,
             NotificationRepository notificationRepository,
             BidRepository bidRepository,
             AuctionService auctionService)
