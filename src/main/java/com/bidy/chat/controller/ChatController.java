@@ -1,5 +1,8 @@
 package com.bidy.chat.controller;
 
+import com.bidy.chat.dto.ChatMessageDto;
+import com.bidy.chat.dto.ChatRoomDto;
+import com.bidy.chat.dto.ChatRoomListDto;
 import com.bidy.chat.entity.ChatMessageEntity;
 import com.bidy.chat.entity.ChatRoomEntity;
 import com.bidy.chat.service.ChatService;
@@ -33,22 +36,21 @@ public class ChatController {
     // 채팅방 목록
     @GetMapping("/list")
     public String chatList(@RequestParam Long memberId, Model model) {
-        List<ChatRoomEntity> rooms = chatService.getMyChatRooms(memberId);
+        List<ChatRoomListDto> rooms = chatService.getMyChatRooms(memberId);
         model.addAttribute("rooms", rooms);
         model.addAttribute("memberId", memberId);
         return "chat_list";
     }
 
     // 게시글에서 '채팅하기' 클릭 시 채팅방으로
-    @GetMapping("/{auctionId}")
-    public String enterChat(@PathVariable Long auctionId,
-                            @RequestParam Long sellerId,
+    @GetMapping("/{productId}")
+    public String enterChat(@PathVariable Long productId,
                             @RequestParam Long buyerId,
                             Model model) {
         // 채팅방 가져오기 또는 생성
-        ChatRoomEntity room = chatService.getOrCreateRoom(auctionId, sellerId, buyerId);
+        ChatRoomDto room = chatService.getOrCreateRoom(productId, buyerId);
         // 채팅방 있을때-기존 메시지 내역 가져오기
-        List<ChatMessageEntity> messages = chatService.getMessages(room);
+        List<ChatMessageDto> messages = chatService.getMessages(room.getId());
 
         // 화면에 전달할 데이터 설정
         model.addAttribute("room", room);           // 채팅방 정보
@@ -61,26 +63,15 @@ public class ChatController {
     // 메시지 전송
     @MessageMapping("/chat/{roomId}")
     @SendTo("/topic/public/{roomId}")
-    public ChatMessageEntity sendMessage(
+    public ChatMessageDto sendMessage(
             @DestinationVariable Long roomId,
-            @Payload ChatMessageEntity chatMessage,
-            @RequestParam Long senderId) {
+            @Payload ChatMessageDto dto) {
 
-        // 채팅방 조회
-        ChatRoomEntity room = chatService.getChatRoomById(roomId);
+        // roomId 설정
+        dto.setId(roomId);
 
-        // 발신자(문의자) 조회
-        Member sender = memberRepository.findById(senderId)
-                .orElseThrow(() -> new IllegalArgumentException("문의자를 찾을 수 없습니다."));
-
-        // 메시지 엔티티 설정
-        chatMessage.setChatRoom(room);
-        chatMessage.setSender(sender);
-        chatMessage.setCreatedAt(LocalDateTime.now());
-        chatMessage.setIsRead(false);
-
-        // 메시지 저장 & 채팅방 업데이트
-        return chatService.saveMessage(chatMessage);
+        // 메시지 저장, DTO 반환
+        return chatService.saveMessage(dto);
     }
 }
 

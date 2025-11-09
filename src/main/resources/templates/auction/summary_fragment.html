@@ -7,7 +7,10 @@
         </div>
 
         <div class="product-actions">
-            <button class="action-buttons chat-btn">채팅</button>
+            <button class="action-buttons chat-btn"
+                    th:onclick="|location.href='@{/chat/{productId}(productId=${product.productId}, buyerId=${session.memberId})}'|">
+                채팅
+            </button>
             <div>
                 <span th:text="|조회수: ${product.views} |">조회수: 0</span>
                 <button class="action-buttons interest-btn" id="interest-btn">찜</button>

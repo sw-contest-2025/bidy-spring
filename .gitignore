@@ -73,3 +73,6 @@ Thumbs.db
 build/
 out/
 
+# 테스트용 파일
+/src/main/java/com/bidy/chat/controller/ChatTestController.java
+/src/main/resources/templates/chatRoom.html
