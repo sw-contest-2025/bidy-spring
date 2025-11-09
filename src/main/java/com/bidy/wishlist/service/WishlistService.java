@@ -1,8 +1,8 @@
-package com.bidy.home.service;
+package com.bidy.wishlist.service;
 
-import com.bidy.home.domain.Wishlist;
+import com.bidy.wishlist.domain.Wishlist;
 import com.bidy.home.repository.ProductRepository;
-import com.bidy.home.repository.WishlistRepository;
+import com.bidy.wishlist.repository.WishlistRepository;
 import com.bidy.member.domain.Member;
 import com.bidy.member.repository.MemberRepository;
 import com.bidy.post.domain.Product;

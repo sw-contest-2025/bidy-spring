@@ -1,6 +1,6 @@
-package com.bidy.home.repository;
+package com.bidy.wishlist.repository;
 
-import com.bidy.home.domain.Wishlist;
+import com.bidy.wishlist.domain.Wishlist;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
