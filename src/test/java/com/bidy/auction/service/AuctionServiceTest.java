@@ -5,9 +5,9 @@ import com.bidy.auction.repository.BidRepository;
 import com.bidy.notification.domain.Notification;
 import com.bidy.notification.repository.NotificationRepository;
 import com.bidy.post.domain.Product;
-import com.bidy.home.repository.ProductRepository;
 import com.bidy.member.domain.Member;
 import com.bidy.member.repository.MemberRepository;
+import com.bidy.post.repository.PostProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ public class AuctionServiceTest {
     @Autowired
     private AuctionService auctionService;
     @Autowired
-    private ProductRepository productRepository;
+    private PostProductRepository postProductRepository;
     @Autowired
     private BidRepository bidRepository;
     @Autowired
@@ -75,7 +75,7 @@ public class AuctionServiceTest {
         product.setDeliveryMethod("택배");
         product.setImageUrl(null);
 
-        productRepository.save(product);
+        postProductRepository.save(product);
         TEST_PRODUCT_ID = product.getProductId();
     }
 
@@ -92,7 +92,7 @@ public class AuctionServiceTest {
 
         // then
         // 현재 최고가가 갱신되었는지 확인
-        Product updatedProduct = productRepository.findById(Math.toIntExact(TEST_PRODUCT_ID)).orElseThrow();
+        Product updatedProduct = postProductRepository.findById(TEST_PRODUCT_ID).orElseThrow();
         assertThat(updatedProduct.getCurrentPrice()).isEqualTo(newBidPrice);
 
         // Bid 기록이 하나 추가되었는지 확인

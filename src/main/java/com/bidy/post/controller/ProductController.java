@@ -3,7 +3,6 @@ package com.bidy.post.controller;
 import com.bidy.post.domain.Product;
 import com.bidy.member.domain.Member;
 import com.bidy.member.repository.MemberRepository;
-import com.bidy.home.repository.ProductRepository;
 import com.bidy.post.repository.PostProductRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -17,12 +16,10 @@ import java.security.Principal;
 @RequestMapping("/products")
 public class ProductController {
 
-    private final ProductRepository productRepository;
     private final PostProductRepository postProductRepository;
     private final MemberRepository memberRepository;
 
-    public ProductController(ProductRepository productRepository, PostProductRepository postProductRepository, MemberRepository memberRepository) {
-        this.productRepository = productRepository;
+    public ProductController(PostProductRepository postProductRepository, MemberRepository memberRepository) {
         this.postProductRepository = postProductRepository;
         this.memberRepository = memberRepository;
     }
