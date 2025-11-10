@@ -118,3 +118,22 @@ VALUES (
            CURRENT_TIMESTAMP,
            FALSE
        );
+
+
+       INSERT INTO product
+(member_id, post_name, category, min_price, current_price, delivery_method, description, image_url,
+ duration_days, duration_hours, duration_minutes, views, created_at, is_ended)
+VALUES (
+           5,
+           '상품 D 처분합니다',
+           '공예',
+           1000,
+           48000,
+           '일반택배',
+           '상품 설명입니다',
+           null,
+           5, 11, 59,
+           0,
+           CURRENT_TIMESTAMP,
+           FALSE
+       );
