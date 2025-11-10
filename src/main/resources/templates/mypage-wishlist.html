@@ -90,7 +90,15 @@
         .content h2{ margin:0 0 10px; }
         .sub{color:var(--muted); font-size:14px; margin-bottom:16px}
 
+        /*상품 하이퍼 링크 밑줄 생기는거 없애기*/
+        a.card {
+            display: block;
+            text-decoration: none; /* 밑줄 제거 */
+            color: inherit;
+        }
+
         /* 카드 그리드 */
+
         .grid{
             display:grid; grid-template-columns: repeat(3, 1fr);
             gap:16px;
@@ -156,7 +164,8 @@
             <div class="grid-wrapper">
 
                 <div class="grid" th:if="${wishlistProducts != null}">
-                    <div class="card" th:each="product : ${wishlistProducts}">
+                    <a class="card" th:each="product : ${wishlistProducts}"
+                         th:href="@{/auction/auction_detail(productId=${product.productId})}">
                         <div class="thumb-wrapper">
                             <img class="thumb"
                                  th:src="${product.imageUrl} ?: @{/images/product_null.png}"
@@ -185,7 +194,9 @@
                     </span>
                             </div>
                         </div>
+                    </a>
                     </div>
+
                 </div>
                 <div th:if="${wishlistProducts == null or #lists.isEmpty(wishlistProducts)}"
                      style="grid-column:1/-1; color:var(&#45;&#45;muted); text-align:center; padding:24px 0;">

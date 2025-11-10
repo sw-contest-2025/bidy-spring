@@ -84,6 +84,12 @@
         .menu a:hover{ }
 
         /* 본문 */
+        /*상품 하이퍼 링크 밑줄 생기는거 없애기*/
+        a.card {
+            display: block;
+            text-decoration: none; /* 밑줄 제거 */
+            color: inherit;
+        }
         .content{
             padding:24px 0 24px 24px;
         }
@@ -132,7 +138,9 @@
             <div class="grid-wrapper">
 
                 <div class="grid" th:if="${sales != null}">
-                    <div class="card" th:each="s : ${sales}">
+                    <!--해당 페이지로 이동-->
+                    <a class="card" th:each="s : ${sales}"
+                         th:href="@{/auction/auction_detail(productId=${s.productId})}">
                         <div class="thumb-wrapper">
                             <img class="thumb"
                                  th:src="${s.imageUrl} ?: @{/images/product_null.png}"
@@ -157,7 +165,7 @@
                                 </span>
                             </div>
                         </div>
-                    </div>
+                    </a>
 
                 </div>
                 <div th:if="${sales == null or #lists.isEmpty(sales)}"
