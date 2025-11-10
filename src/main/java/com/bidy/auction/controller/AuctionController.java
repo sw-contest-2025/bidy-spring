@@ -33,7 +33,7 @@ class AuctionController {
     private static final ZoneId KST_ZONE_ID = ZoneId.of("Asia/Seoul");
     private static final DateTimeFormatter JS_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXXX");
 
-    @GetMapping("/auction/auction_detail")
+    @GetMapping("/auction_detail")
     public String readDetail(@RequestParam("productId") int productId, Model model, HttpSession session) {
         System.out.println("DEBUG: Incoming Request for Product ID: " + productId);
         try{
@@ -119,7 +119,7 @@ class AuctionController {
         return "redirect:/auction/auction_detail?productId=" + bidRequestDto.getProductId();
     }
 
-    @GetMapping("/api/auction/current-price")
+    @GetMapping("/api/current-price")
     @ResponseBody
     public int getCurrentPrice(@RequestParam("productId") int productId) {
         System.out.println("DEBUG: AJAX Price Request for ID: " + productId);

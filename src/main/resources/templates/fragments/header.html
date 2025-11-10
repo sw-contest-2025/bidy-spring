@@ -25,14 +25,13 @@
         </div>
     </div>
 
-    <!-- 로그인 안 했을 때 -->
-    <div th:if="${!isLoggedIn}">
-        <a href="/login" class="header-icon">
-            <span>로그인</span>
-        </a>
-        <a href="/signup" class="header-icon">
-            <span>회원가입</span>
-        </a>
-    </div>
+        <div th:if="${isLoggedIn == null or !isLoggedIn}">
+            <a th:href="@{/login}" class="header-icon">
+                <span>로그인</span>
+            </a>
+            <a th:href="@{/signup}" class="header-icon">
+                <span>회원가입</span>
+            </a>
+        </div>
     </div>
 </header>

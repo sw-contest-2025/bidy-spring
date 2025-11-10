@@ -12,6 +12,7 @@
         }
 
         .container {
+            padding-top: 20px;
             max-width: 1200px;
             margin: 0 auto;
             background: white;
@@ -101,29 +102,27 @@
 
          /* --- 상단 요약 섹션 --- */
         .product-summary {
+            display: flex;
+            gap: 2%;
+            align-items: stretch;
             padding: 30px;
             border-bottom: 1px solid #eee;
         }
 
-        /* Float 자식 요소가 부모 높이를 벗어나는 것을 방지 */
-        .product-summary::after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-
         /* Left side: 상품 이미지 및 설명 */
         .summary-left {
-            float: left;
-            width: 58%;
-            min-width: 0;
-            margin-right: 2%;
+            flex: 58;
+            width: auto;
         }
 
         .product-title {
             font-size: 32px;
             color: #333;
-            margin-bottom: 15px;
+            margin-bottom: 10px
+            padding-top: 10px;
+            margin-left: 25px;
+            width: 100%;
+            display: block;
         }
 
         .product-image {
@@ -156,8 +155,8 @@
 
         /* Right side: 가격, 타이머, 입찰 폼 */
         .summary-right {
-            float: right;
-            width: 37%;
+            flex: 37;
+            width: auto;
             padding: 20px;
             border-radius: 10px;
             background: #fffdf7;
