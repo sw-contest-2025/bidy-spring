@@ -32,6 +32,17 @@ VALUES
      '2005-11-20',
      '2025-11-06');
 
+INSERT INTO member
+(member_email, member_pw, member_name, member_nickname, member_role, member_birthday, member_create)
+VALUES
+    ('kayubin27@gmail.com',
+     '$2a$10$.8Ab5N4rFLzECeZ5h2itkuNQMMhEIgBd/yJdHK1BCAvTBUCKMAc/W', -- yubin@27
+     '가유빈',
+     '유빈',
+     'MEMBER',
+     '2004-02-07',
+     '2025-11-10');
+
 INSERT INTO product
     (member_id, post_name, category, min_price, current_price, delivery_method, description, image_url,
      duration_days, duration_hours, duration_minutes, views, created_at, is_ended)
@@ -46,7 +57,7 @@ VALUES (
     null,
     2, 1, 30,
     0,
-    CURRENT_TIMESTAMP(),
+    CURRENT_TIMESTAMP,
     FALSE
 );
 
@@ -56,5 +67,73 @@ VALUES (
     1,
     1,
     10000,
-    CURRENT_TIMESTAMP()
+    CURRENT_TIMESTAMP
 );
+
+-- 채팅 테스트 데이터 ---------------
+INSERT INTO member -- 판매자: member_id: 5
+(member_email, member_pw, member_name, member_nickname, member_role, member_birthday, member_create)
+VALUES
+    ('gildong@example.com',
+     '$2a$10$ExYVPy.cJxkl2w8Hjj8wj.Gz.ORdW8ZAEQBl5y2vNwoWZrMwEqTT6',
+     '홍길동',
+     '길동',
+     'MEMBER',
+     '2000-01-01',
+     CURRENT_TIMESTAMP);
+
+INSERT INTO product -- product_id: 2
+(member_id, post_name, category, min_price, current_price, delivery_method, description, image_url,
+ duration_days, duration_hours, duration_minutes, views, created_at, is_ended)
+VALUES (
+           5,
+           '상품 B 판매합니다~',
+           '공예',
+           1000,
+           10000,
+           '택배',
+           '채팅 기능 테스트 하기',
+           null,
+           2, 1, 30,
+           0,
+           CURRENT_TIMESTAMP,
+           FALSE
+       );
+
+
+       INSERT INTO product
+(member_id, post_name, category, min_price, current_price, delivery_method, description, image_url,
+ duration_days, duration_hours, duration_minutes, views, created_at, is_ended)
+VALUES (
+           5,
+           '상품 C 판매합니다~',
+           '그림',
+           1000,
+           52000,
+           '편의점택배',
+           '상품 설명입니다',
+           null,
+           3, 12, 45,
+           0,
+           CURRENT_TIMESTAMP,
+           FALSE
+       );
+
+
+       INSERT INTO product
+(member_id, post_name, category, min_price, current_price, delivery_method, description, image_url,
+ duration_days, duration_hours, duration_minutes, views, created_at, is_ended)
+VALUES (
+           5,
+           '상품 D 처분합니다',
+           '공예',
+           1000,
+           48000,
+           '일반택배',
+           '상품 설명입니다',
+           null,
+           5, 11, 59,
+           0,
+           CURRENT_TIMESTAMP,
+           FALSE
+       );
