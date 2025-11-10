@@ -1,6 +1,7 @@
 package com.bidy.wishlist.controller;
 
 import com.bidy.wishlist.service.WishlistService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,14 +21,21 @@ public class WishlistController {
     }
 
     // post 요청으로 위시리스트 상태 변경
-    @PostMapping("/toggle")
+    @PostMapping("/toggle/{productId}")
     public ResponseEntity<Map<String, Object>> toggleWishlist(
-            @RequestParam("memberId") Long memberId,
-            @RequestParam("productId") int productId
+            @RequestParam("productId") int productId,
+            HttpSession session
     ){
         Map<String, Object> response = new HashMap<>();
+        Long memberId = (Long) session.getAttribute("memberId"); //세션으로 현재 사용자 아이디를 가져옴
 
-        try{
+        if (memberId == null) {
+            response.put("success", false);
+            response.put("message", "로그인 필요");
+            return ResponseEntity.status(401).body(response);
+        }
+
+        try {
             boolean isAdded = wishlistService.toggleWishlist(memberId, productId);
             response.put("success", true);
             response.put("action", isAdded ? "added" : "removed");

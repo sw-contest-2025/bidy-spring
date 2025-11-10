@@ -1,0 +1,108 @@
+/* 카드 그리드 */
+.grid-wrapper {
+    width: 100%;
+    max-width: 1000px;
+    margin: 40px auto 80px;
+    display: block; /* flex 영향 제거 */
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /*한줄에 4개씩*/
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 16px;
+}
+
+.card {
+    width: 100%; /* 그리드 셀 폭 채우기 */
+
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease;
+}
+.card:hover {
+    transform: translateY(-4px);
+}
+
+.thumb {
+    width: 100%;
+    aspect-ratio: 1/1; /* 정사각형 유지 */
+    object-fit: cover;
+    background: #f3f3f3;
+}
+/* 이미지 위 찜 버튼 */
+.thumb-wrapper {
+    position: relative;
+}
+
+.wishlist-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(255,255,255,0.8);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+}
+
+.wishlist-btn:hover {
+    transform: scale(1.2);
+}
+/* 타이머 + 판매 상태 한 줄 배치 */
+.meta-timer {
+    display: flex;
+    justify-content: space-between; /* 타이머 왼쪽, 상태 오른쪽 */
+    align-items: center;
+    margin-top: 10px;
+}
+
+.timer {
+    font-size: 16px;
+    font-weight: 700;
+    color: #ffffff;
+    background: linear-gradient(135deg, #ff6b6b, #f06595);
+    padding: 6px 12px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.status {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+.card-body { padding: 12px; }
+
+.title { font-weight: 600; margin: 0 0 6px; }
+
+.meta { display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+
+.price { font-weight: 700; }
+
+.status { font-size: 14px; padding-left: 10px; color: var(--muted); }
+
+@media (max-width: 960px){
+    .layout{ grid-template-columns: 1fr; }
+    .sidebar{ position:static; border-right:none; border-bottom:1px solid var(--line); padding:16px 0; }
+    .content{ padding:16px 0; }
+    .grid{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px){
+    .grid{ grid-template-columns: 1fr; }
+}
+

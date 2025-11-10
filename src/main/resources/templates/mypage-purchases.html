@@ -116,6 +116,8 @@
             .grid{ grid-template-columns: 1fr; }
         }
     </style>
+    <!--상품 그리드 css-->
+    <link rel="stylesheet" th:href="@{/css/mypage_product_grid.css}">
     <!--헤더 css-->
     <link rel="stylesheet" th:href="@{/css/header.css}">
 </head>
@@ -148,25 +150,127 @@
 
         <!-- 본문 -->
         <main class="content">
-            <h2>구매내역</h2>
-            <div class="sub">내가 구매한 상품 리스트</div>
+            <h2>낙찰내역</h2>
+            <div class="sub">내가 최종 낙찰한 상품 리스트</div>
+            <div class="grid-wrapper">
 
-            <div class="grid">
-                <div class="card" th:each="s : ${sales}">
-                    <img class="thumb" th:src="${s.imageUrl} ?: @{/images/product_null.png}">
-                    <div class="card-body">
-                        <p class="title" th:text="${s.title} ?: ${s.name}">상품명</p>
-                        <div class="meta">
-                            <span class="price" th:text="${#numbers.formatInteger(s.price, 3, 'COMMA')} + '원'">0원</span>
-                            <span class="status" th:text="${s.status} ?: '판매중'">판매중</span>
+                <div class="grid" th:if="${purchases != null}">
+                    <div class="card" th:each="p : ${purchases}">
+                        <div class="thumb-wrapper">
+                            <img class="thumb"
+                                 th:src="${p.imageUrl} ?: @{/images/product_null.png}"
+                                 alt="상품 이미지">
+
+                            <!-- 찜 버튼 -->
+                            <button class="wishlist-btn" th:attr="data-product-id=${p.productId}">
+                                <img th:src="@{/images/heart.png}" alt="찜" width="24" height="24">
+                            </button>
+
+                        </div>
+
+                        <div class="card-body">
+                            <p class="title" th:text="${p.postName}">상품명</p>
+                            <span class="price"
+                                  th:text="${#numbers.formatInteger(p.currentPrice, 3, 'COMMA')} + '원'">0원</span>
+
+                            <!-- 타이머 + 상태 한 줄 배치 -->
+                            <div class="meta-timer">
+                                <div class="timer" th:attr="id='timer-' + ${p.productId}"
+                                     th:data-days="${p.durationDays}"
+                                     th:data-hours="${p.durationHours}"
+                                     th:data-minutes="${p.durationMinutes}">00:00:00</div>
+                                <span class="status"
+                                      th:text="${p.calculateEndTime() != null and p.calculateEndTime().isBefore(T(java.time.LocalDateTime).now()) ? '판매완료' : '판매중'}">
+                        상태
+                    </span>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <div th:if="${sales == null or #lists.isEmpty(sales)}" style="grid-column:1/-1; color:var(&#45;&#45;muted);">
+                <div th:if="${purchases == null or #lists.isEmpty(purchases)}"
+                     style="grid-column:1/-1; color:var(--muted); text-align:center; padding:24px 0;">
                     아직 구매내역이 없습니다.
                 </div>
+
             </div>
+
+
+            <!-- JS 파일 로드 -->
+            <script th:src="@{/js/timer.js}"></script>
+            <script th:src="@{/js/wishlist.js}"></script>
+
+            <!--타이머 기능 구현-->
+            <script th:inline="javascript">
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.querySelectorAll('.timer').forEach(timerEl => {
+                        const days = parseInt(timerEl.dataset.days);
+                        const hours = parseInt(timerEl.dataset.hours);
+                        const minutes = parseInt(timerEl.dataset.minutes);
+
+                        const now = new Date().getTime();
+                        const durationMs = (days*24*60*60*1000) + (hours*60*60*1000) + (minutes*60*1000);
+                        const endTime = now + durationMs;
+
+                        startAuctionTimer(timerEl.id, endTime);
+                    });
+                });
+
+                function startAuctionTimer(timerId, endTime) {
+                    const timerEl = document.getElementById(timerId);
+                    if (!timerEl) return;
+
+                    const interval = setInterval(() => {
+                        const now = new Date().getTime();
+                        const distance = endTime - now;
+
+                        if (distance <= 0) {
+                            timerEl.textContent = '판매완료';
+                            clearInterval(interval);
+                            return;
+                        }
+
+                        const hours = Math.floor((distance / (1000*60*60)) % 24);
+                        const minutes = Math.floor((distance / (1000*60)) % 60);
+                        const seconds = Math.floor((distance / 1000) % 60);
+
+                        timerEl.textContent =
+                            (hours<10?'0'+hours:hours) + ':' +
+                            (minutes<10?'0'+minutes:minutes) + ':' +
+                            (seconds<10?'0'+seconds:seconds);
+                    }, 1000);
+                }
+            </script>
+
+            <!--하트 버튼 누르면 이미지 바꾸는 기능-->
+            <script>
+                // JS
+                document.querySelectorAll('.wishlist-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const productId = this.dataset.productId;
+                        const img = this.querySelector('img');
+
+                        // 현재 상태 확인
+                        const isWishlisted = img.dataset.state === 'on';
+
+                        // 상태 토글
+                        if (isWishlisted) {
+                            img.src = '/images/heart.png'; // 클릭 전 이미지
+                            img.dataset.state = 'off';
+                        } else {
+                            img.src = '/images/click_heart.png';  // 클릭 후 이미지
+                            img.dataset.state = 'on';
+                        }
+
+                        // 서버 전송 (AJAX 예시)
+                        fetch(`/wishlist/toggle/${productId}`, {
+                            method: 'POST'
+                        })
+                            .then(response => response.json())
+                            .then(data => console.log(data))
+                            .catch(err => console.error(err));
+                    });
+                });
+            </script>
         </main>
 
     </div>

@@ -90,33 +90,9 @@
         .content h2{ margin:0 0 10px; }
         .sub{color:var(--muted); font-size:14px; margin-bottom:16px}
 
-        /* 카드 그리드 */
-        .grid{
-            display:grid; grid-template-columns: repeat(3, 1fr);
-            gap:16px;
-        }
-        .card{
-            border:1px solid var(--line); border-radius:10px; background:#fff;
-            overflow:hidden; display:flex; flex-direction:column;
-        }
-        .thumb{width:100%; aspect-ratio:1/1; object-fit:cover; background:#f3f3f3}
-        .card-body{padding:12px}
-        .title{font-weight:600; margin:0 0 6px}
-        .meta{display:flex; justify-content:space-between; align-items:center; font-size:14px}
-        .price{font-weight:700}
-        .status{font-size:14px; padding:0 0 0 10px; color:var(--muted)}
-
-        @media (max-width: 960px){
-            .layout{ grid-template-columns: 1fr; }
-            .sidebar{ position:static; border-right:none; border-bottom:1px solid var(--line); padding:16px 0; }
-            .content{ padding:16px 0; }
-            .grid{ grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (max-width: 560px){
-            .grid{ grid-template-columns: 1fr; }
-        }
-
     </style>
+    <!--상품 그리드 css-->
+    <link rel="stylesheet" th:href="@{/css/mypage_product_grid.css}">
 <!--헤더 css-->
     <link rel="stylesheet" th:href="@{/css/header.css}">
 </head>
@@ -152,23 +128,90 @@
         <main class="content">
             <h2>판매내역</h2>
             <div class="sub">내가 등록한 상품 리스트</div>
+            <div class="grid-wrapper">
 
-            <div class="grid">
-                <div class="card" th:each="s : ${sales}">
-                    <img class="thumb" th:src="${s.imageUrl} ?: @{/images/product_null.png}">
-                    <div class="card-body">
-                       <p class="title" th:text="${s.title} ?: ${s.name}">상품명</p>
-                        <div class="meta">
-                            <span class="price" th:text="${#numbers.formatInteger(s.price, 3, 'COMMA')} + '원'">0원</span>
-                            <span class="status" th:text="${s.status} ?: '판매중'">판매중</span>
+                <div class="grid" th:if="${sales != null}">
+                    <div class="card" th:each="s : ${sales}">
+                        <div class="thumb-wrapper">
+                            <img class="thumb"
+                                 th:src="${p.imageUrl} ?: @{/images/product_null.png}"
+                                 alt="상품 이미지">
+
+                        </div>
+
+                        <div class="card-body">
+                            <p class="title" th:text="${s.postName}">상품명</p>
+                            <span class="price"
+                                  th:text="${#numbers.formatInteger(s.currentPrice, 3, 'COMMA')} + '원'">0원</span>
+
+                            <!-- 타이머 + 상태 한 줄 배치 -->
+                            <div class="meta-timer">
+                                <div class="timer" th:attr="id='timer-' + ${s.productId}"
+                                     th:data-days="${s.durationDays}"
+                                     th:data-hours="${s.durationHours}"
+                                     th:data-minutes="${s.durationMinutes}">00:00:00</div>
+                                <span class="status"
+                                      th:text="${s.calculateEndTime() != null and s.calculateEndTime().isBefore(T(java.time.LocalDateTime).now()) ? '판매완료' : '판매중'}">
+                                    상태
+                                </span>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div th:if="${sales == null or #lists.isEmpty(sales)}" style="grid-column:1/-1; color:var(&#45;&#45;muted);">
+                </div>
+                <div th:if="${sales == null or #lists.isEmpty(sales)}"
+                     style="grid-column:1/-1; color:var(--muted); text-align:center; padding:24px 0;">
                     아직 판매내역이 없습니다.
                 </div>
             </div>
+
+
+            <!-- JS 파일 로드 -->
+            <script th:src="@{/js/timer.js}"></script>
+            <script th:src="@{/js/wishlist.js}"></script>
+
+            <!--타이머 기능 구현-->
+            <script th:inline="javascript">
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.querySelectorAll('.timer').forEach(timerEl => {
+                        const days = parseInt(timerEl.dataset.days);
+                        const hours = parseInt(timerEl.dataset.hours);
+                        const minutes = parseInt(timerEl.dataset.minutes);
+
+                        const now = new Date().getTime();
+                        const durationMs = (days*24*60*60*1000) + (hours*60*60*1000) + (minutes*60*1000);
+                        const endTime = now + durationMs;
+
+                        startAuctionTimer(timerEl.id, endTime);
+                    });
+                });
+
+                function startAuctionTimer(timerId, endTime) {
+                    const timerEl = document.getElementById(timerId);
+                    if (!timerEl) return;
+
+                    const interval = setInterval(() => {
+                        const now = new Date().getTime();
+                        const distance = endTime - now;
+
+                        if (distance <= 0) {
+                            timerEl.textContent = '판매완료';
+                            clearInterval(interval);
+                            return;
+                        }
+
+                        const hours = Math.floor((distance / (1000*60*60)) % 24);
+                        const minutes = Math.floor((distance / (1000*60)) % 60);
+                        const seconds = Math.floor((distance / 1000) % 60);
+
+                        timerEl.textContent =
+                            (hours<10?'0'+hours:hours) + ':' +
+                            (minutes<10?'0'+minutes:minutes) + ':' +
+                            (seconds<10?'0'+seconds:seconds);
+                    }, 1000);
+                }
+            </script>
+
         </main>
 
     </div>

@@ -17,4 +17,8 @@ public interface PostProductRepository extends JpaRepository<Product, Long> {
             @Param("excludedIds") List<Long> excludedIds,
             Pageable pageable
     );
+
+    List<Product> findByUser_MemberId(Long memberId);
+
+    List<Product> findByWinner_MemberId(Long memberId);
 }
