@@ -52,7 +52,7 @@ public class ChatController {
         return "chat_list";
     }
 
-    // 게시글에서 '채팅하기' 클릭 시 채팅방으로: 구매자(문의자) -> 판매자
+    // 게시글에서 '채팅하기' 클릭 시 채팅방으로
     @GetMapping("/{productId}")
     public String enterChat(@PathVariable Long productId,
                             HttpSession session,
@@ -114,7 +114,6 @@ public class ChatController {
 
         // roomId 설정
         dto.setRoomId(roomId);
-        System.out.println("받은 메시지 - senderId: " + dto.getSenderId());
 
         // 메시지 저장, DTO 반환
         return chatService.saveMessage(dto);

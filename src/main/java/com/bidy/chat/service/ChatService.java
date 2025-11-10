@@ -44,24 +44,22 @@ public class ChatService {
                         .product(product)
                         .seller(seller)
                         .buyer(buyer)
-                        .createdAt(LocalDateTime.now())
                         .build()));
 
-        // Entity → DTO 변환
-        return ChatRoomDto.builder()
-                .id(room.getId())
-                .productId(product.getProductId())
-                .productName(product.getPostName())
-                .productPostName(product.getPostName())
-                .sellerId(room.getSeller() != null ? room.getSeller().getMemberId() : null)
-                .sellerName(room.getSeller() != null ? room.getSeller().getMemberNickname() : null)
-                .buyerId(room.getBuyer() != null ? room.getBuyer().getMemberId() : null)
-                .buyerName(room.getBuyer() != null ? room.getBuyer().getMemberNickname() : null)
-                .lastMessage(room.getLastMessage())
-                .lastMessageTime(room.getLastMessageTime())
-                .createdAt(room.getCreatedAt())
-                .build();
-    }
+            return ChatRoomDto.builder()
+                    .id(room.getId())
+                    .productId(product.getProductId())
+                    .productName(product.getPostName())
+                    .productPostName(product.getPostName())
+                    .sellerId(room.getSeller() != null ? room.getSeller().getMemberId() : null)
+                    .sellerName(room.getSeller() != null ? room.getSeller().getMemberNickname() : null)
+                    .buyerId(room.getBuyer() != null ? room.getBuyer().getMemberId() : null)
+                    .buyerName(room.getBuyer() != null ? room.getBuyer().getMemberNickname() : null)
+                    .lastMessage(room.getLastMessage())
+                    .lastMessageTime(room.getLastMessageTime())
+                    .createdAt(room.getCreatedAt())
+                    .build();
+        }
 
     // 특정 채팅방 메시지 목록 가져오기
     public List<ChatMessageDto> getMessages(Long roomId) {

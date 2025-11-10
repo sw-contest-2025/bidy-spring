@@ -99,8 +99,6 @@
     <script th:inline="javascript">
         const roomId = /*[[${room.id}]]*/ 1;
         const loginId = /*[[${loginId}]]*/ 2;
-        console.log("roomId:", roomId);
-        console.log("loginId:", loginId);
 
         // WebSocket 연결
         let stompClient = null;

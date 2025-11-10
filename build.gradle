@@ -40,8 +40,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     //.env자동으로 읽게
     implementation 'me.paulschwarz:spring-dotenv:4.0.0'
-	// 레이아웃(헤더/푸터) 의존성
-	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 
 	/* jsp 설정
 	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'

@@ -15,6 +15,7 @@
             border-radius: 10px;
             padding: 10px 30px;
             cursor: pointer;
+            margin-bottom: 10px;
         }
         h3, p {
             margin: 0;
@@ -27,15 +28,9 @@
     </style>
 </head>
 <body>
-<!--    <th:block th:replace="/fragments/header :: header"></th:block>-->
     <div th:each="room : ${rooms}" class="chat-room-item">
         <a th:href="@{/chat/room/{roomId}(roomId=${room.id})}">
             <h3 th:text="${room.productPostName}"></h3>
-
-            <p>
-                From: <span th:text="${room.otherUserNickName}"></span>
-            </p>
-
             <p class="last-message" th:text="${room.lastMessage}"></p>
             <small th:text="${#temporals.format(room.lastMessageTime, 'yyyy-MM-dd HH:mm')}"/></small>
         </a>

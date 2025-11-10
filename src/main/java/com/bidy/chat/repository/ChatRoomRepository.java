@@ -20,8 +20,6 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoomEntity,Long> {
                                                                @Param("sellerId") Long sellerId,
                                                                @Param("buyerId") Long buyerId);
 
-
-
     @Query("SELECT cr FROM ChatRoomEntity cr " +
             "LEFT JOIN FETCH cr.seller " +
             "LEFT JOIN FETCH cr.buyer " +

@@ -10,12 +10,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.ui.Model;
 
 import java.security.Principal;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.util.List;
 
 
 @Controller
 public class controller {
-
     private final PostProductRepository postProductRepository;
 
     // 생성자 주입
@@ -25,9 +29,22 @@ public class controller {
 
     //첫 화면으로 설정
     @GetMapping("/") // 홈페이지 루트 경로
-    public String home(Model model, HttpSession session) {
-        List<Product> products = postProductRepository.findAll();
-        model.addAttribute("products", products); //HTML에서 th:each="s : ${products}" 사용 가능 -자바스크립트에 쓰임
+    public String home(
+            @RequestParam(value = "category", required = false) String category,
+            HttpSession session
+            , Model model) {
+        List<Product> products;
+
+        if (category == null || category.equals("전체")) { // 기본&전체 -> 모두 반환
+            products = postProductRepository.findAll();
+        } else { // 카테고리 있음 -> 해당 카테고리의 상품 반환
+            products = postProductRepository.findByCategory(category);
+        }
+
+        model.addAttribute("products", products);
+        model.addAttribute("selectedCategory", category);
+        System.out.println("상품 수: " + products.size()); // 콘솔 확인
+        model.addAttribute("sales", products); // HTML에서 th:each="s : ${sales}" 사용 가능
 
         // 세션에서 로그인 정보 확인
         Object loginMember = session.getAttribute(SessionConst.LOGIN_MEMBER);
