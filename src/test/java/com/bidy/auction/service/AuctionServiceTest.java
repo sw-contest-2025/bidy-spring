@@ -157,4 +157,21 @@ public class AuctionServiceTest {
             auctionService.createBid(dto);
         }, "상품을 찾을 수 없습니다.");
     }
+
+    @Test
+    @DisplayName("실패: 존재하지 않는 입찰자 ID로 입찰 시 NoSuchElementException 발생")
+    void should_ThrowException_When_BidIsNotFound() {
+        // given
+        // DB에 존재하지 않는 임의의 ID
+        Long NON_EXISTENT_MEMBER_ID = 99999L;
+        int newBidPrice = INIT_CURRENT_PRICE + 100;
+
+        // DTO 생성 시 존재하지 않는 입찰자 ID 사용
+        BidRequestDto dto = new BidRequestDto((long)TEST_PRODUCT_ID, newBidPrice, NON_EXISTENT_MEMBER_ID);
+
+        // when, then
+        assertThrows(NoSuchElementException.class, () -> {
+            auctionService.createBid(dto);
+        }, "존재하지 않는 입찰자 ID입니다."); // AuctionService에서 던지는 메시지 확인
+    }
 }
