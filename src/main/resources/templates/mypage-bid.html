@@ -115,11 +115,11 @@
         @media (max-width: 560px){
             .grid{ grid-template-columns: 1fr; }
         }
-
-    </style><!--헤더 css-->
-    <link rel="stylesheet" th:href="@{/css/header.css}">
+    </style>
     <!--상품 그리드 css-->
     <link rel="stylesheet" th:href="@{/css/mypage_product_grid.css}">
+    <!--헤더 css-->
+    <link rel="stylesheet" th:href="@{/css/header.css}">
 </head>
 <body>
 
@@ -151,51 +151,47 @@
 
         <!-- 본문 -->
         <main class="content">
-            <h2>위시리스트</h2>
-            <div class="sub">내가 찜한 상품 리스트</div>
+            <h2>입찰리스트</h2>
+            <div class="sub">내가 입찰한 상품 리스트</div>
             <div class="grid-wrapper">
 
-                <div class="grid" th:if="${wishlistProducts != null}">
-                    <div class="card" th:each="product : ${wishlistProducts}">
+                <div class="grid" th:if="${bid != null}">
+                    <div class="card" th:each="b : ${bid}">
                         <div class="thumb-wrapper">
                             <img class="thumb"
-                                 th:src="${product.imageUrl} ?: @{/images/product_null.png}"
+                                 th:src="${b.imageUrl} ?: @{/images/product_null.png}"
                                  alt="상품 이미지">
-                            <!-- 찜 버튼 -->
-                            <button class="wishlist-btn" th:attr="data-product-id=${product.productId}">
-                                <img th:src="@{/images/click_heart.png}" alt="찜" width="24" height="24" data-state="on">
-                            </button>
 
                         </div>
 
                         <div class="card-body">
-                            <p class="title" th:text="${product.postName}">상품명</p>
+                            <p class="title" th:text="${b.postName}">상품명</p>
                             <span class="price"
-                                  th:text="${#numbers.formatInteger(product.currentPrice, 3, 'COMMA')} + '원'">0원</span>
+                                  th:text="${#numbers.formatInteger(b.currentPrice, 3, 'COMMA')} + '원'">0원</span>
 
-                            <!-- 타이머 + 상태 한 줄 배치 -->
+                            <!--타이머 + 상태 한 줄 배치-->
                             <div class="meta-timer">
-                                <div class="timer" th:attr="id='timer-' + ${product.productId}"
-                                     th:data-days="${product.durationDays}"
-                                     th:data-hours="${product.durationHours}"
-                                     th:data-minutes="${product.durationMinutes}">00:00:00</div>
+                                <div class="timer" th:attr="id='timer-' + ${b.productId}"
+                                     th:data-days="${b.durationDays}"
+                                     th:data-hours="${b.durationHours}"
+                                     th:data-minutes="${b.durationMinutes}">00:00:00</div>
                                 <span class="status"
-                                      th:text="${product.calculateEndTime() != null and product.calculateEndTime().isBefore(T(java.time.LocalDateTime).now()) ? '판매완료' : '판매중'}">
+                                      th:text="${b.calculateEndTime() != null and b.calculateEndTime().isBefore(T(java.time.LocalDateTime).now()) ? '판매완료' : '판매중'}">
                         상태
                     </span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div th:if="${wishlistProducts == null or #lists.isEmpty(wishlistProducts)}"
+                <div th:if="${bid == null or #lists.isEmpty(bid)}"
                      style="grid-column:1/-1; color:var(&#45;&#45;muted); text-align:center; padding:24px 0;">
-                    아직 관심목록이 없습니다.
+                    아직 구매내역이 없습니다.
                 </div>
 
             </div>
 
 
-            <!-- JS 파일 로드 -->
+            <!--JS 파일 로드-->
             <script th:src="@{/js/timer.js}"></script>
             <script th:src="@{/js/wishlist.js}"></script>
 
@@ -241,36 +237,6 @@
                 }
             </script>
 
-            <!--하트 버튼 누르면 이미지 바꾸는 기능-->
-            <script>
-                // JS
-                document.querySelectorAll('.wishlist-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const productId = this.dataset.productId;
-                        const img = this.querySelector('img');
-
-                        // 현재 상태 확인
-                        const isWishlisted = img.dataset.state === 'on';
-
-                        // 상태 토글
-                        if (isWishlisted) {
-                            img.src = '/images/heart.png'; // 클릭 전 이미지
-                            img.dataset.state = 'off';
-                        } else {
-                            img.src = '/images/click_heart.png';  // 클릭 후 이미지
-                            img.dataset.state = 'on';
-                        }
-
-                        // 서버 전송 (AJAX 예시)
-                        fetch(`/api/wishlist/toggle/${productId}`, {
-                            method: 'POST'
-                        })
-                            .then(response => response.json())
-                            .then(data => console.log(data))
-                            .catch(err => console.error(err));
-                    });
-                });
-            </script>
         </main>
 
     </div>

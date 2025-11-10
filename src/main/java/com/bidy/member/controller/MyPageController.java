@@ -18,6 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import com.bidy.auction.domain.Bid;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,6 +110,39 @@ public class MyPageController {
         model.addAttribute("activeTab", "purchases"); //현재 탭 어딘지 알려주는 용(View)
 
         return "mypage-purchases";
+    }
+
+    //입찰 내역
+    @GetMapping("/mypage/bid")
+    public String myPageBid(HttpSession session, Model model){
+
+        //세션에서 로그인 된 멤버 꺼냄
+        Member loginMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
+
+        //로그인 안되있으면 홈 페이지로
+        if(loginMember == null) return "redirect:/";
+
+        //DB에서 다시 아이디로 조회해서 새로 갖고옴(수정된 경우를 반영하기위함)
+        Member member = memberRepository.findById(loginMember.getMemberId())
+                .orElseThrow(() -> new IllegalArgumentException("회원 정보를 찾을 수 없습니다."));
+        //findById는 <Optional>로 반환돼서 Member로 바로 받지않고
+        //.orElseThrow 로 <Optional>에서 Member꺼내고 안에 값이 없으면 예외 던짐
+
+        if (member.getProfileImageUrl() == null) {
+            member.setProfileImageUrl("/images/profile_temp.png"); // 임시 이미지
+        }
+
+        //거래횟수 (판매 횟수+구매횟수)
+        int tradeCount = 3;  // <--- 계산해야함
+        List<Bid> bidList = bidRepository.findByBidder_MemberId(loginMember.getMemberId());
+
+        //꺼낸거 보냄
+        model.addAttribute("member", member);
+        model.addAttribute("tradeCount", tradeCount);
+        model.addAttribute("bid", bidList);
+        model.addAttribute("activeTab", "bid"); //현재 탭 어딘지 알려주는 용(View)
+
+        return "mypage-bid";
     }
 
 
