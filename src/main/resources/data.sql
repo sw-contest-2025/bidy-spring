@@ -94,7 +94,7 @@ VALUES (
 );
 
 -- 채팅 테스트 데이터 ---------------
-INSERT INTO member -- 판매자: member_id: 5
+INSERT INTO member -- 판매자: member_id: 7
 (member_email, member_pw, member_name, member_nickname, member_role, member_birthday, member_create)
 VALUES
     ('gildong@example.com',
@@ -162,4 +162,23 @@ VALUES (
            CURRENT_TIMESTAMP,
            FALSE,
            3
+       );
+
+INSERT INTO product -- product_id: 2
+(member_id, post_name, category, min_price, current_price, delivery_method, description, image_url,
+ duration_days, duration_hours, duration_minutes, views, created_at, is_ended, winner_id)
+VALUES (
+           7,
+           '목도리 판매함!!',
+           '뜨개',
+           20000,
+           20000,
+           '택배',
+           '채팅 기능 테스트 하기',
+           null,
+           2, 1, 30,
+           0,
+           CURRENT_TIMESTAMP,
+           FALSE,
+           null
        );
