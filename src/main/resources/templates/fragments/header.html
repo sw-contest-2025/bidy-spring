@@ -1,10 +1,11 @@
 
 <header th:fragment="header">
     <div class="header-container">
-    <div class="logo">
-        <img src="/images/bidy_logo.png" alt="로고">
-    </div>
-
+        <div class="logo">
+            <a th:href="@{/}">
+                <img src="/images/bidy_logo.png" alt="로고">
+            </a>
+        </div>
     <!-- 로그인 했을 때 -->
     <div th:if="${isLoggedIn}" class="header-container">
         <a href="/products/new" class="header-post">
