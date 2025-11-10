@@ -63,7 +63,9 @@ public class Product {
     @Column(name = "is_ended", nullable = false)
     private boolean isEnded = false;
 
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "winner_id", foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
+    private Member winner; // 경매 종료 시점에 설정 (진행 중엔 null)
 
     /**
      * createdAt과 duration을 더하여
@@ -84,6 +86,16 @@ public class Product {
                 .plusDays(days)
                 .plusHours(hours)
                 .plusMinutes(minutes);
+    }
+
+    //경매 종료!!
+    public void finishAuction(Member winner, int finalPrice) {
+        this.isEnded = true;
+        this.winner = winner;          // FK 세팅
+        this.currentPrice = finalPrice;
+        // finalPrice를 별도로 둘 거면 finalPrice에 넣고 currentPrice 유지도 가능
+        // this.endedAt = LocalDateTime.now();
+        // this.finalPrice = finalPrice;
     }
 
 
