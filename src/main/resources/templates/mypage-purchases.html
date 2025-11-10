@@ -116,8 +116,13 @@
             .grid{ grid-template-columns: 1fr; }
         }
     </style>
+    <!--헤더 css-->
+    <link rel="stylesheet" th:href="@{/css/header.css}">
 </head>
 <body>
+
+<!-- 헤더 포함 -->
+<div th:replace="~{fragments/header :: header}"></div>
 <div class="wrap">
     <div class="layout">
 
