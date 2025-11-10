@@ -1,6 +1,5 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="productSummary" class="product-summary">
-    <h1 class="product-title" th:text="${product.postName}">경매 상품명</h1>
     <div class="summary-left">
         <div class="product-image">
             <img th:src="${product.imageUrl ?: '[https://placehold.co/600x450/fdd855/000?text=NO+IMAGE](https://placehold.co/600x450/fdd855/000?text=NO+IMAGE)'}" alt="상품 이미지">

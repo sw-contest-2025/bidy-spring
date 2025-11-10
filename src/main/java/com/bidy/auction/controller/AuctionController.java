@@ -119,7 +119,7 @@ class AuctionController {
         return "redirect:/auction/auction_detail?productId=" + bidRequestDto.getProductId();
     }
 
-    @GetMapping("/api/auction/current-price")
+    @GetMapping("/api/current-price")
     @ResponseBody
     public int getCurrentPrice(@RequestParam("productId") int productId) {
         System.out.println("DEBUG: AJAX Price Request for ID: " + productId);
