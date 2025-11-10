@@ -14,7 +14,7 @@ INSERT INTO member
     (member_email, member_pw, member_name, member_nickname, member_role, member_birthday, member_create)
 VALUES
     ('5678@mail.com',
-     '5678',
+     '$2a$10$ExYVPy.cJxkl2w8Hjj8wj.Gz.ORdW8ZAEQBl5y2vNwoWZrMwEqTT6',
      '테스트입찰자',
      'bidder',
      'MEMBER',
@@ -52,6 +52,17 @@ VALUES
      '유빈',
      'MEMBER',
      '2004-02-07',
+     '2025-11-10');
+
+     INSERT INTO member
+(member_email, member_pw, member_name, member_nickname, member_role, member_birthday, member_create)
+VALUES
+    ('kacajot221@fandoe.com',
+     '$2a$10$UEO/cL6Uw1NsAlm9I1cwg.x/Sd8lTQR5127OTxo9jHWUhaxN1Z79S',
+     'test',
+     'ttt',
+     'MEMBER',
+     '2222-11-11',
      '2025-11-10');
 
 INSERT INTO product
