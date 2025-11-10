@@ -25,7 +25,7 @@ public class Product {
     @JoinColumn(name = "member_id", nullable = false) // Product 테이블 컬럼 이름
     private Member user; // Member PK(member_id) 참조
 
-    @Column(nullable = false, length = 100)
+    @Column(name = "post_name", nullable = false, length = 100)
     private String postName; // 작성글 제목
 
     @Column(nullable = false, length = 20)
@@ -37,9 +37,12 @@ public class Product {
     @Column(name = "delivery_method", nullable = false, length = 20)
     private String deliveryMethod;
 
-    private Integer durationDays;
-    private Integer durationHours;
-    private Integer durationMinutes;
+    @Column(nullable = false)
+    private int durationDays = 0;
+    @Column(nullable = false)
+    private int durationHours = 0;
+    @Column(nullable = false)
+    private int durationMinutes = 0;
 
     @Column(columnDefinition = "TEXT")
     private String description;
@@ -57,7 +60,9 @@ public class Product {
     @Column(nullable = false)
     private int currentPrice; // 현재가격
 
+    @Column(name = "is_ended", nullable = false)
     private boolean isEnded = false;
+
 
 
     /**

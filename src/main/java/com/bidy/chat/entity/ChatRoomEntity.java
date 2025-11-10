@@ -1,5 +1,6 @@
 package com.bidy.chat.entity;
 
+import com.bidy.post.domain.Product;
 import jakarta.persistence.*;
 import lombok.*;
 import com.bidy.member.domain.Member;
@@ -18,8 +19,10 @@ public class ChatRoomEntity {
     // 채팅방 고유 id
     private Long id;
 
-    // 경매 게시글 id -> Product 참조하면 될듯
-    private Long auctionId;
+    // 상품 참조
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")

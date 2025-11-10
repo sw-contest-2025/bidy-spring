@@ -1,0 +1,22 @@
+<header th:fragment="header">
+    <div class="header-container">
+        <div class="logo">
+            <a th:href="@{/}">
+                <img src="/images/bidy_logo.png" alt="로고">
+            </a>
+        </div>
+
+        <a th:href="@{/post}" class="header-post">
+            <span>글쓰기</span>
+        </a>
+
+        <a th:href="@{/notifications}" class="header-icon">
+            <span>🔔</span>
+            <span>알림</span>
+        </a>
+
+        <a th:href="@{/mypage}" class="header-icon">
+            <span>마이페이지</span>
+        </a>
+    </div>
+</header>

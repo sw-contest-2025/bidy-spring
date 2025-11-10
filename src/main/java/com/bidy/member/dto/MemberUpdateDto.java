@@ -18,7 +18,7 @@ public class MemberUpdateDto {
     private String memberNickname;
 
     // 비밀번호 변경에 사용
-    private String currentPassword; // 현재 비밀번호 (필수)
+    private String currentPassword; // 현재 비밀번호
     private String newPassword;     // 새 비밀번호
     private String newPasswordConfirm; // 새 비밀번호 확인
 

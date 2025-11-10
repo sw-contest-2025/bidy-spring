@@ -87,20 +87,29 @@
             justify-content: flex-start; /* 세로는 위쪽으로 붙임 */
             padding: 40px 20px;
         }
+ .slogan {
+            font-size: 25px;
+            font-weight: 600;
+            color: #4a4a4a;
+            margin-bottom: 50px;
+            text-align: center;
+            letter-spacing: -0.3px;
+        }
 
         /* 검색창 */
             .search-box{
-            width:700px;
-            height:50px;
-            background: white;
-            border-radius: 40px;
-            padding:10px;
-            border: 1px solid rgba(0,0,0,0.06);
-            background: #fff;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-            transition: box-shadow 0.25s ease, transform 0.15s ease;
-             display: flex;             /* input이 꽉 차게 정렬 */
-            align-items: center;
+                width: 700px;
+                height: 50px;
+                border-radius: 40px;
+                padding: 10px;
+                display: flex;
+                align-items: center;
+                background:
+                        linear-gradient(white, white) padding-box,
+                        linear-gradient(to right, #ffa742 0%, #fa890f 20%, #fa890f 70%, #f380c5 100%) border-box;
+                border: 3px solid transparent;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+                transition: box-shadow 0.25s ease, transform 0.15s ease;
         }
 
         .search-txt {
@@ -130,7 +139,7 @@
         /* 카테고리 박스들 */
         .nav-boxes {
             display: grid;
-            grid-template-columns: repeat(4, 90px); /*  각 박스 가로 크기 줄이기 */
+            grid-template-columns: repeat(5, 90px); /*  각 박스 가로 크기 줄이기 */
             gap: 15px;
             max-width: 550px;
             width: 100%;
@@ -178,11 +187,11 @@
             }
             }
 
-<!--        하단 박스들-->
+/*하단 박스들*/
 .grid-wrapper {
     width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: 1000px;
+    margin: 40px auto 80px;
     display: block; /* flex 영향 제거 */
 }
 
@@ -218,6 +227,57 @@
       background: #f3f3f3;
     }
 
+/* 이미지 위 찜 버튼 */
+.thumb-wrapper {
+    position: relative;
+}
+
+.wishlist-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(255,255,255,0.8);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+}
+
+.wishlist-btn:hover {
+    transform: scale(1.2);
+}
+
+/* 타이머 + 판매 상태 한 줄 배치 */
+.meta-timer {
+    display: flex;
+    justify-content: space-between; /* 타이머 왼쪽, 상태 오른쪽 */
+    align-items: center;
+    margin-top: 10px;
+}
+
+.timer {
+    font-size: 16px;
+    font-weight: 700;
+    color: #ffffff;
+    background: linear-gradient(135deg, #ff6b6b, #f06595);
+    padding: 6px 12px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.status {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+
   .card-body { padding: 12px; }
 
   .title { font-weight: 600; margin: 0 0 6px; }
@@ -241,6 +301,8 @@
       }
     }
     </style>
+    <!--헤더 css-->
+    <link rel="stylesheet" th:href="@{/css/header.css}">
 </head>
 <body>
 <!-- 상단 헤더 -->
@@ -248,7 +310,7 @@
     <div class="logo">
         <img src="/images/bidy_logo.png" alt="로고">
     </div>
-    <a href="post" class="header-post">
+    <a href="/products/new" class="header-post">
         <span>글쓰기</span>
     </a>
     <a href="notifications.html" class="header-icon">
@@ -264,16 +326,22 @@
 <div class="main-content">
     <div class="logo"></div>
 
+    <p class="slogan">당신의 일상을 더 가치있게,</p>
+
     <!-- 검색창 -->
     <form class = "search-box" action="" method="get">
         <input class="search-txt" type="text" name="" placeholder="  검색어를 입력하세요">
         <button class="search-button" type="submit">
             <i class="fa-solid fa-magnifying-glass"></i>
         </button>
-    </form><br><br>
+    </form><br>
 
     <!-- 네비게이션 박스 -->
     <div class="nav-boxes">
+        <a href="category4.html" class="nav-box">
+            <div class="nav-icon">🔅</div>
+            <div>전체보기</div>
+        </a>
         <a href="category1.html" class="nav-box">
             <div class="nav-icon">🎨</div>
             <div>그림</div>
@@ -297,30 +365,118 @@
 <!--하단 상품 설명, 상품이 추가되면 증가하도록-->
 <div class="grid-wrapper">
 
-    <div class="grid" th:if="${sales != null}">
-        <div class="card" th:each="s : ${sales}">
-            <img class="thumb"
-                 th:src="${s.imageUrl != null} ? @{${s.imageUrl}} : @{/images/product_null.png}"
-                 alt="상품 이미지">
+    <div class="grid" th:if="${products != null}">
+        <div class="card" th:each="s : ${products}">
+            <div class="thumb-wrapper">
+                <img class="thumb"
+                     th:src="${s.imageUrl != null} ? @{${s.imageUrl}} : @{/images/product_null.png}"
+                     alt="상품 이미지">
+                <!-- 찜 버튼 -->
+                <button class="wishlist-btn" th:attr="data-product-id=${s.productId}">
+                    <img th:src="@{/images/heart.png}" alt="찜" width="24" height="24">
+                </button>
+            </div>
+
             <div class="card-body">
                 <p class="title" th:text="${s.postName}">상품명</p>
-                <div class="meta">
                 <span class="price"
                       th:text="${#numbers.formatInteger(s.currentPrice, 3, 'COMMA')} + '원'">0원</span>
+
+                <!-- 타이머 + 상태 한 줄 배치 -->
+                <div class="meta-timer">
+                    <div class="timer" th:attr="id='timer-' + ${s.productId}"
+                         th:data-days="${s.durationDays}"
+                         th:data-hours="${s.durationHours}"
+                         th:data-minutes="${s.durationMinutes}">00:00:00</div>
                     <span class="status"
                           th:text="${s.calculateEndTime() != null and s.calculateEndTime().isBefore(T(java.time.LocalDateTime).now()) ? '판매완료' : '판매중'}">
-                    상태
-                </span>
+                        상태
+                    </span>
                 </div>
             </div>
         </div>
     </div>
 
-<!--&lt;!&ndash;    테스트용&ndash;&gt;-->
-<!--    <div class="card" th:each="product : ${products}">-->
-<!--        <p th:text="${product.postName}">상품명</p>-->
-<!--    </div>-->
 </div>
+
+
+<!-- JS 파일 로드 -->
+<script th:src="@{/js/timer.js}"></script>
+<script th:src="@{/js/wishlist.js}"></script>
+
+<!--타이머 기능 구현-->
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+     document.querySelectorAll('.timer').forEach(timerEl => {
+         const days = parseInt(timerEl.dataset.days);
+         const hours = parseInt(timerEl.dataset.hours);
+         const minutes = parseInt(timerEl.dataset.minutes);
+
+         const now = new Date().getTime();
+         const durationMs = (days*24*60*60*1000) + (hours*60*60*1000) + (minutes*60*1000);
+         const endTime = now + durationMs;
+
+         startAuctionTimer(timerEl.id, endTime);
+     });
+ });
+
+ function startAuctionTimer(timerId, endTime) {
+     const timerEl = document.getElementById(timerId);
+     if (!timerEl) return;
+
+     const interval = setInterval(() => {
+         const now = new Date().getTime();
+         const distance = endTime - now;
+
+         if (distance <= 0) {
+             timerEl.textContent = '판매완료';
+             clearInterval(interval);
+             return;
+         }
+
+         const hours = Math.floor((distance / (1000*60*60)) % 24);
+         const minutes = Math.floor((distance / (1000*60)) % 60);
+         const seconds = Math.floor((distance / 1000) % 60);
+
+         timerEl.textContent =
+             (hours<10?'0'+hours:hours) + ':' +
+             (minutes<10?'0'+minutes:minutes) + ':' +
+             (seconds<10?'0'+seconds:seconds);
+     }, 1000);
+ }
+
+</script>
+
+<!--하트 버튼 누르면 이미지 바꾸는 기능-->
+<script>
+    // JS
+document.querySelectorAll('.wishlist-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const productId = this.dataset.productId;
+        const img = this.querySelector('img');
+
+        // 현재 상태 확인
+        const isWishlisted = img.dataset.state === 'on';
+
+        // 상태 토글
+        if (isWishlisted) {
+            img.src = '/images/heart.png'; // 클릭 전 이미지
+            img.dataset.state = 'off';
+        } else {
+            img.src = '/images/click_heart.png';  // 클릭 후 이미지
+            img.dataset.state = 'on';
+        }
+
+        // 서버 전송 (AJAX 예시)
+        fetch(`/wishlist/toggle/${productId}`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch(err => console.error(err));
+    });
+});
+</script>
 
 <script>
     function handleSearch(event) {
