@@ -10,7 +10,6 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to bottom, #ffffff, #fedf54);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -119,17 +118,16 @@
         /* 카테고리 박스들 */
         .nav-boxes {
             display: grid;
-            grid-template-columns: repeat(5, 90px); /*  각 박스 가로 크기 줄이기 */
-            gap: 15px;
-            max-width: 550px;
-            width: 100%;
+            grid-template-columns: repeat(10, 80px); /*  각 박스 가로 크기 줄이기 */
+            gap: 4px;
+            max-width: 800px;
+            margin: 10px auto 0;
             justify-content: center; /* 중앙 정렬 */
         }
 
         .nav-box {
             aspect-ratio: 1;
             background: white;
-            border: 1px solid #e0e0e0;
             border-radius: 12px;
             display: flex;
             flex-direction: column;
@@ -137,17 +135,14 @@
             justify-content: center;
             text-decoration: none;
             color: #333;
-            font-weight: 500;
+            font-weight: 400;
             font-size: 13px;
             transition: all 0.3s ease;
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
         .nav-box:hover {
-            background: rgb(231, 109,11);
-            transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
         }
 
         .nav-icon {
@@ -159,7 +154,7 @@
         @media (max-width: 768px) {
             .nav-boxes {
                 grid-template-columns: repeat(2, 1fr);
-                max-width: 400px;
+                max-width: 600px;
             }
 
             .logo {
