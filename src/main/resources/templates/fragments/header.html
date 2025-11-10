@@ -1,3 +1,4 @@
+
 <header th:fragment="header">
     <div class="header-container">
         <div class="logo">
@@ -5,22 +6,33 @@
                 <img src="/images/bidy_logo.png" alt="로고">
             </a>
         </div>
-      
-        <a th:href="@{/chat/list}" class="header-post">
-            <span>채팅방</span>
-        </a>
-
-        <a th:href="@{/post}" class="header-post">
+    <!-- 로그인 했을 때 -->
+    <div th:if="${isLoggedIn}" class="header-container">
+        <a href="/products/new" class="header-post">
             <span>글쓰기</span>
         </a>
+        <!-- 마이페이지 드롭다운 -->
+        <div class="header-dropdown">
+            <!-- 이미지 아이콘 -->
+            <img src="/images/profile_temp.png" alt="마이페이지" class="mypage-icon" style="cursor: pointer; width: 32px; height: 32px;">
 
-        <a th:href="@{/notifications}" class="header-icon">
-            <span>🔔</span>
-            <span>알림</span>
-        </a>
+            <!-- 드롭다운 메뉴 -->
+            <div class="dropdown-menu" >
+                <a href="notifications.html" class="header-icon"> <span>🔔</span> <span>알림</span> </a>
+                <a href="chat_list.html" class="header-icon"> <span>💬</span> <span>채팅</span> </a>
+                <a href="/mypage" class="header-icon"> <span>마이페이지</span> </a>
+            </div>
+        </div>
+    </div>
 
-        <a th:href="@{/mypage}" class="header-icon">
-            <span>마이페이지</span>
+    <!-- 로그인 안 했을 때 -->
+    <div th:if="${!isLoggedIn}">
+        <a href="/login" class="header-icon">
+            <span>로그인</span>
         </a>
+        <a href="/signup" class="header-icon">
+            <span>회원가입</span>
+        </a>
+    </div>
     </div>
 </header>

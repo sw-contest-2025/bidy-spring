@@ -28,18 +28,18 @@ public class ChatService {
     private final  PostProductRepository postProductRepository;
 
     // 기존 채팅방 있으면 반환, 없으면 생성
-    public ChatRoomDto getOrCreateRoom(Long productId, Long loginId) {
+    public ChatRoomDto getOrCreateRoom(Long productId, Long buyerId) {
         // 경매 상품
         Product product = postProductRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
         // 판매자
         Member seller = product.getUser();
         // 구매자
-        Member buyer = memberRepository.findById(loginId)
+        Member buyer = memberRepository.findById(buyerId)
                 .orElseThrow(() -> new IllegalArgumentException("구매자 정보가 없습니다."));
 
         ChatRoomEntity room = chatRoomRepository
-                .findByProductAndSellerAndBuyerIds(product, seller.getMemberId(), buyer.getMemberId())
+                .findByProductAndBuyer(product, buyer)
                 .orElseGet(() -> chatRoomRepository.save(ChatRoomEntity.builder()
                         .product(product)
                         .seller(seller)
@@ -48,19 +48,7 @@ public class ChatService {
                         .build()));
 
         // Entity → DTO 변환
-        return ChatRoomDto.builder()
-                .id(room.getId())
-                .productId(product.getProductId())
-                .productName(product.getPostName())
-                .productPostName(product.getPostName())
-                .sellerId(room.getSeller() != null ? room.getSeller().getMemberId() : null)
-                .sellerName(room.getSeller() != null ? room.getSeller().getMemberNickname() : null)
-                .buyerId(room.getBuyer() != null ? room.getBuyer().getMemberId() : null)
-                .buyerName(room.getBuyer() != null ? room.getBuyer().getMemberNickname() : null)
-                .lastMessage(room.getLastMessage())
-                .lastMessageTime(room.getLastMessageTime())
-                .createdAt(room.getCreatedAt())
-                .build();
+        return ChatRoomDto.from(room);
     }
 
     // 특정 채팅방 메시지 목록 가져오기
