@@ -1,9 +1,10 @@
 header {
     padding: 15px 30px;
     display: flex;
-    justify-content: space-between; /* 좌우 끝으로 정렬 */
+    justify-content: center;
     align-items: center;
     gap: 2px;
+    width: 100%;
 }
 
 .header-container {
@@ -13,6 +14,7 @@ header {
     justify-content: space-between;
     align-items: center;
     gap: 10px;
+    margin:0 auto;
 }
 
 .logo { margin-right: auto; }
@@ -54,4 +56,60 @@ header {
     background-color: rgb(255, 118, 20);
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.header-dropdown {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.mypage-icon {
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 160px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    padding: 6px 0;
+    z-index: 1000;
+}
+
+.dropdown-menu a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    color: #333333;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.header-dropdown.open .dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu a:not(:last-child) {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.dropdown-menu a:hover {
+    background-color: #f7f7f7;
 }

@@ -1,9 +1,8 @@
 /**
  * 위시리스트 토글 기능을 초기화 및 이벤트 리스너를 설정.
- * @param {number} memberId - 사용자
  * @param {number} productId - 관심 버튼이 눌린 상품 ID
  */
-function initializeWishlistToggle(memberId, productId) {
+function initializeWishlistToggle(productId) {
   const wishButton = document.getElementById('interest-btn');
   if (!wishButton) return;
 
@@ -12,13 +11,10 @@ function initializeWishlistToggle(memberId, productId) {
   const newWishButton = document.getElementById('interest-btn');
 
   newWishButton.addEventListener('click', async () => {
-    const data = { memberId, productId };
-
     try {
-      const response = await fetch('/api/wishlist/toggle', {
+      const response = await fetch(`/api/wishlist/toggle/${productId}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        headers: { 'Content-Type': 'application/json' }
       });
 
       const result = await response.json();

@@ -134,7 +134,7 @@
                     <div class="card" th:each="s : ${sales}">
                         <div class="thumb-wrapper">
                             <img class="thumb"
-                                 th:src="${p.imageUrl} ?: @{/images/product_null.png}"
+                                 th:src="${s.imageUrl} ?: @{/images/product_null.png}"
                                  alt="상품 이미지">
 
                         </div>
@@ -144,7 +144,7 @@
                             <span class="price"
                                   th:text="${#numbers.formatInteger(s.currentPrice, 3, 'COMMA')} + '원'">0원</span>
 
-                            <!-- 타이머 + 상태 한 줄 배치 -->
+<!--                            타이머 + 상태 한 줄 배치-->
                             <div class="meta-timer">
                                 <div class="timer" th:attr="id='timer-' + ${s.productId}"
                                      th:data-days="${s.durationDays}"
@@ -160,13 +160,13 @@
 
                 </div>
                 <div th:if="${sales == null or #lists.isEmpty(sales)}"
-                     style="grid-column:1/-1; color:var(--muted); text-align:center; padding:24px 0;">
+                     style="grid-column:1/-1; color:var(&#45;&#45;muted); text-align:center; padding:24px 0;">
                     아직 판매내역이 없습니다.
                 </div>
             </div>
 
 
-            <!-- JS 파일 로드 -->
+<!--            JS 파일 로드-->
             <script th:src="@{/js/timer.js}"></script>
             <script th:src="@{/js/wishlist.js}"></script>
 

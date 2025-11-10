@@ -158,13 +158,8 @@
                     <div class="card" th:each="p : ${purchases}">
                         <div class="thumb-wrapper">
                             <img class="thumb"
-                                 th:src="${p.imageUrl} ?: @{/images/product_null.png}"
-                                 alt="상품 이미지">
-
-                            <!-- 찜 버튼 -->
-                            <button class="wishlist-btn" th:attr="data-product-id=${p.productId}">
-                                <img th:src="@{/images/heart.png}" alt="찜" width="24" height="24">
-                            </button>
+                                             th:src="${p.imageUrl} ?: @{/images/product_null.png}"
+                                             alt="상품 이미지">
 
                         </div>
 
@@ -173,7 +168,7 @@
                             <span class="price"
                                   th:text="${#numbers.formatInteger(p.currentPrice, 3, 'COMMA')} + '원'">0원</span>
 
-                            <!-- 타이머 + 상태 한 줄 배치 -->
+                            <!--타이머 + 상태 한 줄 배치-->
                             <div class="meta-timer">
                                 <div class="timer" th:attr="id='timer-' + ${p.productId}"
                                      th:data-days="${p.durationDays}"
@@ -188,14 +183,14 @@
                     </div>
                 </div>
                 <div th:if="${purchases == null or #lists.isEmpty(purchases)}"
-                     style="grid-column:1/-1; color:var(--muted); text-align:center; padding:24px 0;">
+                     style="grid-column:1/-1; color:var(&#45;&#45;muted); text-align:center; padding:24px 0;">
                     아직 구매내역이 없습니다.
                 </div>
 
             </div>
 
 
-            <!-- JS 파일 로드 -->
+             <!--JS 파일 로드-->
             <script th:src="@{/js/timer.js}"></script>
             <script th:src="@{/js/wishlist.js}"></script>
 
@@ -241,36 +236,6 @@
                 }
             </script>
 
-            <!--하트 버튼 누르면 이미지 바꾸는 기능-->
-            <script>
-                // JS
-                document.querySelectorAll('.wishlist-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const productId = this.dataset.productId;
-                        const img = this.querySelector('img');
-
-                        // 현재 상태 확인
-                        const isWishlisted = img.dataset.state === 'on';
-
-                        // 상태 토글
-                        if (isWishlisted) {
-                            img.src = '/images/heart.png'; // 클릭 전 이미지
-                            img.dataset.state = 'off';
-                        } else {
-                            img.src = '/images/click_heart.png';  // 클릭 후 이미지
-                            img.dataset.state = 'on';
-                        }
-
-                        // 서버 전송 (AJAX 예시)
-                        fetch(`/wishlist/toggle/${productId}`, {
-                            method: 'POST'
-                        })
-                            .then(response => response.json())
-                            .then(data => console.log(data))
-                            .catch(err => console.error(err));
-                    });
-                });
-            </script>
         </main>
 
     </div>

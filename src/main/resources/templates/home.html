@@ -41,37 +41,37 @@
             <div class="nav-icon">🎨</div>
             <div>그림</div>
         </a>
-        <a th:href="@{/(category='뜨개')}" class="nav-box">
-            <div class="nav-icon">🧶</div>
-            <div>뜨개</div>
-        </a>
-        <a th:href="@{/(category='자수')}" class="nav-box">
-            <div class="nav-icon">🧵</div>
-            <div>자수</div>
-        </a>
         <a th:href="@{/(category='공예')}" class="nav-box">
-            <div class="nav-icon">🔨</div>
+            <div class="nav-icon">🧶</div>
             <div>공예</div>
         </a>
-        <a href="category4.html" class="nav-box">
-            <div class="nav-icon">🔨</div>
+        <a th:href="@{/(category='도서')}" class="nav-box">
+            <div class="nav-icon">📖</div>
+            <div>도서</div>
+        </a>
+        <a th:href="@{/(category='의류/잡화')}" class="nav-box">
+            <div class="nav-icon">👗</div>
+            <div>의류/잡화</div>
+        </a>
+        <a th:href="@{/(category='홈인테리어')}" class="nav-box">
+            <div class="nav-icon">🪑</div>
+            <div>홈인테리어</div>
+        </a>
+        <a th:href="@{/(category='문구류')}" class="nav-box">
+            <div class="nav-icon">✏️</div>
+            <div>문구류</div>
+        </a>
+        <a th:href="@{/(category='가전디지털')}" class="nav-box">
+            <div class="nav-icon">💻</div>
+            <div>가전디지털</div>
+        </a>
+        <a th:href="@{/(category='악기')}" class="nav-box">
+            <div class="nav-icon">🎻</div>
             <div>공예</div>
         </a>
-        <a href="category4.html" class="nav-box">
+        <a th:href="@{/(category='기타')}" class="nav-box">
             <div class="nav-icon">🔨</div>
-            <div>공예</div>
-        </a>
-        <a href="category4.html" class="nav-box">
-            <div class="nav-icon">🔨</div>
-            <div>공예</div>
-        </a>
-        <a href="category4.html" class="nav-box">
-            <div class="nav-icon">🔨</div>
-            <div>공예</div>
-        </a>
-        <a href="category4.html" class="nav-box">
-            <div class="nav-icon">🔨</div>
-            <div>공예</div>
+            <div>기타</div>
         </a>
     </div>
 </div>
@@ -88,7 +88,7 @@
                      alt="상품 이미지">
                 <!-- 찜 버튼 -->
                 <button class="wishlist-btn" th:attr="data-product-id=${s.productId}">
-                    <img th:src="@{/images/heart.png}" alt="찜" width="24" height="24">
+                    <img th:src="@{/images/heart.png}" alt="찜" width="24" height="24" data-state="off">
                 </button>
             </div>
 
@@ -184,30 +184,23 @@ document.querySelectorAll('.wishlist-btn').forEach(btn => {
             message = '추가되었습니다.';
         }
 
-        alert('위시리스트 ' + message );
-        // 서버 전송에 로그인과 찜 여부 전송
-        fetch(`/wishlist/toggle/${productId}`, { method: 'POST' })
-        .then(res => res.json())
-        .then(data => console.log(data));
+        fetch(`/api/wishlist/toggle/${productId}`, { method: 'POST' })
+        .then(res => {
+            if (res.status === 401) {
+                alert('로그인이 필요합니다.');
+                img.src = '/images/heart.png';
+                img.dataset.state = 'off';
+                throw new Error('Unauthorized');
+            }
+            return res.json();
+        })
+        .then(data => {
+            alert('위시리스트 ' + message );
+            console.log(data);
+        })
+        .catch(err => console.error(err));
     });
 });
-</script>
-
-<!--마이페이지 드롭다운-->
-<script>
-    const mypageIcon = document.querySelector('.mypage-icon');
-    const dropdownMenu = document.querySelector('.dropdown-menu');
-
-    mypageIcon.addEventListener('click', function(e) { // 드롭다운 토글
-        dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
-    });
-
-    // 드롭다운 밖 클릭 시 닫기
-    document.addEventListener('click', function(e) {
-        if (!mypageIcon.contains(e.target) && !dropdownMenu.contains(e.target)) {
-            dropdownMenu.style.display = 'none';
-        }
-    });
 </script>
 
 <script>

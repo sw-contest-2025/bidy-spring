@@ -8,6 +8,7 @@ import com.bidy.member.service.MemberService;
 import com.bidy.post.domain.Product;
 import com.bidy.post.repository.PostProductRepository;
 import com.bidy.session.SessionConst;
+import com.bidy.wishlist.domain.Wishlist;
 import com.bidy.wishlist.repository.WishlistRepository;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -19,9 +20,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 public class MyPageController {
@@ -79,6 +78,7 @@ public class MyPageController {
         return "mypage";
     }
 
+    //구매 내역
     @GetMapping("/mypage/purchases")
     public String myPagePurchases(HttpSession session, Model model){
 
@@ -133,12 +133,17 @@ public class MyPageController {
 
         //거래횟수 (판매 횟수+구매횟수)
         int tradeCount = 3;  // <--- 계산해야함
-        //List<Product> wishList = wishlistRepository.findByMemberId_(loginMember.getMemberId());
+        List<Wishlist> wishList = wishlistRepository.findByMember_MemberId(loginMember.getMemberId());
+        List<Product> wishlistProducts = new ArrayList<>();
+        for (Wishlist wishlist : wishList) {
+            wishlistProducts.add(wishlist.getProduct());
+        }
 
         //꺼낸거 보냄
         model.addAttribute("member", member);
         model.addAttribute("tradeCount", tradeCount);
-        //model.addAttribute("wish", wishList);
+        model.addAttribute("wish", wishList);
+        model.addAttribute("wishlistProducts", wishlistProducts);
         model.addAttribute("activeTab", "wishlist"); //현재 탭 어딘지 알려주는 용(View)
 
         return "mypage-wishlist";
