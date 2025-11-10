@@ -51,7 +51,7 @@ public class LoginController {
         try{
             Member member = memberService.login(loginDto);
             session.setAttribute("member", member); //세션에 담음->로그인!!
-            return "redirect:/mypage";  // ***로그인 성공시 일단 마이페이지로***
+            return "redirect:/";  // ***로그인 성공시 홈으로***
         } catch(IllegalArgumentException e){
             if (e.getMessage().contains("이메일")) {
                 bindingResult.rejectValue("memberEmail", "none", e.getMessage());

@@ -87,20 +87,29 @@
             justify-content: flex-start; /* 세로는 위쪽으로 붙임 */
             padding: 40px 20px;
         }
+ .slogan {
+            font-size: 25px;
+            font-weight: 600;
+            color: #4a4a4a;
+            margin-bottom: 50px;
+            text-align: center;
+            letter-spacing: -0.3px;
+        }
 
         /* 검색창 */
             .search-box{
-            width:700px;
-            height:50px;
-            background: white;
-            border-radius: 40px;
-            padding:10px;
-            border: 1px solid rgba(0,0,0,0.06);
-            background: #fff;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-            transition: box-shadow 0.25s ease, transform 0.15s ease;
-             display: flex;             /* input이 꽉 차게 정렬 */
-            align-items: center;
+                width: 700px;
+                height: 50px;
+                border-radius: 40px;
+                padding: 10px;
+                display: flex;
+                align-items: center;
+                background:
+                        linear-gradient(white, white) padding-box,
+                        linear-gradient(to right, #ffa742 0%, #fa890f 20%, #fa890f 70%, #f380c5 100%) border-box;
+                border: 3px solid transparent;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+                transition: box-shadow 0.25s ease, transform 0.15s ease;
         }
 
         .search-txt {
@@ -178,11 +187,11 @@
             }
             }
 
-<!--        하단 박스들-->
+/*하단 박스들*/
 .grid-wrapper {
     width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: 1000px;
+    margin: 40px auto 80px;
     display: block; /* flex 영향 제거 */
 }
 
@@ -292,6 +301,8 @@
       }
     }
     </style>
+    <!--헤더 css-->
+    <link rel="stylesheet" th:href="@{/css/header.css}">
 </head>
 <body>
 <!-- 상단 헤더 -->
@@ -315,16 +326,22 @@
 <div class="main-content">
     <div class="logo"></div>
 
+    <p class="slogan">당신의 일상을 더 가치있게,</p>
+
     <!-- 검색창 -->
     <form class = "search-box" action="" method="get">
         <input class="search-txt" type="text" name="" placeholder="  검색어를 입력하세요">
         <button class="search-button" type="submit">
             <i class="fa-solid fa-magnifying-glass"></i>
         </button>
-    </form><br><br>
+    </form><br>
 
     <!-- 네비게이션 박스 -->
     <div class="nav-boxes">
+        <a href="category4.html" class="nav-box">
+            <div class="nav-icon">🔅</div>
+            <div>전체보기</div>
+        </a>
         <a href="category1.html" class="nav-box">
             <div class="nav-icon">🎨</div>
             <div>그림</div>
