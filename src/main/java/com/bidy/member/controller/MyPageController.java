@@ -1,10 +1,14 @@
 package com.bidy.member.controller;
 
+import com.bidy.auction.repository.BidRepository;
 import com.bidy.member.domain.Member;
 import com.bidy.member.dto.MemberUpdateDto;
 import com.bidy.member.repository.MemberRepository;
 import com.bidy.member.service.MemberService;
+import com.bidy.post.domain.Product;
+import com.bidy.post.repository.PostProductRepository;
 import com.bidy.session.SessionConst;
+import com.bidy.wishlist.repository.WishlistRepository;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -24,10 +28,21 @@ public class MyPageController {
 
     private final MemberRepository memberRepository;
     private final MemberService memberService;
+    private final PostProductRepository postProductRepository;
+    private final BidRepository bidRepository;
+    private final WishlistRepository wishlistRepository;
 
-    public MyPageController(MemberRepository memberRepository, MemberService memberService) {
+    public MyPageController(MemberRepository memberRepository,
+                            MemberService memberService,
+                            PostProductRepository postProductRepository,
+                            BidRepository bidRepository,
+                            WishlistRepository wishlistRepository) {
+
         this.memberRepository = memberRepository;
         this.memberService = memberService;
+        this.postProductRepository = postProductRepository;
+        this.bidRepository = bidRepository;
+        this.wishlistRepository = wishlistRepository;
     }
 
     //마이페이지
@@ -53,27 +68,7 @@ public class MyPageController {
 
         //거래횟수 (판매 횟수+구매횟수)
         int tradeCount = 3;  // TODO: <--- 계산해야함
-        //List<Product> salesList = productRepository.findByMemberId(loginMember.getMemberId());
-
-        //테스트용
-        List<Map<String, Object>> salesList = new ArrayList<>();
-        Map<String, Object> p1 = new HashMap<>();
-        p1.put("title", "아이폰 13 미니");
-        p1.put("name", "아이폰");
-        p1.put("price", 1000000);
-        p1.put("status", "판매중");
-        p1.put("imageUrl","/images/product1.png");
-
-        Map<String, Object> p2 = new HashMap<>();
-        p2.put("title", "닌텐도 스위치 OLED");
-        p2.put("name", "닌텐도");
-        p2.put("price", 40000);
-        p2.put("status", "예약중");
-        p2.put("imageUrl", null);
-
-        salesList.add(p1);
-        salesList.add(p2);
-        //
+        List<Product> salesList = postProductRepository.findByUser_MemberId(loginMember.getMemberId());
 
         //꺼낸거 보냄
         model.addAttribute("member", member);
@@ -105,32 +100,12 @@ public class MyPageController {
 
         //거래횟수 (판매 횟수+구매횟수)
         int tradeCount = 3;  // <--- 계산해야함
-        //List<Product> purchasesList = bidRepository.findByMemberId(loginMember.getMemberId());
-
-        //테스트용
-        List<Map<String, Object>> purchasesList = new ArrayList<>();
-        Map<String, Object> p1 = new HashMap<>();
-        p1.put("title", "아이폰 13 미니");
-        p1.put("name", "아이폰");
-        p1.put("price", 1000000);
-        p1.put("status", "판매중");
-        p1.put("imageUrl","/images/product1.png");
-
-        Map<String, Object> p2 = new HashMap<>();
-        p2.put("title", "닌텐도 스위치 OLED");
-        p2.put("name", "닌텐도");
-        p2.put("price", 40000);
-        p2.put("status", "예약중");
-        p2.put("imageUrl", null);
-
-        purchasesList.add(p1);
-        purchasesList.add(p2);
-        //
+        List<Product> purchasesList = postProductRepository.findByWinner_MemberId(loginMember.getMemberId());
 
         //꺼낸거 보냄
         model.addAttribute("member", member);
         model.addAttribute("tradeCount", tradeCount);
-        model.addAttribute("sales", purchasesList);
+        model.addAttribute("purchases", purchasesList);
         model.addAttribute("activeTab", "purchases"); //현재 탭 어딘지 알려주는 용(View)
 
         return "mypage-purchases";
@@ -158,32 +133,12 @@ public class MyPageController {
 
         //거래횟수 (판매 횟수+구매횟수)
         int tradeCount = 3;  // <--- 계산해야함
-        //List<Product> purchasesList = bidRepository.findByMemberId(loginMember.getMemberId());
-
-        //테스트용
-        List<Map<String, Object>> purchasesList = new ArrayList<>();
-        Map<String, Object> p1 = new HashMap<>();
-        p1.put("title", "아이폰 13 미니");
-        p1.put("name", "아이폰");
-        p1.put("price", 1000000);
-        p1.put("status", "판매중");
-        p1.put("imageUrl","/images/product1.png");
-
-        Map<String, Object> p2 = new HashMap<>();
-        p2.put("title", "닌텐도 스위치 OLED");
-        p2.put("name", "닌텐도");
-        p2.put("price", 40000);
-        p2.put("status", "예약중");
-        p2.put("imageUrl", null);
-
-        purchasesList.add(p1);
-        purchasesList.add(p2);
-        //
+        //List<Product> wishList = wishlistRepository.findByMemberId_(loginMember.getMemberId());
 
         //꺼낸거 보냄
         model.addAttribute("member", member);
         model.addAttribute("tradeCount", tradeCount);
-        model.addAttribute("sales", purchasesList);
+        //model.addAttribute("wish", wishList);
         model.addAttribute("activeTab", "wishlist"); //현재 탭 어딘지 알려주는 용(View)
 
         return "mypage-wishlist";

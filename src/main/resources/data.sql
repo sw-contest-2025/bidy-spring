@@ -24,13 +24,24 @@ VALUES
 INSERT INTO member
 (member_email, member_pw, member_name, member_nickname, member_role, member_birthday, member_create)
 VALUES
-    ('chaerinss01@gmail.com',
+    ('s.chaerlyn@gmail.com',
      '$2a$10$ExYVPy.cJxkl2w8Hjj8wj.Gz.ORdW8ZAEQBl5y2vNwoWZrMwEqTT6',
      '송채린',
      '채린',
      'MEMBER',
      '2005-11-20',
      '2025-11-06');
+
+INSERT INTO member
+(member_email, member_pw, member_name, member_nickname, member_role, member_birthday, member_create)
+VALUES
+    ('min@mail.com',
+     '$2a$10$ExYVPy.cJxkl2w8Hjj8wj.Gz.ORdW8ZAEQBl5y2vNwoWZrMwEqTT6',
+     '유민',
+     '유민',
+     'MEMBER',
+     '2222-11-11',
+     '2025-11-10');
 
 INSERT INTO member
 (member_email, member_pw, member_name, member_nickname, member_role, member_birthday, member_create)
@@ -56,7 +67,7 @@ VALUES
 
 INSERT INTO product
     (member_id, post_name, category, min_price, current_price, delivery_method, description, image_url,
-     duration_days, duration_hours, duration_minutes, views, created_at, is_ended)
+     duration_days, duration_hours, duration_minutes, views, created_at, is_ended,winner_id)
 VALUES (
     1,
     '상품 A',
@@ -69,7 +80,8 @@ VALUES (
     2, 1, 30,
     0,
     CURRENT_TIMESTAMP,
-    FALSE
+    FALSE,
+    null
 );
 
 INSERT INTO bid
@@ -95,9 +107,9 @@ VALUES
 
 INSERT INTO product -- product_id: 2
 (member_id, post_name, category, min_price, current_price, delivery_method, description, image_url,
- duration_days, duration_hours, duration_minutes, views, created_at, is_ended)
+ duration_days, duration_hours, duration_minutes, views, created_at, is_ended, winner_id)
 VALUES (
-           5,
+           3,
            '상품 B 판매합니다~',
            '공예',
            1000,
@@ -108,15 +120,16 @@ VALUES (
            2, 1, 30,
            0,
            CURRENT_TIMESTAMP,
-           FALSE
+           FALSE,
+           null
        );
 
 
        INSERT INTO product
 (member_id, post_name, category, min_price, current_price, delivery_method, description, image_url,
- duration_days, duration_hours, duration_minutes, views, created_at, is_ended)
+ duration_days, duration_hours, duration_minutes, views, created_at, is_ended, winner_id)
 VALUES (
-           5,
+           3,
            '상품 C 판매합니다~',
            '그림',
            1000,
@@ -127,13 +140,14 @@ VALUES (
            3, 12, 45,
            0,
            CURRENT_TIMESTAMP,
-           FALSE
+           FALSE,
+            null
        );
 
 
        INSERT INTO product
 (member_id, post_name, category, min_price, current_price, delivery_method, description, image_url,
- duration_days, duration_hours, duration_minutes, views, created_at, is_ended)
+ duration_days, duration_hours, duration_minutes, views, created_at, is_ended, winner_id)
 VALUES (
            5,
            '상품 D 처분합니다',
@@ -146,5 +160,6 @@ VALUES (
            5, 11, 59,
            0,
            CURRENT_TIMESTAMP,
-           FALSE
+           FALSE,
+           3
        );
