@@ -4,6 +4,7 @@ import com.bidy.post.domain.Product;
 import com.bidy.member.domain.Member;
 import com.bidy.member.repository.MemberRepository;
 import com.bidy.post.repository.PostProductRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
@@ -39,21 +40,20 @@ public class ProductController {
     }
 
     // 게시물 작성 처리
-    public String submitPost(@ModelAttribute Product product, Principal principal,
+    @PostMapping("/post")
+    public String submitPost(@ModelAttribute Product product, HttpSession session,
                              @RequestParam String deliveryMethod) {
-        Member user;
-        // 로그인 여부 체크
-        if (principal != null) { // 로그인한 사용자
-            String email = principal.getName();
-            user = memberRepository.findByMemberEmail(email)
-                    .orElseThrow(() -> new IllegalArgumentException("회원 정보가 없습니다."));
-        } else { // 로그인 안 되어있으면 테스트용 회원 사용
-            user = memberRepository.findByMemberEmail("5678@mail.com")
-                    .orElseThrow(() -> new IllegalArgumentException("테스트 회원이 존재하지 않습니다."));
+
+        Long memberId = (Long) session.getAttribute("memberId");
+        if (memberId == null) { // 혹시라도 로그인 안된 경우
+            return "redirect:/login";
         }
+
+        Member user = new Member();
+        user.setMemberId(memberId);
         product.setUser(user);                  // Product에 작성자 자동 저장
         product.setDeliveryMethod(deliveryMethod); // 배송 방법 저장
         postProductRepository.save(product);    // DB에 저장
-        return "redirect:/home";                // 홈으로 이동
+        return "redirect:/";                // 홈으로 이동
     }
 }

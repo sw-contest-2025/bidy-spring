@@ -1,7 +1,7 @@
 header {
     padding: 15px 30px;
     display: flex;
-    justify-content: center;
+    justify-content: space-between; /* 좌우 끝으로 정렬 */
     align-items: center;
     gap: 2px;
 }
@@ -12,7 +12,7 @@ header {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    gap: 2px;
+    gap: 10px;
 }
 
 .logo { margin-right: auto; }
