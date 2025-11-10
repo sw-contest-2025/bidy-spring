@@ -4,7 +4,7 @@
     <div class="recommendation-cards">
 
         <a th:each="recProduct : ${recommendedProducts}"
-           th:href="@{|/auction/auction_detail?productId=${recProduct.productId}|}"
+           th:href="@{/auction/{id}(id=${recProduct.productId})}"
            class="rec-card">
 
             <div class="rec-image-container">
