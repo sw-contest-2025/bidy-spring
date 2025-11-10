@@ -33,7 +33,7 @@ class AuctionController {
     private static final ZoneId KST_ZONE_ID = ZoneId.of("Asia/Seoul");
     private static final DateTimeFormatter JS_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXXX");
 
-    @GetMapping("/auction/auction_detail")
+    @GetMapping("/auction_detail")
     public String readDetail(@RequestParam("productId") int productId, Model model, HttpSession session) {
         System.out.println("DEBUG: Incoming Request for Product ID: " + productId);
         try{
