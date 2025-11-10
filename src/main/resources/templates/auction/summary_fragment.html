@@ -7,10 +7,12 @@
         </div>
 
         <div class="product-actions">
-            <button class="action-buttons chat-btn"
-                    th:onclick="|location.href='@{/chat/{productId}(productId=${product.productId}, buyerId=${session.member.memberId})}'|">
+            <button th:if="${product.user.memberId  != loginId}"
+                    class="action-buttons chat-btn"
+                    th:onclick="|location.href='@{/chat/{productId}(productId=${product.productId})}'|">
                 채팅
             </button>
+
             <div>
                 <span th:text="|조회수: ${product.views} |">조회수: 0</span>
                 <button class="action-buttons interest-btn" id="interest-btn">찜</button>

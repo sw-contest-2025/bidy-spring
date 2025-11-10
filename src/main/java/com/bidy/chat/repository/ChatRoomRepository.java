@@ -14,16 +14,17 @@ import java.util.Optional;
 @Repository
 public interface ChatRoomRepository extends JpaRepository<ChatRoomEntity,Long> {
     // 해당 경매에서 판매자와 구매자가 속한 채팅방 찾기
-    Optional<ChatRoomEntity> findByProductAndBuyer(Product product, Member buyer);
+    @Query("SELECT cr FROM ChatRoomEntity cr " +
+            "WHERE cr.product = :product AND cr.seller.memberId = :sellerId AND cr.buyer.memberId = :buyerId")
+    Optional<ChatRoomEntity> findByProductAndSellerAndBuyerIds(@Param("product") Product product,
+                                                               @Param("sellerId") Long sellerId,
+                                                               @Param("buyerId") Long buyerId);
 
-    // 회원이 판매자/구매자인 채팅방을 최근 메시지 순으로 가져오기
-//    List<ChatRoomEntity> findBySellerOrBuyerOrderByLastMessageTimeDesc(
-//            Member seller, Member buyer
-//    );
+
+
     @Query("SELECT cr FROM ChatRoomEntity cr " +
             "LEFT JOIN FETCH cr.seller " +
             "LEFT JOIN FETCH cr.buyer " +
-//            "LEFT JOIN FETCH cr.auction " +
             "WHERE cr.seller = :member OR cr.buyer = :member " +
             "ORDER BY cr.lastMessageTime DESC")
     List<ChatRoomEntity> findByMemberWithFetch(@Param("member") Member member);
