@@ -16,48 +16,6 @@
             margin: 0;
         }
 
-        /* 상단 헤더 */
-
-        /* 마이페이지 드롭다운 메뉴 */
-        .header-dropdown {
-            display: inline-block;
-            position: relative;
-        }
-        .mypage-icon {
-            cursor: pointer;
-            width: 50px;
-            height: 50px;
-        }
-        .dropdown-menu {        /* 드롭다운 박스 */
-            display: none;
-            position: absolute;
-            top: 100%; /* 아이콘 바로 아래 */
-            left: 0;
-            background-color: white;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            width: 160px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            padding: 0;
-            margin-top: 5px;
-            z-index: 1000;
-        }
-
-        .dropdown-menu a {        /* 드롭다운 메뉴 항목 */
-            display: block;
-            padding: 10px 15px;
-            color: #333;
-            text-decoration: none;
-        }
-
-        .dropdown-menu a:not(:last-child) {
-            border-bottom: 1px solid #ccc; /* 회색 구분선 */
-        }
-
-        .dropdown-menu a:hover {    /* 드롭다운 호버 효과 */
-            background-color: #f2f2f2;
-        }
-
         /* 메인 컨텐츠 영역  서치창과 카테고리들*/
         .main-content {
             display: flex;

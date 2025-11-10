@@ -88,7 +88,7 @@
                      alt="상품 이미지">
                 <!-- 찜 버튼 -->
                 <button class="wishlist-btn" th:attr="data-product-id=${s.productId}">
-                    <img th:src="@{/images/heart.png}" alt="찜" width="24" height="24">
+                    <img th:src="@{/images/heart.png}" alt="찜" width="24" height="24" data-state="off">
                 </button>
             </div>
 
@@ -184,30 +184,23 @@ document.querySelectorAll('.wishlist-btn').forEach(btn => {
             message = '추가되었습니다.';
         }
 
-        alert('위시리스트 ' + message );
-        // 서버 전송에 로그인과 찜 여부 전송
-        fetch(`/wishlist/toggle/${productId}`, { method: 'POST' })
-        .then(res => res.json())
-        .then(data => console.log(data));
+        fetch(`/api/wishlist/toggle/${productId}`, { method: 'POST' })
+        .then(res => {
+            if (res.status === 401) {
+                alert('로그인이 필요합니다.');
+                img.src = '/images/heart.png';
+                img.dataset.state = 'off';
+                throw new Error('Unauthorized');
+            }
+            return res.json();
+        })
+        .then(data => {
+            alert('위시리스트 ' + message );
+            console.log(data);
+        })
+        .catch(err => console.error(err));
     });
 });
-</script>
-
-<!--마이페이지 드롭다운-->
-<script>
-    const mypageIcon = document.querySelector('.mypage-icon');
-    const dropdownMenu = document.querySelector('.dropdown-menu');
-
-    mypageIcon.addEventListener('click', function(e) { // 드롭다운 토글
-        dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
-    });
-
-    // 드롭다운 밖 클릭 시 닫기
-    document.addEventListener('click', function(e) {
-        if (!mypageIcon.contains(e.target) && !dropdownMenu.contains(e.target)) {
-            dropdownMenu.style.display = 'none';
-        }
-    });
 </script>
 
 <script>

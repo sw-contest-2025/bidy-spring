@@ -56,13 +56,12 @@
     // 타이머용 문자열
     const serverEndTimeStr = /*[[${endTime}]]*/ '2025-11-15T10:00:00+0900';
     const currentProductId = /*[[${product.productId}]]*/ 1;
-    const currentMemberId = /*[[${currentMemberId}]]*/ null;
 
     // 타이머 시작
     startAuctionFeatures(serverEndTimeStr, currentProductId);
 
     // 위시리스트 토글 기능 초기화
-    initializeWishlistToggle(currentMemberId, currentProductId);
+    initializeWishlistToggle(currentProductId);
 </script>
 </body>
 </html>

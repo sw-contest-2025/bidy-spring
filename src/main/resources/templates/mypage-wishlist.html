@@ -150,42 +150,45 @@
 
         <!-- 본문 -->
         <main class="content">
-            <h2>판매내역</h2>
-            <div class="sub">내가 등록한 상품 리스트</div>
+            <h2>관심목록</h2>
+            <div class="sub">내가 찜한 상품 리스트</div>
             <div class="grid-wrapper">
 
-                <div class="grid" th:if="${sales != null}">
-                    <div class="card" th:each="s : ${sales}">
+                <div class="grid" th:if="${wishlistProducts != null}">
+                    <div class="card" th:each="product : ${wishlistProducts}">
                         <div class="thumb-wrapper">
                             <img class="thumb"
-                                 th:src="${p.imageUrl} ?: @{/images/product_null.png}"
+                                 th:src="${product.imageUrl} ?: @{/images/product_null.png}"
                                  alt="상품 이미지">
-
                             <!-- 찜 버튼 -->
-                            <button class="wishlist-btn" th:attr="data-product-id=${s.productId}">
-                                <img th:src="@{/images/heart.png}" alt="찜" width="24" height="24">
+                            <button class="wishlist-btn" th:attr="data-product-id=${product.productId}">
+                                <img th:src="@{/images/click_heart.png}" alt="찜" width="24" height="24" data-state="on">
                             </button>
 
                         </div>
 
                         <div class="card-body">
-                            <p class="title" th:text="${s.postName}">상품명</p>
+                            <p class="title" th:text="${product.postName}">상품명</p>
                             <span class="price"
-                                  th:text="${#numbers.formatInteger(s.currentPrice, 3, 'COMMA')} + '원'">0원</span>
+                                  th:text="${#numbers.formatInteger(product.currentPrice, 3, 'COMMA')} + '원'">0원</span>
 
                             <!-- 타이머 + 상태 한 줄 배치 -->
                             <div class="meta-timer">
-                                <div class="timer" th:attr="id='timer-' + ${s.productId}"
-                                     th:data-days="${s.durationDays}"
-                                     th:data-hours="${s.durationHours}"
-                                     th:data-minutes="${s.durationMinutes}">00:00:00</div>
+                                <div class="timer" th:attr="id='timer-' + ${product.productId}"
+                                     th:data-days="${product.durationDays}"
+                                     th:data-hours="${product.durationHours}"
+                                     th:data-minutes="${product.durationMinutes}">00:00:00</div>
                                 <span class="status"
-                                      th:text="${s.calculateEndTime() != null and s.calculateEndTime().isBefore(T(java.time.LocalDateTime).now()) ? '판매완료' : '판매중'}">
+                                      th:text="${product.calculateEndTime() != null and product.calculateEndTime().isBefore(T(java.time.LocalDateTime).now()) ? '판매완료' : '판매중'}">
                         상태
                     </span>
                             </div>
                         </div>
                     </div>
+                </div>
+                <div th:if="${wishlistProducts == null or #lists.isEmpty(wishlistProducts)}"
+                     style="grid-column:1/-1; color:var(&#45;&#45;muted); text-align:center; padding:24px 0;">
+                    아직 관심목록이 없습니다.
                 </div>
 
             </div>
@@ -258,7 +261,7 @@
                         }
 
                         // 서버 전송 (AJAX 예시)
-                        fetch(`/wishlist/toggle/${productId}`, {
+                        fetch(`/api/wishlist/toggle/${productId}`, {
                             method: 'POST'
                         })
                             .then(response => response.json())
