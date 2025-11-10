@@ -14,7 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.print.attribute.standard.PageRanges;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -143,7 +143,6 @@ public class AuctionService {
      * @param currentProductId 현재 보고 있는 상품 ID
      * @return 추천 상품 3개 리스트
      */
-
     /*
     @Transactional(readOnly = true)
     public List<Product> getRecommendProducts(Long currentProductId){
@@ -179,8 +178,7 @@ public class AuctionService {
                 .limit(RECOMMENDED_COUNT)
                 .collect(Collectors.toList());
     }
-
-
+    
      */
 
 }
