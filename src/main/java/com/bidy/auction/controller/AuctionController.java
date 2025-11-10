@@ -3,6 +3,7 @@ package com.bidy.auction.controller;
 import com.bidy.auction.domain.Bid;
 import com.bidy.auction.dto.BidRequestDto;
 import com.bidy.auction.service.AuctionService;
+import com.bidy.member.domain.Member;
 import com.bidy.post.domain.Product;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
