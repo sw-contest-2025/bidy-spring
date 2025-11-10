@@ -22,62 +22,11 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to bottom, #ffffff, #fedf54);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             margin: 0;
         }
-
-        /* 상단 헤더 */
-        header {
-            padding: 15px 30px;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 2px;
-        }
-
-        /* 왼쪽 로고 */
-        .logo {
-            margin-right: auto; /*왼쪽 끝으로 이동 */
-        }
-        .logo img {
-          width: 150px;
-          height: 50px;
-          object-fit: contain;
-          display: block;
-        }
-
-        .header-icon {
-            color:#494949;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-            font-weight: bold;
-            padding: 10px 15px;
-        }
-            .header-post{
-            width: 100px;
-            height: 50px;
-            border-radius: 50px;
-            padding: 15px 20px 10px 30px;   /* 버튼 안 여백 */
-            background-color:#fedf54; /* 버튼 배경색 */
-            color: #494949;            /* 글자색 */
-            font-size: 16px;           /* 글자 크기 */
-            font-weight: bold;         /* 글자 굵기 */
-            border: none;              /* 테두리 제거 */
-            text-decoration: none; /* 밑줄 제거 */
-            display: flex;         /* 텍스트 가운데 정렬 */
-            cursor: pointer;           /* 마우스 올리면 손 모양 */
-            transition: all 0.3s; /* 호버 시 부드럽게 변하도록 */
-            }
-
-            .header-post:hover {  /* 글쓰기 마우스 올렸을 때 색 변화 */
-            background-color: rgb(231, 109,11);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            }
 
         /* 메인 컨텐츠 영역  서치창과 카테고리들*/
         .main-content {
@@ -139,35 +88,29 @@
         /* 카테고리 박스들 */
         .nav-boxes {
             display: grid;
-            grid-template-columns: repeat(5, 90px); /*  각 박스 가로 크기 줄이기 */
-            gap: 15px;
-            max-width: 550px;
-            width: 100%;
+            grid-template-columns: repeat(10, 80px);
+            /* 각 박스 가로 크기 줄이기 */
+            gap: 4px;
+            max-width: 800px; margin: 10px auto 0;
             justify-content: center; /* 중앙 정렬 */
         }
 
-        .nav-box {
-            aspect-ratio: 1;
+        .nav-box { aspect-ratio: 1;
             background: white;
-            border: 1px solid #e0e0e0;
             border-radius: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
+            text-decoration: none; color: #333;
+            font-weight: 400;
             font-size: 13px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
+            transition: all 0.3s ease; cursor: pointer;
+             }
 
         .nav-box:hover {
-            background: rgb(231, 109,11);
-            transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+            font-weight: 500;
         }
 
         .nav-icon {
@@ -305,22 +248,8 @@
     <link rel="stylesheet" th:href="@{/css/header.css}">
 </head>
 <body>
-<!-- 상단 헤더 -->
-<header>
-    <div class="logo">
-        <img src="/images/bidy_logo.png" alt="로고">
-    </div>
-    <a href="/products/new" class="header-post">
-        <span>글쓰기</span>
-    </a>
-    <a href="notifications.html" class="header-icon">
-        <span>🔔</span>
-        <span>알림</span>
-    </a>
-    <a href="mypage" class="header-icon">
-        <span>마이페이지</span>
-    </a>
-</header>
+<!-- 헤더 포함 -->
+<div th:replace="~{fragments/header :: header}"></div>
 
 <!-- 메인 컨텐츠 -->
 <div class="main-content">
@@ -353,6 +282,26 @@
         <a href="category3.html" class="nav-box">
             <div class="nav-icon">🧵</div>
             <div>자수</div>
+        </a>
+        <a href="category4.html" class="nav-box">
+            <div class="nav-icon">🔨</div>
+            <div>공예</div>
+        </a>
+        <a href="category4.html" class="nav-box">
+            <div class="nav-icon">🔨</div>
+            <div>공예</div>
+        </a>
+        <a href="category4.html" class="nav-box">
+            <div class="nav-icon">🔨</div>
+            <div>공예</div>
+        </a>
+        <a href="category4.html" class="nav-box">
+            <div class="nav-icon">🔨</div>
+            <div>공예</div>
+        </a>
+        <a href="category4.html" class="nav-box">
+            <div class="nav-icon">🔨</div>
+            <div>공예</div>
         </a>
         <a href="category4.html" class="nav-box">
             <div class="nav-icon">🔨</div>
