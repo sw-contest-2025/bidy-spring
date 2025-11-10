@@ -43,7 +43,7 @@ function startAuctionFeatures(endTimeStr, productId) {
     let pricePollingInterval; // setInterval 변수를 함수 외부에 선언
 
     function fetchCurrentPrice() {
-        fetch(`/api/auction/current-price?productId=${productId}`)
+        fetch(`/auction/api/current-price?productId=${productId}`)
             .then(response => {
                 if (!response.ok) throw new Error('Network response was not ok.');
                 return response.json();

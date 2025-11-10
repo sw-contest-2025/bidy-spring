@@ -7,15 +7,13 @@
 
     <!-- CSS 파일 로드 -->
     <link rel="stylesheet" th:href="@{/css/auction_detail_styles.css}">
+    <link rel="stylesheet" th:href="@{/css/header.css}">
 
     <style>
-        .main-header, .main-footer {
-            padding: 15px 30px;
-            background-color: #fff;
-            border-bottom: 1px solid #eee;
-            margin-bottom: 20px;
-        }
-
+        .auction-header-wrapper {
+            max-width: 1200px; !important;
+            margin: 0 auto; !important;
+           }
         .bid-status-box-section, .recommendations-section, .description-section {
             padding: 0 30px;
             margin-bottom: 40px;
@@ -27,15 +25,15 @@
 </head>
 <body>
 
-<!-- 헤더 Fragment 호출
-<div th:replace="fragments/layout_header :: header"></div> -->
 
+<div class="auction-header-wrapper" th:replace="fragments/header :: header"></div>
 <div class="container">
     <div th:if="${message}" class="alert alert-success" style="padding: 10px; background: #e6ffe6; color: green; text-align: center;">
         <span th:text="${message}"></span>
     </div>
 
     <!-- 상품 요약 및 입찰 폼-->
+    <h1 class="product-title" th:text="${product.postName}">경매 상품명</h1>
     <div th:insert="auction/summary_fragment :: productSummary"></div>
 
     <div style="clear: both;"></div>
