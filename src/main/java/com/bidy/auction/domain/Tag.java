@@ -14,11 +14,7 @@ public class Tag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tagId;
 
-    // 2. tagName: VARCHAR(50), Unique, Not Null
-    @Column(
-            length = 50,
-            unique = true,
-            nullable = false
-    )
+    // 2. tagName: VARCHAR(20), Unique, Not Null
+    @Column(nullable = false, unique = true, length = 20)
     private String tagName;
 }
