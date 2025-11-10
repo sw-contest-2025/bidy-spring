@@ -41,9 +41,10 @@
                        id="bidAmount"
                        name="bidPrice"
                        required
-                       th:min="${product.currentPrice + 1}"
-                       th:placeholder="|제시 가격: ${#numbers.formatInteger(product.currentPrice + 1, 0, 'COMMA')}원 이상|"
-                       style="margin-bottom: 10px;">
+                       th:min="${product.currentPrice + 100}"
+                       th:placeholder="|제시 가격: ${#numbers.formatInteger(product.currentPrice + 100, 0, 'COMMA')}원 이상|"
+                       style="margin-bottom: 10px;"
+                       step="100">
             </div>
 
             <input type="hidden" name="productId" th:value="${product.productId}">
