@@ -10,25 +10,34 @@
             padding: 20px;
         }
         .chat-room-item {
-            width: 100%;
-
+            width: 80%;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 10px 30px;
+            cursor: pointer;
+        }
+        h3, p {
+            margin: 0;
+            margin-bottom: 10px;
+        }
+        a {
+            text-decoration-line: none;
+            color: black;
         }
     </style>
 </head>
 <body>
+<!--    <th:block th:replace="/fragments/header :: header"></th:block>-->
     <div th:each="room : ${rooms}" class="chat-room-item">
-        <a th:href="@{/chat/{productId}(productId=${room.productId},
-                                        buyerId=${room.otherUserId})}">
-            <h3 th:text="${room.productPostName}">제목</h3>
+        <a th:href="@{/chat/room/{roomId}(roomId=${room.id})}">
+            <h3 th:text="${room.productPostName}"></h3>
 
             <p>
-                <span th:text"${room.otherUserNickName}>닉네임</span>
+                From: <span th:text="${room.otherUserNickName}"></span>
             </p>
 
             <p class="last-message" th:text="${room.lastMessage}"></p>
-            <small th:text="${#temporals.format(room.lastMessageTime, 'yyyy-MM-dd HH:mm')}">
-                시간
-            </small>
+            <small th:text="${#temporals.format(room.lastMessageTime, 'yyyy-MM-dd HH:mm')}"/></small>
         </a>
     </div>
 </body>
