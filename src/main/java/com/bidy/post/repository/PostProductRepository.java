@@ -12,4 +12,6 @@ public interface PostProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByUser_MemberId(Long memberId);
 
     List<Product> findByWinner_MemberId(Long memberId);
+
+    List<Product> findByCategory(String category);
 }

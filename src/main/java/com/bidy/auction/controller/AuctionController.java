@@ -3,7 +3,9 @@ package com.bidy.auction.controller;
 import com.bidy.auction.domain.Bid;
 import com.bidy.auction.dto.BidRequestDto;
 import com.bidy.auction.service.AuctionService;
+import com.bidy.member.domain.Member;
 import com.bidy.post.domain.Product;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -29,9 +31,14 @@ class AuctionController {
     private static final DateTimeFormatter JS_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXXX");
 
     @GetMapping("/auction/auction_detail")
-    public String readDetail(@RequestParam("productId") int productId, Model model) {
+    public String readDetail(@RequestParam("productId") int productId, Model model, HttpSession session) {
         System.out.println("DEBUG: Incoming Request for Product ID: " + productId);
         try{
+            // 로그인한 회원 정보 조회
+            Member loginMember = (Member) session.getAttribute("loginMember");
+            if (loginMember != null) {
+                model.addAttribute("loginId", loginMember.getMemberId());
+            }
             // 1. 홈페이지에서 productId를 넘겨 받아 해당 상품을 조회
             Product product = auctionService.findProductById(productId);
             // 2. 최신 입찰 기록(가장 높은 입찰 가격) 5개 조회
