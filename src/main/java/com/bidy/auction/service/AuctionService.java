@@ -79,16 +79,14 @@ public class AuctionService {
      * @throws IllegalStateException 경매 종료, 입찰가 미달, 연속 입찰 시도, 혹은 100원 단위가 아닐 경우
      */
     @Transactional
-    public String createBid(BidRequestDto dto, HttpSession session){
+    public String createBid(BidRequestDto dto, Long bidderId){
         //유효성 검증 (Product)
         Product product = productRepository.findById((long)Math.toIntExact(dto.getProductId()))
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 상품입니다."));
 
         //유효성 검증 (Member)
-        Member bidder = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
-        if (bidder == null) {
-            return "redirect:/login";
-        }
+        Member bidder = memberRepository.findById(bidderId)
+                .orElseThrow(() -> new NoSuchElementException("로그인된 입찰자 정보가 유효하지 않습니다."));
 
         Optional<Bid> previousBid = bidRepository.findTopByProductOrderByBidTimeDesc(product);
 
