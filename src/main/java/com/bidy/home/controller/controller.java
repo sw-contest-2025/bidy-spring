@@ -53,4 +53,22 @@ public class controller {
 
         return "home"; // home.html
     }
+
+    // postName에 따른 검색
+    @GetMapping("/search")
+    public String search(
+            @RequestParam(required = false) String keyword,
+            Model model) {
+        List<Product> searchResults;
+
+        if (keyword == null || keyword.trim().isEmpty()) { // 검색어 없음 -> 모두 반환
+            searchResults = postProductRepository.findAll();
+        } else { // 검색어 있음 -> 해당 키워드 들어간 상품 반환
+            searchResults = postProductRepository.findByPostNameContainingIgnoreCase(keyword);
+        }
+
+        model.addAttribute("products", searchResults);
+        model.addAttribute("keyword", keyword);
+        return "home";
+    }
 }
