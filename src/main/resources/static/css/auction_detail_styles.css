@@ -218,19 +218,19 @@
         }
 
         .bid-bar-container {
-            flex-grow: 1;
-            height: 12px;
-            background: #f0f0f0;
-            border-radius: 6px;
-            margin-right: 10px;
+            height: 10px;
+            background-color: #f0f0f0;
+            width: 100%;
+            border-radius: 5px;
             overflow: hidden;
+            margin-top: 5px;
         }
 
         .bid-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #fdd855, #e6891e);
-            border-radius: 6px;
-            transition: width 0.5s ease-out;
+            height: 10px;
+            background-color: #5cb85c;
+            transition: width 0.5s ease-in-out;
+            width: 0%;
         }
 
         .bid-amount {
