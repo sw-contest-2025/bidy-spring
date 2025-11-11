@@ -48,8 +48,8 @@ public class controller {
 
         // 세션에서 로그인 정보 확인
         Object loginMember = session.getAttribute(SessionConst.LOGIN_MEMBER);
-        boolean isLoggedIn = (loginMember != null); //로그인 여부 확인하기 (true면 마이페이지, false면 로그인회원가입)
-        model.addAttribute("isLoggedIn", isLoggedIn);
+        boolean loggedIn = (loginMember != null); //로그인 여부 확인하기 (true면 마이페이지, false면 로그인회원가입)
+        model.addAttribute("loggedIn", loggedIn);
 
         return "home"; // home.html
     }

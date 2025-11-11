@@ -74,7 +74,7 @@ VALUES (
     '공예',
     1000,
     10000,
-    '택배',
+    '일반택배',
     '입찰 기능 테스트를 위한 상품입니다.',
     null,
     2, 1, 30,
@@ -114,7 +114,7 @@ VALUES (
            '공예',
            1000,
            10000,
-           '택배',
+           '일반택배',
            '채팅 기능 테스트 하기',
            null,
            2, 1, 30,
@@ -173,10 +173,48 @@ VALUES (
            '뜨개',
            20000,
            20000,
-           '택배',
+           '편의점택배',
            '채팅 기능 테스트 하기',
            null,
            2, 1, 30,
+           0,
+           CURRENT_TIMESTAMP,
+           FALSE,
+           null
+       );
+
+INSERT INTO product
+(member_id, post_name, category, min_price, current_price, delivery_method, description, image_url,
+ duration_days, duration_hours, duration_minutes, views, created_at, is_ended, winner_id)
+VALUES (
+           7,
+           '테스트 상품',
+           '문구류',
+           88000,
+           88000,
+           '일반택배',
+           '타이머 테스트 하기',
+           null,
+           0, 0, 0,
+           0,
+           CURRENT_TIMESTAMP,
+           FALSE,
+           null
+       );
+
+INSERT INTO product
+(member_id, post_name, category, min_price, current_price, delivery_method, description, image_url,
+ duration_days, duration_hours, duration_minutes, views, created_at, is_ended, winner_id)
+VALUES (
+           7,
+           '알람테스트용 1시간 남으면 알람',
+           '문구류',
+           88000,
+           88000,
+           '일반택배',
+           '알람 테스트 하기 1분뒤 종료 1시간 남으면 알람이 오는지 확인하기',
+           null,
+           0, 1, 1,
            0,
            CURRENT_TIMESTAMP,
            FALSE,

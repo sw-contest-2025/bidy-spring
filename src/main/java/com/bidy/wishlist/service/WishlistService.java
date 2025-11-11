@@ -27,28 +27,35 @@ public class WishlistService {
 
     /**
      * 특정 사용자의 특정 상품 위시리스트 상태 추가 또는 삭제
-     * @param memberId 사용자 ID
+     * @param member 로그인된 사용자 Member 객체
      * @param productId 상품 ID
-     * @return boolean - true: 추가, false: 삭제
+     * @return String - "added" 또는 "removed"
      */
-    public boolean toggleWishlist(Long memberId, int productId){
+    public String toggleWishlist(Member member, int productId){
+        Long memberId = member.getMemberId(); // Member 객체에서 ID를 추출
+
         // 1. 기존 찜 목록 조회
         Optional<Wishlist> wishs = wishlistRepository.findByMemberMemberIdAndProductProductId(memberId, productId);
 
+        //  2. Product 엔티티를 미리 조회
+        Product product = postProductRepository.findById((long) productId)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 상품입니다."));
+
+        // 3. 토글 로직
         if(wishs.isPresent()){
-            // 2. 이미 찜 기록이 있다면 삭제
+            // 3-1. 이미 찜 기록이 있다면 삭제
             wishlistRepository.delete(wishs.get());
-            return false;
+            return "removed";
         }
         else{
-            // 3. 찜 기록이 없다면 생성
-            Member member = memberRepository.findById(memberId).get();
-            Optional<Product> optionalProduct = postProductRepository.findById((long) productId);
-            Product product = optionalProduct
-                    .orElseThrow(() -> new NoSuchElementException("Product not found"));
+            // 3-2. 찜 기록이 없다면 생성
             Wishlist newWish =  new Wishlist(member, product);
             wishlistRepository.save(newWish);
-            return true;
+            return "added";
         }
+    }
+
+    public boolean getWishlistStatus(Long memberId, int productId){
+        return wishlistRepository.existsByMemberMemberIdAndProductProductId(memberId, (long)productId);
     }
 }

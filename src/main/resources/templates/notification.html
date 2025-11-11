@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>알림함</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f9fafb;
+            margin: 0;
+            padding: 0;
+        }
+
+        .notification-wrapper {
+            max-width: 700px;
+            margin: 40px auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        .notification-item {
+            border-bottom: 1px solid #e0e0e0;
+            padding: 15px 10px;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-message {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .notification-time {
+            color: #777;
+            font-size: 12px;
+        }
+
+        .no-notification {
+            text-align: center;
+            color: #aaa;
+            margin-top: 40px;
+            font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+<div class="notification-wrapper">
+    <h2>🔔 내 알림</h2>
+
+    <div th:if="${notifications.size() == 0}" class="no-notification">
+        아직 새로운 알림이 없습니다.
+    </div>
+
+    <div th:each="n : ${notifications}" class="notification-item">
+        <div class="notification-message" th:text="${n.message}"></div>
+        <div class="notification-time" th:text="${#temporals.format(n.createdAt, 'yyyy-MM-dd HH:mm')}"></div>
+    </div>
+</div>
+</body>
+</html>

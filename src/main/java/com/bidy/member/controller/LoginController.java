@@ -3,6 +3,7 @@ package com.bidy.member.controller;
 import com.bidy.member.domain.Member;
 import com.bidy.member.dto.LoginDto;
 import com.bidy.member.service.MemberService;
+import com.bidy.session.SessionConst;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,7 @@ public class LoginController {
 
         try{
             Member member = memberService.login(loginDto);
-            session.setAttribute("member", member); //세션에 담음->로그인!!
+            session.setAttribute(SessionConst.LOGIN_MEMBER, member); //세션에 담음->로그인!!
             return "redirect:/";  // ***로그인 성공시 홈으로***
         } catch(IllegalArgumentException e){
             if (e.getMessage().contains("이메일")) {
@@ -61,5 +62,13 @@ public class LoginController {
             }
             return "login";
         }
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        if (session != null) {
+            session.invalidate();
+        }
+        return "redirect:/";
     }
 }

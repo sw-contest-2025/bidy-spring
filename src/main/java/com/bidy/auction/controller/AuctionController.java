@@ -94,10 +94,9 @@ class AuctionController {
             return null;
         }
 
-        bidRequestDto.setBidderId(loginMember.getMemberId());
         try {
             // 1. Service 호출: 입찰 기록 저장 및 가격 갱신
-            String successMessage = auctionService.createBid(bidRequestDto);
+            String successMessage = auctionService.createBid(bidRequestDto, (HttpSession) loginMember);
 
             rttr.addFlashAttribute("message", successMessage);
         }

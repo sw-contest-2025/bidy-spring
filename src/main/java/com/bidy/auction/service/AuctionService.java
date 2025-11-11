@@ -10,6 +10,8 @@ import com.bidy.post.domain.Product;
 import com.bidy.member.domain.Member;
 import com.bidy.member.repository.MemberRepository;
 import com.bidy.post.repository.PostProductRepository;
+import com.bidy.session.SessionConst;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,14 +76,16 @@ public class AuctionService {
      * @throws IllegalStateException 경매 종료, 입찰가 미달, 연속 입찰 시도, 혹은 100원 단위가 아닐 경우
      */
     @Transactional
-    public String createBid(BidRequestDto dto){
+    public String createBid(BidRequestDto dto, HttpSession session){
         //유효성 검증 (Product)
         Product product = productRepository.findById((long)Math.toIntExact(dto.getProductId()))
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 상품입니다."));
 
         //유효성 검증 (Member)
-        Member bidder = memberRepository.findById(dto.getBidderId())
-                .orElseThrow(() -> new NoSuchElementException("로그인 상태가 아닙니다. 유효하지 않거나 존재하지 않는 입찰자 ID입니다."));
+        Member bidder = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (bidder == null) {
+            return "redirect:/login";
+        }
 
         Optional<Bid> previousBid = bidRepository.findTopByProductOrderByBidTimeDesc(product);
 
