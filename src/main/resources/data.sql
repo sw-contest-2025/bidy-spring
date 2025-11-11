@@ -201,3 +201,22 @@ VALUES (
            FALSE,
            null
        );
+
+INSERT INTO product
+(member_id, post_name, category, min_price, current_price, delivery_method, description, image_url,
+ duration_days, duration_hours, duration_minutes, views, created_at, is_ended, winner_id)
+VALUES (
+           7,
+           '알람테스트용 1시간 남으면 알람',
+           '문구류',
+           88000,
+           88000,
+           '일반택배',
+           '알람 테스트 하기 1분뒤 종료 1시간 남으면 알람이 오는지 확인하기',
+           null,
+           0, 1, 1,
+           0,
+           CURRENT_TIMESTAMP,
+           FALSE,
+           null
+       );
