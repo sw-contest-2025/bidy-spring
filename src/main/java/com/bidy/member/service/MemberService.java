@@ -62,6 +62,7 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
+    //비밀번호 재발급!!
     public void resetPassword(String email) {
         Member member = memberRepository.findByMemberEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 이메일입니다."));

@@ -9,19 +9,19 @@
         <section class="bid-status-box-section">
         <h2>입찰 현황</h2>
 
-        <th:block th:with="currentPrice=${maxBidPrice}">
+        <th:block th:with="maxPrice=${maxBidPrice}">
 
             <div th:if="${#lists.isEmpty(recentBids)}" style="text-align: center; color: #777; padding: 20px;">
                 아직 입찰 기록이 없습니다. 최저가로 입찰해 보세요!
             </div>
 
-            <div th:each="bid : ${recentBids}" class="bid-graph-item">
+            <div th:each="bid, iterStat : ${recentBids}" class="bid-graph-item">
 
                 <span class="bid-label" th:text="${bid.bidder.memberNickname}">닉네임</span>
 
                 <div class="bid-bar-container">
                     <div class="bid-bar"
-                         th:style="|width: ${maxPrice != null ? (bid.bidPrice / maxPrice) * 100 : 0}%;|">
+                         th:style="|width: ${maxPrice != null && maxPrice > 0 ? (bid.bidPrice / maxPrice) * 100 : 0}%; background-color:${iterStat.index == 0 ? '#f17716' : '#5cb85c'};|">
                     </div>
                 </div>
 

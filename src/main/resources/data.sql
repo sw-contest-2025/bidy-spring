@@ -185,7 +185,7 @@ INSERT INTO product (member_id, post_name, category, min_price, current_price, d
                      duration_days, duration_hours, duration_minutes, views, created_at, is_ended, winner_id)
 VALUES
 --- 입찰 종료: 입찰자: 사용자3
-(1, '우쿨렐레 초급용, 음악 입문자 팝니다', '악기', 25000, 25000, '일반택배', '초보자도 쉽게 연주할 수 있는 우쿨렐레입니다.', 'https://i.pinimg.com/1200x/9e/92/37/9e923783eb7f2180fa0ab552ef5c35d8.jpg', 0, 0, 0, 0, CURRENT_TIMESTAMP, TRUE, 3),
+(1, '우쿨렐레 초급용, 음악 입문자 팝니다', '악기', 25000, 25000, '일반택배', '초보자도 쉽게 연주할 수 있는 우쿨렐레입니다.', 'https://i.pinimg.com/1200x/9e/92/37/9e923783eb7f2180fa0ab552ef5c35d8.jpg', 0, 0, 1, 0, CURRENT_TIMESTAMP, FALSE, null),
 (1, '전자 드럼 패드, 필요하신 분 들어오세요', '악기', 80000, 80000, '반값 택배', '집에서 연습하기 좋은 전자 드럼 패드입니다.', 'https://i.pinimg.com/736x/c6/d8/51/c6d851d0ed35c818a7b78b182606d5d0.jpg', 3, 0, 0, 0, CURRENT_TIMESTAMP, FALSE, null);
 
 -- 기타

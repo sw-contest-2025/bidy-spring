@@ -6,26 +6,25 @@ import com.bidy.post.repository.PostProductRepository;
 import com.bidy.session.SessionConst;
 import com.bidy.wishlist.service.WishlistService;
 import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
-import org.antlr.v4.runtime.tree.pattern.ParseTreePattern;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.ui.Model;
-
-import java.security.Principal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Controller
 public class controller {
     private final PostProductRepository postProductRepository;
     private final WishlistService wishlistService;
+    private static final ZoneId KST_ZONE_ID = ZoneId.of("Asia/Seoul");
+    private static final DateTimeFormatter HOME_TIMER_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
 
     // 생성자 주입
     public controller(PostProductRepository postProductRepository, WishlistService wishlistService) {
@@ -51,6 +50,17 @@ public class controller {
         model.addAttribute("selectedCategory", category);
         System.out.println("상품 수: " + products.size()); // 콘솔 확인
         model.addAttribute("sales", products); // HTML에서 th:each="s : ${sales}" 사용 가능
+
+        Map<Long, String> productEndTimes = new HashMap<>();
+        for (Product product : products) {
+            if (product.calculateEndTime() != null) {
+                String formatted = product.calculateEndTime()
+                        .atZone(KST_ZONE_ID)
+                        .format(HOME_TIMER_FORMATTER);
+                productEndTimes.put(product.getProductId(), formatted);
+            }
+        }
+        model.addAttribute("productEndTimes", productEndTimes);
 
         // 세션에서 로그인 정보 확인
         Member loginMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);

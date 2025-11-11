@@ -21,9 +21,9 @@
         }
 
         h2 {
-            color: #bd6b0e;
+            color: #f59e0b;
             padding-bottom: 10px;
-            border-bottom: 2px solid #fdd855;
+            border-bottom: 2px solid #f59e0b;
             margin-bottom: 20px;
             font-size: 24px;
         }
@@ -42,11 +42,11 @@
 
            /* 채팅 버튼 */
            .chat-btn {
-             background: linear-gradient(135deg, #6ea8fe, #4b7bec);
-             color: white;
+             background: linear-gradient(135deg, #bfe44e, #92c644);
+             color: black;
            }
            .chat-btn:hover {
-             background: linear-gradient(135deg, #4b7bec, #3867d6);
+             background: linear-gradient(135deg, #92c644, #92c644);
              transform: translateY(-2px);
              box-shadow: 0 4px 10px rgba(75, 123, 236, 0.3);
            }
@@ -118,7 +118,7 @@
         .product-title {
             font-size: 32px;
             color: #333;
-            margin-bottom: 10px
+            margin-bottom: 10px;
             padding-top: 10px;
             margin-left: 25px;
             width: 100%;
@@ -172,13 +172,13 @@
 
         .price-info strong {
             font-size: 28px;
-            color: #e67c25;
+            color: #f17716;
             display: block;
             margin-top: 5px;
         }
 
         .timer-box {
-            background-color: #ffe668;
+            background-color: #ffe58e;
             padding: 15px;
             border-radius: 8px;
             text-align: center;
@@ -186,10 +186,39 @@
             box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
         }
 
+        .bid-form-wrapper {
+            margin-top: 90px;
+        }
+
+        .bid-form-wrapper form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .bid-form-wrapper .price-info {
+            margin-bottom: 16px;
+        }
+
+        .bid-form-wrapper .input-group input[type="number"] {
+            width: 100%;
+            height: 48px;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 12px 14px;
+        }
+
+        .bid-form-wrapper .input-group input[type="number"]:focus,
+        .bid-form-wrapper .input-group input[type="number"]:active {
+            outline: none;
+            border: 3px solid #f59e0b;
+            box-shadow: 0 0 6px rgba(245, 158, 11, 0.3);
+        }
+
         #countdown-timer {
             font-size: 24px;
             font-weight: 700;
-            color: #a0520b;
+            color: #954b04;
             display: block;
             padding-top: 5px;
         }
@@ -247,7 +276,7 @@
             font-size: 24px;
             color: #333;
             margin-bottom: 25px;
-            border-bottom: 2px solid #fdd855;
+            border-bottom: 2px solid #f59e0b;
             padding-bottom: 10px;
             font-weight: bold;
         }

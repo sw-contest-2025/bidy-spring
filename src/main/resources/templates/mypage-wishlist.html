@@ -81,7 +81,6 @@
             color:var(--text);
         }
         .menu a.active{ color:var(--brand); font-weight:700; }
-        .menu a:hover{ }
 
         /* 본문 */
         .content{
@@ -179,11 +178,13 @@
                                   th:text="${#numbers.formatInteger(product.currentPrice, 3, 'COMMA')} + '원'">0원</span>
 
                             <!-- 타이머 + 상태 한 줄 배치 -->
-                            <div class="meta-timer">
-                                <div class="timer" th:attr="id='timer-' + ${product.productId}"
-                                     th:data-days="${product.durationDays}"
-                                     th:data-hours="${product.durationHours}"
-                                     th:data-minutes="${product.durationMinutes}">00:00:00</div>
+                            <div class="meta-timer" style="margin-top:0;">
+                                <div class="timer" 
+                                     th:attr="id='timer-' + ${product.productId},
+                                              data-end-time=${productEndTimes[product.productId]},
+                                              data-days=${product.durationDays},
+                                              data-hours=${product.durationHours},
+                                              data-minutes=${product.durationMinutes}">0일:00:00:00</div>
                                 <span class="status"
                                       th:text="${product.calculateEndTime() != null and product.calculateEndTime().isBefore(T(java.time.LocalDateTime).now()) ? '판매완료' : '판매중'}">
                         상태
@@ -195,7 +196,7 @@
 
                 </div>
                 <div th:if="${wishlistProducts == null or #lists.isEmpty(wishlistProducts)}"
-                     style="grid-column:1/-1; color:var(&#45;&#45;muted); text-align:center; padding:24px 0;">
+                     style="grid-column:1/-1; color:var(--muted); text-align:center; padding:24px 0;">
                     아직 관심목록이 없습니다.
                 </div>
 
@@ -203,32 +204,45 @@
 
 
             <!-- JS 파일 로드 -->
-            <script th:src="@{/js/timer.js}"></script>
             <script th:src="@{/js/wishlist.js}"></script>
 
             <!--타이머 기능 구현-->
             <script th:inline="javascript">
                 document.addEventListener('DOMContentLoaded', function() {
                     document.querySelectorAll('.timer').forEach(timerEl => {
-                        const days = parseInt(timerEl.dataset.days);
-                        const hours = parseInt(timerEl.dataset.hours);
-                        const minutes = parseInt(timerEl.dataset.minutes);
+                        const endTimeStr = timerEl.dataset.endTime;
+                        let endTimestamp = null;
 
-                        const now = new Date().getTime();
-                        const durationMs = (days*24*60*60*1000) + (hours*60*60*1000) + (minutes*60*1000);
-                        const endTime = now + durationMs;
+                        if (endTimeStr) {
+                            const parsed = Date.parse(endTimeStr);
+                            if (!Number.isNaN(parsed)) {
+                                endTimestamp = parsed;
+                            }
+                        }
 
-                        startAuctionTimer(timerEl.id, endTime);
+                        if (!endTimestamp) {
+                            const days = parseInt(timerEl.dataset.days || '0', 10);
+                            const hours = parseInt(timerEl.dataset.hours || '0', 10);
+                            const minutes = parseInt(timerEl.dataset.minutes || '0', 10);
+                            const now = new Date().getTime();
+                            const durationMs =
+                                (days * 24 * 60 * 60 * 1000) +
+                                (hours * 60 * 60 * 1000) +
+                                (minutes * 60 * 1000);
+                            endTimestamp = now + durationMs;
+                        }
+
+                        startAuctionTimer(timerEl.id, endTimestamp);
                     });
                 });
 
-                function startAuctionTimer(timerId, endTime) {
+                function startAuctionTimer(timerId, endTimestamp) {
                     const timerEl = document.getElementById(timerId);
                     if (!timerEl) return;
 
                     const interval = setInterval(() => {
                         const now = new Date().getTime();
-                        const distance = endTime - now;
+                        const distance = endTimestamp - now;
 
                         if (distance <= 0) {
                             timerEl.textContent = '판매완료';
@@ -236,11 +250,14 @@
                             return;
                         }
 
-                        const hours = Math.floor((distance / (1000*60*60)) % 24);
-                        const minutes = Math.floor((distance / (1000*60)) % 60);
-                        const seconds = Math.floor((distance / 1000) % 60);
+                        const totalSeconds = Math.floor(distance / 1000);
+                        const days = Math.floor(totalSeconds / 86400);
+                        const hours = Math.floor((totalSeconds % 86400) / 3600);
+                        const minutes = Math.floor((totalSeconds % 3600) / 60);
+                        const seconds = totalSeconds % 60;
 
                         timerEl.textContent =
+                            days + '일:' +
                             (hours<10?'0'+hours:hours) + ':' +
                             (minutes<10?'0'+minutes:minutes) + ':' +
                             (seconds<10?'0'+seconds:seconds);
@@ -250,37 +267,25 @@
 
             <!--하트 버튼 누르면 이미지 바꾸는 기능-->
             <script>
-                // JS
                 document.querySelectorAll('.wishlist-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
+                    btn.addEventListener('click', function(event) {
+                        event.preventDefault();
                         const productId = this.dataset.productId;
                         const img = this.querySelector('img');
-
-                        // 현재 상태 확인
                         const isWishlisted = img.dataset.state === 'on';
 
-                        // 상태 토글
                         if (isWishlisted) {
-                            img.src = '/images/heart.png'; // 클릭 전 이미지
+                            img.src = '/images/heart.png';
                             img.dataset.state = 'off';
                         } else {
-                            img.src = '/images/click_heart.png';  // 클릭 후 이미지
+                            img.src = '/images/click_heart.png';
                             img.dataset.state = 'on';
                         }
 
-                        // 서버 전송 (AJAX 예시)
-                        fetch(`/api/wishlist/toggle/${productId}`, {
-                            method: 'POST'
-                        })
-                            .then(response => response.json())
+                        fetch(`/api/wishlist/toggle/${productId}`, { method: 'POST' })
+                            .then(res => res.json())
                             .then(data => console.log(data))
                             .catch(err => console.error(err));
                     });
                 });
             </script>
-        </main>
-
-    </div>
-</div>
-</body>
-</html>
