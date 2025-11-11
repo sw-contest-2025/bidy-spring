@@ -25,9 +25,11 @@ public interface BidRepository extends JpaRepository<Bid, Long> {
     List<Bid> findByBidder_MemberId(Long memberId);
 
     // 해당 상품에 입찰한 모든 회원을 중복 없이 조회
-    List<Member> findDistinctBidderByProduct(Product product);
+    @Query("SELECT DISTINCT b.bidder FROM Bid b WHERE b.product = :product")
+    List<Member> findDistinctBidderByProduct(@Param("product") Product product);
 
     @Query("select coalesce(max(b.bidPrice), 0) from Bid b where b.product = :product")
     int findMaxBidPriceByProduct(@Param("product") Product product);
+
 
 }

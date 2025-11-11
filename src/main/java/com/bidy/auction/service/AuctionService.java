@@ -242,7 +242,16 @@ public class AuctionService {
                     Notification.NotificationType.AUCTION_WON,
                     "축하합니다! '" + product.getPostName() + "' 상품에 낙찰되었습니다. 낙찰 문서가 발급됩니다."
             );
-            pdfService.generateAndSendCompletionCertificate(winner, product, finalPrice);
+            String winnerEmail = winner.getMemberEmail();
+            String winnerNickname = winner.getMemberNickname();
+            String productName = product.getPostName();
+
+            pdfService.generateAndSendCompletionCertificate(
+                    winnerEmail,
+                    winnerNickname,
+                    productName,
+                    finalPrice
+            );
 
             // 판매자 알림
             createNotification(

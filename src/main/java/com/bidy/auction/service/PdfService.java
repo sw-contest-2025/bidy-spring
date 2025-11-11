@@ -2,6 +2,7 @@ package com.bidy.auction.service;
 
 import com.bidy.member.domain.Member;
 import com.bidy.post.domain.Product;
+import com.lowagie.text.pdf.BaseFont;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.util.ByteArrayDataSource;
@@ -10,38 +11,82 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
+import org.xhtmlrenderer.pdf.ITextRenderer;
 
-import java.nio.charset.StandardCharsets;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Objects;
+import java.util.Locale;
 
 @Service
 public class PdfService {
     private final JavaMailSender javaMailSender;
+    private final SpringTemplateEngine templateEngine;
 
-    public PdfService(JavaMailSender javaMailSender) {
+    public PdfService(JavaMailSender javaMailSender, SpringTemplateEngine templateEngine) {
         this.javaMailSender = Objects.requireNonNull(javaMailSender, "JavaMailSender must not be null");
+        this.templateEngine = templateEngine;
     }
 
     @Async
-    public void generateAndSendCompletionCertificate(Member winner, Product product, int finalPrice) {
-        if (winner == null || product == null) {
-            throw new IllegalArgumentException("Winner or product must not be null");
+    public void generateAndSendCompletionCertificate(
+            String winnerEmail,
+            String winnerNickname,
+            String productName,
+            int finalPrice
+    ) {
+        if (winnerEmail == null || productName == null) {
+            throw new IllegalArgumentException("Required parameters must not be null");
         }
 
-        byte[] pdfBytes = createCompletionCertificaticatePdf(winner, product, finalPrice);
-        String recipientEmail = winner.getMemberEmail();
-        String recipientNickname = winner.getMemberNickname();
+        byte[] pdfBytes = createCompletionCertificaticatePdf(winnerNickname, productName, finalPrice);
 
-        String subject = "[BiDY] " + product.getPostName() + " 상품 낙찰 완료 증명서 발급";
+        String recipientEmail = winnerEmail;
+        String recipientNickname = winnerNickname; // winnerNickname 사용
+
+        String subject = "[BiDY] " + productName + " 상품 낙찰 완료 증명서 발급";
         String body = String.format(
                 "안녕하세요, %s님.\n\n" +
                         "축하합니다! 경매에서 %s 상품에 최종 낙찰되셨습니다.\n" +
                         "자세한 내용은 첨부된 '낙찰 완료 증명서.pdf'를 확인해 주십시오.\n",
-                recipientNickname, product.getPostName()
+                recipientNickname, productName
         );
         sendEmailWithAttachment(recipientEmail, subject, body, pdfBytes, "낙찰 완료 증명서.pdf");
     }
+    public byte[] createCompletionCertificaticatePdf(String winnerNickname, String productName, int finalPrice) {
+        // 1. Thymeleaf Context 생성 및 데이터 바인딩
+        Context context = new Context();
+        context.setVariable("winnerNickname", winnerNickname);
+        context.setVariable("postName", productName);
 
+        // 최종 낙찰 가격 (finalPrice)을 템플릿의 currentPrice 변수에 매핑
+        context.setVariable("currentPrice", finalPrice);
+
+        context.setVariable("currentDate", LocalDate.now());
+
+        // 2. Thymeleaf를 사용하여 HTML 템플릿 렌더링
+        String htmlContent = templateEngine.process("auction/certificate", context);
+
+        // 3. Flying Saucer를 사용하여 HTML을 PDF로 변환 (한글 폰트 내장)
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+            ITextRenderer renderer = new ITextRenderer();
+
+            renderer.getFontResolver().addFont("fonts/NanumGothic.ttf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+
+            renderer.setDocumentFromString(htmlContent);
+            renderer.layout(); // 레이아웃 계산
+            renderer.createPDF(os); // PDF 생성
+
+            return os.toByteArray();
+        } catch (IOException | com.lowagie.text.DocumentException e) {
+            // PDF 생성 관련 예외 처리
+            throw new RuntimeException("PDF 생성 중 오류 발생: " + e.getMessage(), e);
+        }
+    }
+    /*
     public byte[] createCompletionCertificaticatePdf(Member winner, Product product, int finalPrice) {
         String line1 = sanitize("Auction Completion Certificate");
         String line2 = buildPdfLine("Winner: ", winner.getMemberNickname(), winner.getMemberEmail());
@@ -84,6 +129,8 @@ public class PdfService {
 
         return pdf.toString().getBytes(StandardCharsets.US_ASCII);
     }
+
+     */
 
     private String buildContentStream(String... lines) {
         StringBuilder sb = new StringBuilder();
