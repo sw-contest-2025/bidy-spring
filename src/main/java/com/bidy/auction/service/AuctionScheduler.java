@@ -22,6 +22,7 @@ public class AuctionScheduler {
     private final PostProductRepository productRepository;
     private final NotificationRepository notificationRepository;
     private final BidRepository bidRepository;
+    private final AuctionService auctionService;
 
     public AuctionScheduler(
             PostProductRepository productRepository,
@@ -32,6 +33,7 @@ public class AuctionScheduler {
         this.productRepository = productRepository;
         this.notificationRepository = notificationRepository;
         this.bidRepository = bidRepository;
+        this.auctionService = auctionService;
     }
 
     // 1분마다 경매 종료 여부 확인
@@ -46,26 +48,39 @@ public class AuctionScheduler {
         for(Product product : products){
             LocalDateTime endTime = product.calculateEndTime();
             // 2. 경매가 종료되었는지 확인
-            if(endTime != null && endTime.isBefore(now)){
+            if(endTime != null && endTime.isBefore(now) && !product.isEnded()){
+
                 // 3. 해당 상품에 대한 입찰자 찾기
                 List<Bid> bids = bidRepository.findByProduct(product);
 
                 Set<Member> allBidders = bids.stream()
                         .map(Bid::getBidder)
-                        .collect(Collectors.toSet()); // 중복 입찰자 제거
+                        .collect(Collectors.toSet());
+
                 // 4. 낙찰자 결정 및 알림
                 Optional<Bid> winningBid = bidRepository.findTopByProductOrderByBidTimeDesc(product);
+
                 if(winningBid.isPresent()){
-                    Member winner = winningBid.get().getBidder();
+                    Bid winning = winningBid.get();
+                    Member winner = winning.getBidder();
+                    int finalPrice = winning.getBidPrice(); // 최종 가격
+
+                    product.finishAuction(winner, finalPrice);
 
                     // 낙찰자에게 알림
                     sendNotification(winner, product, Notification.NotificationType.AUCTION_WON, product.getPostName() + "상품에 낙찰되셨습니다!");
+
                     // 다른 입찰자들에게 알림
                     allBidders.stream()
                             .filter(member -> !member.getMemberId().equals(winner.getMemberId()))
                             .forEach(member -> sendNotification(member, product, Notification.NotificationType.AUCTION_ENDED, product.getPostName() + "경매가 종료되었습니다."));
+                } else {
+                    // 입찰자가 없는 경우
+                    product.finishAuction(null, product.getCurrentPrice()); // 낙찰자 없이 종료
+                    sendNotification(product.getUser(), product, Notification.NotificationType.AUCTION_ENDED, product.getPostName() + "경매가 입찰 없이 종료되었습니다.");
                 }
-                product.setEnded(true);
+
+                product.setEnded(true); // 이 코드는 product.finishAuction 내부에 있다면 중복입니다.
                 productRepository.save(product);
             }
         }

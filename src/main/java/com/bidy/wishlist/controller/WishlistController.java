@@ -5,10 +5,7 @@ import com.bidy.session.SessionConst;
 import com.bidy.wishlist.service.WishlistService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,10 +23,9 @@ public class WishlistController {
     @PostMapping("/toggle/{productId}")
     public ResponseEntity<Map<String, Object>> toggleWishlist(
             @PathVariable int productId,
-            HttpSession session
+            @ModelAttribute("loginMember") Member loginMember
     ) {
         Map<String, Object> response = new HashMap<>();
-        Member loginMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER); //세션으로 현재 사용자 아이디를 가져옴
 
         if (loginMember == null) {
             response.put("success", false);
@@ -59,5 +55,20 @@ public class WishlistController {
             response.put("message", "처리 중 오류가 발생했습니다.");
             return ResponseEntity.status(500).body(response);
         }
+    }
+    @GetMapping("/check/{productId}")
+    public ResponseEntity<Map<String, Object>> checkWishlist(
+            @PathVariable int productId,
+            @ModelAttribute("loginMember") Member loginMember
+    ) {
+        Map<String, Object> response = new HashMap<>();
+        if (loginMember == null) {
+            response.put("isWishlisted", false);
+            return ResponseEntity.ok(response);
+        }
+
+        boolean isWishlisted = wishlistService.getWishlistStatus(loginMember.getMemberId(), productId);
+        response.put("isWishlisted", isWishlisted);
+        return ResponseEntity.ok(response);
     }
 }

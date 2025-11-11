@@ -13,7 +13,9 @@ import com.bidy.post.repository.PostProductRepository;
 import com.bidy.session.SessionConst;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -74,6 +76,7 @@ public class AuctionService {
     /**
      * 입찰하는 메서드
      * @param dto 입찰 요청 데이터
+     * @param bidderId  입찰자 아이디
      * @return 입찰 성공 메시지
      * @throws NoSuchElementException 상품 또는 입찰자 ID가 존재하지 않을 경우
      * @throws IllegalStateException 경매 종료, 입찰가 미달, 연속 입찰 시도, 혹은 100원 단위가 아닐 경우
@@ -139,6 +142,7 @@ public class AuctionService {
                     product.getPostName() + " 상품의 최고가 입찰이 갱신되었습니다!"
             );
         }
+        bidRepository.flush();
         return "입찰이 성공적으로 완료되었습니다! 현재 당신이 최고가입니다.";
     }
 
@@ -175,10 +179,30 @@ public class AuctionService {
 
             List<Product> topViewedProducts = productRepository.findByViewsExcludingIds(
                     excludedProductIds,
-                    (Pageable) PageRequest.of(0, needMore)
+                    PageRequest.of(0, needMore)
             );
             recommendedList.addAll(topViewedProducts);
         }
+
+        currentSize = recommendedList.size();
+
+        if (currentSize < RECOMMENDED_COUNT) {
+            int needMore = RECOMMENDED_COUNT - currentSize;
+
+            // 현재까지 추천 목록에 포함된 모든 ID를 다시 제외 목록에 넣습니다.
+            List<Long> allExcludedIds = recommendedList.stream()
+                    .map(Product::getProductId)
+                    .collect(Collectors.toList());
+            allExcludedIds.add(currentProductId); // 현재 상품 ID도 다시 추가 (중복 방지)
+
+            // DB에 있는 나머지 상품을 순서대로 (ID 순, 즉 등록 순) 가져옵니다.
+            List<Product> remainingProducts = productRepository.findByProductIdNotIn(
+                    allExcludedIds,
+                    PageRequest.of(0, needMore, Sort.by("productId").ascending())
+            );
+            recommendedList.addAll(remainingProducts);
+        }
+
         return recommendedList.stream()
                 .limit(RECOMMENDED_COUNT)
                 .collect(Collectors.toList());
@@ -188,7 +212,7 @@ public class AuctionService {
      * 경매 종료 후 낙찰자 확정
      * @param productId 현재 보고 있는 상품 ID
      */
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void finishAuction(Long productId){
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NoSuchElementException("경매를 종료할 상품을 찾을 수 없습니다."));
@@ -209,6 +233,7 @@ public class AuctionService {
 
             // 3. Product 엔티티의 finishAuction 비즈니스 메서드를 사용하여 상태 업데이트
             product.finishAuction(winner, finalPrice);
+            productRepository.saveAndFlush(product);
 
             // 낙찰자 알림
             createNotification(
@@ -250,7 +275,6 @@ public class AuctionService {
                     "'" + product.getPostName() + "' 경매가 입찰 없이 종료되었습니다. 상품을 재등록해주세요."
             );
         }
-        productRepository.save(product);
     }
     private void createNotification(Member recipient, Product product, Notification.NotificationType type, String message) {
         Notification notification = new Notification();
@@ -260,5 +284,17 @@ public class AuctionService {
         notification.setMessage(message);
         notification.setCreatedAt(LocalDateTime.now());
         notificationRepository.save(notification);
+    }
+
+    @Transactional
+    public Product getProductDetailAndUpdateViews(Long productId) {
+        // 1. 상품 엔티티 조회
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 상품입니다. (ID: " + productId + ")"));
+
+        // 2. 조회수(Views) 1 증가
+        product.setViews(product.getViews() + 1);
+        // 3. 업데이트된 Product 객체를 반환
+        return product;
     }
 }
