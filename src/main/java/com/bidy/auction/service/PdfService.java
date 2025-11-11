@@ -16,6 +16,7 @@ import jakarta.mail.util.ByteArrayDataSource;
 import org.springframework.http.MediaType;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +29,6 @@ import java.io.IOException;
 import java.util.Objects;
 
 @Service
-@Transactional
 public class PdfService {
     private final JavaMailSender javaMailSender;
 
@@ -37,6 +37,7 @@ public class PdfService {
     }
 
     // 낙찰 완료 증명서 생성 및 이메일 발송
+    @Async
     public void generateAndSendCompletionCertificate(Member winner, Product product, int finalPrice) {
         if(winner == null || product == null){
             throw new IllegalArgumentException("Winner or product must not be null");
@@ -109,8 +110,13 @@ public class PdfService {
             helper.addAttachment(attachmentName, dataSource);
 
             javaMailSender.send(message);
+
+            System.out.println("DEBUG: 이메일 발송 성공 - 수신자: " + to);
+
         } catch (MessagingException e) {
-            throw new RuntimeException(e);
+            System.err.println("경고: 이메일 발송 중 오류 발생. 수신자: " + to + ", 오류: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("경고: 이메일 발송 중 예상치 못한 오류 발생. 수신자: " + to + ", 오류: " + e.getMessage());
         }
     }
 }

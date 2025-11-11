@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -141,6 +142,7 @@ public class AuctionService {
                     product.getPostName() + " 상품의 최고가 입찰이 갱신되었습니다!"
             );
         }
+        bidRepository.flush();
         return "입찰이 성공적으로 완료되었습니다! 현재 당신이 최고가입니다.";
     }
 
@@ -210,7 +212,7 @@ public class AuctionService {
      * 경매 종료 후 낙찰자 확정
      * @param productId 현재 보고 있는 상품 ID
      */
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void finishAuction(Long productId){
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NoSuchElementException("경매를 종료할 상품을 찾을 수 없습니다."));
@@ -231,6 +233,7 @@ public class AuctionService {
 
             // 3. Product 엔티티의 finishAuction 비즈니스 메서드를 사용하여 상태 업데이트
             product.finishAuction(winner, finalPrice);
+            productRepository.saveAndFlush(product);
 
             // 낙찰자 알림
             createNotification(
@@ -272,7 +275,6 @@ public class AuctionService {
                     "'" + product.getPostName() + "' 경매가 입찰 없이 종료되었습니다. 상품을 재등록해주세요."
             );
         }
-        productRepository.save(product);
     }
     private void createNotification(Member recipient, Product product, Notification.NotificationType type, String message) {
         Notification notification = new Notification();
