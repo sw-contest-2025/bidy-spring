@@ -1,10 +1,244 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffe668 0%, #e6891e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        /* 로고 이미지 스타일 */
+        .logo-img {
+            max-width: 60px;
+            height: auto;
+            display: inline-block;
+        }
+
+        h3 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="date"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #e67c25;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-danger {
+            background-color: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #fdd855 0%, #e6891e 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-small{
+            padding:12px 18px;
+            background-color:#e6891e;
+            border:none;
+            border-radius:8px;
+            color:white;
+            font-weight:bold;
+            cursor:pointer;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(129, 57, 4, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .text-center {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .text-center a {
+            color: #bd6b0e;
+            text-decoration: none;
+        }
+
+        .text-center a:hover {
+            text-decoration: underline;
+        }
+
+        .email-row { display:flex; gap:8px; align-items:center; }
+
+        .email-row input { flex:1; }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-danger {
+            background-color: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #fdd855 0%, #e6891e 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 20px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(129, 57, 4, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .links {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .links a {
+            flex: 1;
+            text-align: center;
+            color: #bd6b0e;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+    </style>
 </head>
 <body>
+<div class="login-container">
 
+    <div class="logo-container">
+        <img th:src="@{/images/bidy_logo.png}" alt="로고" class="logo-img">
+    </div>
+    <h2>이메일 찾기</h2>
+    <!-- <h1>이메일 찾기</h1>-->
+
+    <form th:action="@{/find-email}" th:object="${req}" method="post">
+        <div class="form-group">
+        <label>이름</label>
+        <input type="text" th:field="*{memberName}" placeholder="이름 입력">
+        <div class="error" th:if="${#fields.hasErrors('memberName')}" th:errors="*{memberName}"></div>
+        </div>
+            <div class="form-group">
+        <label>생년월일</label>
+        <input type="date" th:field="*{memberBirthday}">
+        <div class="error" th:if="${#fields.hasErrors('memberBirthday')}" th:errors="*{memberBirthday}"></div>
+            </div>
+
+        <button type="submit" class="btn">이메일 찾기</button>
+    </form>
+
+    <!-- 링크들 -->
+    <div class="links">
+        <a th:href="@{/find-email}">이메일(ID) 찾기</a>
+        <a th:href="@{/signup}">회원가입</a>
+        <a th:href="@{/find-password}">비밀번호 찾기</a>
+    </div>
+</div>
 </body>
 </html>
+
+
