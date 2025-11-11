@@ -33,6 +33,7 @@ public class AuctionService {
     private final MemberRepository memberRepository;
     private final NotificationRepository notificationRepository;
     private final ItemTagRepository itemTagRepository;
+    private final PdfService pdfService;
     private static final int RECOMMENDED_COUNT = 3;
 
     // 생성자 주입
@@ -41,12 +42,14 @@ public class AuctionService {
             PostProductRepository productRepository,
             MemberRepository memberRepository,
             NotificationRepository notificationRepository,
-            ItemTagRepository itemTagRepository) {
+            ItemTagRepository itemTagRepository,
+            PdfService pdfService) {
         this.bidRepository = bidRepository;
         this.productRepository = productRepository;
         this.memberRepository = memberRepository;
         this.notificationRepository = notificationRepository;
         this.itemTagRepository = itemTagRepository;
+        this.pdfService = pdfService;
     }
 
     /**
@@ -131,13 +134,12 @@ public class AuctionService {
             Member oldBidder = previousBid.get().getBidder();
 
             // Notification 객체 생성
-            Notification notification = new Notification();
-            notification.setRecipient(oldBidder);
-            notification.setProduct(product);
-            notification.setType(Notification.NotificationType.BID_CROSSED);
-            notification.setMessage(product.getPostName() + "상품의 최고가 입찰이 갱신되었습니다!");
-            notification.setCreatedAt(LocalDateTime.now());
-            notificationRepository.save(notification);
+            createNotification(
+                    oldBidder,
+                    product,
+                    Notification.NotificationType.BID_CROSSED,
+                    product.getPostName() + " 상품의 최고가 입찰이 갱신되었습니다!"
+            );
         }
         return "입찰이 성공적으로 완료되었습니다! 현재 당신이 최고가입니다.";
     }
@@ -182,5 +184,83 @@ public class AuctionService {
         return recommendedList.stream()
                 .limit(RECOMMENDED_COUNT)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 경매 종료 후 낙찰자 확정
+     * @param productId 현재 보고 있는 상품 ID
+     */
+    @Transactional
+    public void finishAuction(Long productId){
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new NoSuchElementException("경매를 종료할 상품을 찾을 수 없습니다."));
+
+        // 1. 이미 종료되어있는지 확인
+        if (product.isEnded()){
+            return;
+        }
+
+        // 2. 해당 상품의 최종 입찰 기록 조회
+        Optional<Bid> finalBid = bidRepository.findTopByProductOrderByBidTimeDesc(product);
+        Member seller = product.getUser();
+
+        if(finalBid.isPresent()){
+            Bid winningBid = finalBid.get();
+            Member winner = winningBid.getBidder();
+            int finalPrice = winningBid.getBidPrice();
+
+            // 3. Product 엔티티의 finishAuction 비즈니스 메서드를 사용하여 상태 업데이트
+            product.finishAuction(winner, finalPrice);
+
+            // 낙찰자 알림
+            createNotification(
+                    winner,
+                    product,
+                    Notification.NotificationType.AUCTION_WON,
+                    "축하합니다! '" + product.getPostName() + "' 상품에 낙찰되었습니다. 낙찰 문서가 발급됩니다."
+            );
+            pdfService.generateAndSendCompletionCertificate(winner, product, finalPrice);
+
+            // 판매자 알림
+            createNotification(
+                    seller,
+                    product,
+                    Notification.NotificationType.AUCTION_ENDED,
+                    "'" + product.getPostName() + "' 경매가 종료되었으며, " + winner.getMemberNickname() + "님에게 낙찰되었습니다."
+            );
+
+            // 유찰자 알림
+            List<Member> allBidders = bidRepository.findDistinctBidderByProduct(product);
+            allBidders.stream()
+                    .filter(bidder -> !bidder.getMemberId().equals(winner.getMemberId()))
+                    .forEach(loser -> {
+                        createNotification(
+                                loser,
+                                product,
+                                Notification.NotificationType.AUCTION_ENDED,
+                                "'" + product.getPostName() + "' 상품이 " + winner.getMemberNickname() + "님에게 낙찰되었습니다."
+                        );
+                    });
+        }
+        else{
+            product.finishAuction(null, product.getCurrentPrice());
+
+            createNotification(
+                    seller,
+                    product,
+                    Notification.NotificationType.AUCTION_ENDED,
+                    "'" + product.getPostName() + "' 경매가 입찰 없이 종료되었습니다. 상품을 재등록해주세요."
+            );
+        }
+        productRepository.save(product);
+    }
+    private void createNotification(Member recipient, Product product, Notification.NotificationType type, String message) {
+        Notification notification = new Notification();
+        notification.setRecipient(recipient);
+        notification.setProduct(product);
+        notification.setType(type);
+        notification.setMessage(message);
+        notification.setCreatedAt(LocalDateTime.now());
+        notificationRepository.save(notification);
     }
 }

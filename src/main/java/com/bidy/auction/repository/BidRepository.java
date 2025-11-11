@@ -1,6 +1,7 @@
 package com.bidy.auction.repository;
 
 import com.bidy.auction.domain.Bid;
+import com.bidy.member.domain.Member;
 import com.bidy.post.domain.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -20,5 +21,8 @@ public interface BidRepository extends JpaRepository<Bid, Long> {
     List<Bid> findByProduct(Product product);
 
     List<Bid> findByBidder_MemberId(Long memberId);
+
+    // 해당 상품에 입찰한 모든 회원을 중복 없이 조회
+    List<Member> findDistinctBidderByProduct(Product product);
 
 }
