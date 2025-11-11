@@ -2,11 +2,9 @@ package com.bidy.post.domain;
 
 import com.bidy.member.domain.Member;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
@@ -50,6 +48,9 @@ public class Product {
     @Column(name = "image_url", length = 255)
     private String imageUrl;
 
+    @Transient
+    private MultipartFile imageFile;// DB와 무관
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -65,6 +66,7 @@ public class Product {
             currentPrice = minPrice;
         }
     }
+
 
     @Column(name = "is_ended", nullable = false)
     private boolean isEnded = false;
@@ -104,6 +106,12 @@ public class Product {
         // this.finalPrice = finalPrice;
     }
 
+    public MultipartFile getImageFile() {
+        return imageFile;
+    }
+    public void setImageFile(MultipartFile imageFile) {
+        this.imageFile = imageFile;
+    }
 
 
 
@@ -188,13 +196,13 @@ public class Product {
         this.description = description;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
+//    public String getImageUrl() {
+//        return imageUrl;
+//    }
+//
+//    public void setImageUrl(String imageUrl) {
+//        this.imageUrl = imageUrl;
+//    }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
