@@ -57,8 +57,14 @@ dependencies {
 
     // implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+
+    // Mokiko
+    testImplementation 'org.mockito:mockito-core:5.11.0'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+tasks.withType(Test) {
+    jvmArgs += "-javaagent:${classpath.find { it.name.contains("mockito-core") }.absolutePath}"
 }

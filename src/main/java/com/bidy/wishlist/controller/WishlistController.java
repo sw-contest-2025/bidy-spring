@@ -38,10 +38,15 @@ public class WishlistController {
         }
 
         try {
-            boolean isAdded = wishlistService.toggleWishlist(loginMember.getMemberId(), productId);
+            String action = wishlistService.toggleWishlist(loginMember, productId);
             response.put("success", true);
-            response.put("action", isAdded ? "added" : "removed");
-            response.put("message", isAdded ? "위시리스트에 추가되었습니다." : "위시리스트에서 삭제되었습니다.");
+            response.put("action", action);
+            if ("added".equals(action)) {
+                response.put("message", "위시리스트에 추가되었습니다.");
+            } else {
+                response.put("message", "위시리스트에서 삭제되었습니다.");
+            }
+
             return ResponseEntity.ok(response);
         }
         catch(NoSuchElementException e){

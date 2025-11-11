@@ -8,9 +8,14 @@ import com.bidy.post.domain.Product;
 import com.bidy.member.domain.Member;
 import com.bidy.member.repository.MemberRepository;
 import com.bidy.post.repository.PostProductRepository;
+import com.bidy.session.SessionConst;
+import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,35 +40,48 @@ public class AuctionServiceTest {
     private MemberRepository memberRepository;
     @Autowired
     private NotificationRepository notificationRepository;
+    @Mock
+    private HttpSession mockSession;
 
     private Long TEST_PRODUCT_ID;
-    private Long TEST_BIDDER_ID = 1L;
-    private Long OTHER_BIDDER_ID;
+    private Member TEST_BIDDER_MEMBER;
+    private Member OTHER_BIDDER_MEMBER;
     private int INIT_CURRENT_PRICE = 10000;
+    private final Long NON_EXISTENT_ID = 99999L;
 
     @BeforeEach
     void setUp(){
+        MockitoAnnotations.openMocks(this);
         // 1. Member 초기화
-        Member testBidder;
-        if(memberRepository.findByMemberNickname("테스터").isEmpty()) {
-            testBidder = new Member();
-            testBidder.setMemberEmail("test_user@mail.com");
-            testBidder.setMemberPw("123");
-            testBidder.setMemberName("테스터");
-            testBidder.setMemberNickname("테스터");
-            testBidder.setMemberRole("MEMBER");
-            testBidder.setMemberBirthday(LocalDate.of(2000, 11, 6));
+        TEST_BIDDER_MEMBER = memberRepository.findByMemberNickname("테스터").orElseGet(() -> {
+            Member m = new Member();
+            m.setMemberEmail("test_user@mail.com");
+            m.setMemberPw("123");
+            m.setMemberName("테스터");
+            m.setMemberNickname("테스터");
+            m.setMemberRole("MEMBER");
+            m.setMemberBirthday(LocalDate.of(2000, 11, 6));
+            return memberRepository.save(m);
+        });
 
-            memberRepository.save(testBidder);
-            TEST_BIDDER_ID = testBidder.getMemberId();
-        } else {
-            testBidder = memberRepository.findByMemberNickname("테스터").get();
-            TEST_BIDDER_ID = testBidder.getMemberId();
-        }
+        // 2. OTHER_BIDDER 초기화
+        OTHER_BIDDER_MEMBER = memberRepository.findByMemberNickname("bidder2").orElseGet(() -> {
+            Member m = new Member();
+            m.setMemberEmail("member2@mail.com");
+            m.setMemberPw("456");
+            m.setMemberName("두번째입찰자");
+            m.setMemberNickname("bidder2");
+            m.setMemberRole("MEMBER");
+            m.setMemberBirthday(LocalDate.of(2001, 1, 1));
+            return memberRepository.save(m);
+        });
 
-        // 2. Product 초기화
+        Mockito.when(mockSession.getAttribute(SessionConst.LOGIN_MEMBER))
+                .thenReturn(TEST_BIDDER_MEMBER);
+
+        // 3. Product 초기화
         Product product = new Product();
-        product.setUser(testBidder);
+        product.setUser(TEST_BIDDER_MEMBER);
         product.setCurrentPrice(INIT_CURRENT_PRICE);
         product.setDurationDays(2);
         product.setPostName("test product");
@@ -78,24 +96,22 @@ public class AuctionServiceTest {
         postProductRepository.save(product);
         TEST_PRODUCT_ID = product.getProductId();
     }
-
     // 1. 성공 테스트: 입찰 기록 저장 및 가격 갱신 확인
     @Test
     @DisplayName("성공: 최고가보다 높은 금액으로 입찰 시 기록이 저장되고 가격이 갱신")
     void should_PlaceBidAndRefreshPrice_When_HigherPriceIsGiven() {
         // given
         int newBidPrice = INIT_CURRENT_PRICE + 500;
-        BidRequestDto dto = new BidRequestDto((long)TEST_PRODUCT_ID, newBidPrice, TEST_BIDDER_ID);
-
+        BidRequestDto dto = new BidRequestDto(TEST_PRODUCT_ID, newBidPrice, 0L);
         // when
-        auctionService.createBid(dto);
-
+        String successMessage = auctionService.createBid(dto, mockSession);
         // then
         // 현재 최고가가 갱신되었는지 확인
         Product updatedProduct = postProductRepository.findById(TEST_PRODUCT_ID).orElseThrow();
         assertThat(updatedProduct.getCurrentPrice()).isEqualTo(newBidPrice);
 
         // Bid 기록이 하나 추가되었는지 확인
+        // (Service 내에서 세션의 TEST_BIDDER_MEMBER가 입찰자로 사용되었는지 확인)
         assertThat(bidRepository.count()).isGreaterThanOrEqualTo(1);
     }
 
@@ -105,40 +121,34 @@ public class AuctionServiceTest {
     void should_ThrowException_When_LowerOrSamePriceIsGiven() {
         // given
         int samePrice = INIT_CURRENT_PRICE;
-        BidRequestDto dto = new BidRequestDto((long)TEST_PRODUCT_ID, samePrice, TEST_BIDDER_ID);
-
+        BidRequestDto dto = new BidRequestDto(TEST_PRODUCT_ID, samePrice, 0L);
         // when, then
         assertThrows(IllegalStateException.class, () -> {
-            auctionService.createBid(dto);
+            auctionService.createBid(dto, mockSession);
         }, "최고가보다 높게 입찰해야 합니다.");
     }
 
     @Test
     @DisplayName("성공: 최고가 갱신 시 이전 입찰자에게 알림이 생성")
     void should_CreateNotification_When_BidIsCrossed(){
-        // member, product가 준비되어있다고 가정
-        Long member1Id = 1L;
-        Member member2 = new Member();
-        member2.setMemberEmail("member2@mail.com");
-        member2.setMemberPw("456");
-        member2.setMemberName("두번째입찰자");
-        member2.setMemberNickname("bidder2");
-        member2.setMemberRole("MEMBER");
-        member2.setMemberBirthday(LocalDate.of(2001, 1, 1));
-        memberRepository.save(member2);
-        Long member2Id = member2.getMemberId();
+        // given: TEST_BIDDER_MEMBER.getMemberId()가 최초 입찰자
+        Long initialBidderId = TEST_BIDDER_MEMBER.getMemberId();
 
-        // member1이 최초 입찰
-        BidRequestDto initialDto = new BidRequestDto(TEST_PRODUCT_ID, INIT_CURRENT_PRICE + 100, member1Id);
-        auctionService.createBid(initialDto);
+        // 1. TEST_BIDDER가 최초 입찰 (mockSession에 TEST_BIDDER가 Mocking 되어있음)
+        BidRequestDto initialDto = new BidRequestDto(TEST_PRODUCT_ID, INIT_CURRENT_PRICE + 100, 0L);
+        auctionService.createBid(initialDto, mockSession);
 
-        // member2가 가격 갱신 시도
+        // 2. OTHER_BIDDER로 세션 변경 Mocking
+        Mockito.when(mockSession.getAttribute(SessionConst.LOGIN_MEMBER))
+                .thenReturn(OTHER_BIDDER_MEMBER);
+
+        // 3. OTHER_BIDDER가 가격 갱신 시도
         int newPrice = INIT_CURRENT_PRICE + 500;
-        BidRequestDto crossingDto = new BidRequestDto((long)TEST_PRODUCT_ID, newPrice, member2Id);
-        auctionService.createBid(crossingDto);
+        BidRequestDto crossingDto = new BidRequestDto(TEST_PRODUCT_ID, newPrice, 0L);
+        auctionService.createBid(crossingDto, mockSession);
 
-        // Then
-        List<Notification> notifications = notificationRepository.findByRecipientMemberIdAndIsReadFalseOrderByCreatedAtDesc(member1Id);
+        // Then: 최초 입찰자(initialBidderId)에게 알림이 생성되었는지 확인
+        List<Notification> notifications = notificationRepository.findByRecipientMemberIdAndIsReadFalseOrderByCreatedAtDesc(initialBidderId);
 
         assertThat(notifications.size()).isEqualTo(1);
         assertThat(notifications.get(0).getType()).isEqualTo(Notification.NotificationType.BID_CROSSED);
@@ -148,30 +158,28 @@ public class AuctionServiceTest {
     @DisplayName("실패: 존재하지 않는 상품 ID로 입찰 시 NoSuchElementException 발생")
     void should_ThrowException_When_ProductNotFound() {
         // given
-        Long NON_EXISTENT_ID = 99999L;
         int newBidPrice = INIT_CURRENT_PRICE + 100;
-        BidRequestDto dto = new BidRequestDto(NON_EXISTENT_ID, newBidPrice, OTHER_BIDDER_ID);
+        BidRequestDto dto = new BidRequestDto(NON_EXISTENT_ID, newBidPrice, 0L);
 
         // when, then
         assertThrows(NoSuchElementException.class, () -> {
-            auctionService.createBid(dto);
-        }, "상품을 찾을 수 없습니다.");
+            auctionService.createBid(dto, mockSession);
+        }, "존재하지 않는 상품입니다.");
     }
 
     @Test
-    @DisplayName("실패: 존재하지 않는 입찰자 ID로 입찰 시 NoSuchElementException 발생")
-    void should_ThrowException_When_BidIsNotFound() {
+    @DisplayName("실패: 세션에 로그인 정보가 없을 경우 (Service에서 IllegalStateException 발생 가정)")
+    void should_ThrowException_When_NotLoggedIn() {
         // given
-        // DB에 존재하지 않는 임의의 ID
-        Long NON_EXISTENT_MEMBER_ID = 99999L;
-        int newBidPrice = INIT_CURRENT_PRICE + 100;
+        Mockito.when(mockSession.getAttribute(SessionConst.LOGIN_MEMBER))
+                .thenReturn(null);
 
-        // DTO 생성 시 존재하지 않는 입찰자 ID 사용
-        BidRequestDto dto = new BidRequestDto((long)TEST_PRODUCT_ID, newBidPrice, NON_EXISTENT_MEMBER_ID);
+        int newBidPrice = INIT_CURRENT_PRICE + 100;
+        BidRequestDto dto = new BidRequestDto(TEST_PRODUCT_ID, newBidPrice, 0L);
 
         // when, then
-        assertThrows(NoSuchElementException.class, () -> {
-            auctionService.createBid(dto);
-        }, "존재하지 않는 입찰자 ID입니다."); // AuctionService에서 던지는 메시지 확인
+        assertThrows(IllegalStateException.class, () -> {
+            auctionService.createBid(dto, mockSession);
+        }, "로그인이 필요합니다."); // Service에서 던지는 예외 메시지
     }
 }
