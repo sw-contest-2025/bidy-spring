@@ -4,6 +4,7 @@ import com.bidy.post.domain.Product;
 import com.bidy.member.domain.Member;
 import com.bidy.member.repository.MemberRepository;
 import com.bidy.post.repository.PostProductRepository;
+import com.bidy.session.SessionConst;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -44,13 +45,13 @@ public class ProductController {
     public String submitPost(@ModelAttribute Product product, HttpSession session,
                              @RequestParam String deliveryMethod) {
 
-        Long memberId = (Long) session.getAttribute("memberId");
-        if (memberId == null) { // 혹시라도 로그인 안된 경우
+        Member loginMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (loginMember == null) {
             return "redirect:/login";
         }
 
         Member user = new Member();
-        user.setMemberId(memberId);
+        user.setMemberId(loginMember.getMemberId());
         product.setUser(user);                  // Product에 작성자 자동 저장
         product.setDeliveryMethod(deliveryMethod); // 배송 방법 저장
         postProductRepository.save(product);    // DB에 저장

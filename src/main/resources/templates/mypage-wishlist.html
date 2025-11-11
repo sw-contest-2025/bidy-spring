@@ -90,7 +90,15 @@
         .content h2{ margin:0 0 10px; }
         .sub{color:var(--muted); font-size:14px; margin-bottom:16px}
 
+        /*상품 하이퍼 링크 밑줄 생기는거 없애기*/
+        a.card {
+            display: block;
+            text-decoration: none; /* 밑줄 제거 */
+            color: inherit;
+        }
+
         /* 카드 그리드 */
+
         .grid{
             display:grid; grid-template-columns: repeat(3, 1fr);
             gap:16px;
@@ -141,21 +149,23 @@
                 <div class="label">거래횟수</div>
             </div>
             <ul class="menu">
-                <li><a th:href="@{/mypage}" th:classappend="${activeTab}=='sales' ? ' active'">판매내역</a></li>
-                <li><a th:href="@{/mypage/purchases}" th:classappend="${activeTab}=='purchases' ? ' active'">구매내역</a></li>
-                <li><a th:href="@{/mypage/wishlist}" th:classappend="${activeTab}=='wishlist' ? ' active'">관심목록</a></li>
+                <li><a th:href="@{/mypage}" th:classappend="${activeTab}=='sales' ? ' active'">판매리스트</a></li>
+                <li><a th:href="@{/mypage/purchases}" th:classappend="${activeTab}=='purchases' ? ' active'">낙찰리스트</a></li>
+                <li><a th:href="@{/mypage/bid}" th:classappend="${activeTab}=='bid' ? ' active'">입찰리스트</a></li>
+                <li><a th:href="@{/mypage/wishlist}" th:classappend="${activeTab}=='wishlist' ? ' active'">위시리스트</a></li>
                 <li><a th:href="@{/mypage/edit}" th:classappend="${activeTab}=='edit' ? ' active'">계정설정</a></li>
             </ul>
         </aside>
 
         <!-- 본문 -->
         <main class="content">
-            <h2>관심목록</h2>
+            <h2>위시리스트</h2>
             <div class="sub">내가 찜한 상품 리스트</div>
             <div class="grid-wrapper">
 
                 <div class="grid" th:if="${wishlistProducts != null}">
-                    <div class="card" th:each="product : ${wishlistProducts}">
+                    <a class="card" th:each="product : ${wishlistProducts}"
+                         th:href="@{/auction/auction_detail(productId=${product.productId})}">
                         <div class="thumb-wrapper">
                             <img class="thumb"
                                  th:src="${product.imageUrl} ?: @{/images/product_null.png}"
@@ -184,7 +194,9 @@
                     </span>
                             </div>
                         </div>
+                    </a>
                     </div>
+
                 </div>
                 <div th:if="${wishlistProducts == null or #lists.isEmpty(wishlistProducts)}"
                      style="grid-column:1/-1; color:var(&#45;&#45;muted); text-align:center; padding:24px 0;">

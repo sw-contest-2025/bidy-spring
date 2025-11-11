@@ -59,6 +59,12 @@ public class Product {
 
     @Column(nullable = false)
     private int currentPrice; // 현재가격
+    @PrePersist
+    public void prePersist() {
+        if (currentPrice == 0) { //미리 값 초기화해주기
+            currentPrice = minPrice;
+        }
+    }
 
     @Column(name = "is_ended", nullable = false)
     private boolean isEnded = false;

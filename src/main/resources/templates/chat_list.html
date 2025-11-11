@@ -7,7 +7,7 @@
         body {
             max-width: 600px;
             margin: 50px auto;
-            padding: 20px;
+            padding: 0 20px 20px 20px;
         }
         .chat-room-item {
             width: 80%;
@@ -26,8 +26,11 @@
             color: black;
         }
     </style>
+    <link rel="stylesheet" th:href="@{/css/header.css}">
 </head>
 <body>
+    <div th:replace="~{fragments/header :: header}"></div>
+
     <div th:each="room : ${rooms}" class="chat-room-item">
         <a th:href="@{/chat/room/{roomId}(roomId=${room.id})}">
             <h3 th:text="${room.productPostName}"></h3>

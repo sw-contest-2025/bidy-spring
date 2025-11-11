@@ -67,7 +67,7 @@
         </a>
         <a th:href="@{/(category='악기')}" class="nav-box">
             <div class="nav-icon">🎻</div>
-            <div>공예</div>
+            <div>악기</div>
         </a>
         <a th:href="@{/(category='기타')}" class="nav-box">
             <div class="nav-icon">🔨</div>
@@ -81,7 +81,8 @@
 <div class="grid-wrapper">
 
     <div class="grid" th:if="${products != null}">
-        <div class="card" th:each="s : ${products}">
+        <div class="card" th:each="s : ${products}"
+             th:onclick="'location.href=\'/auction/auction_detail?productId=' + ${s.productId} + '\';'">
             <div class="thumb-wrapper">
                 <img class="thumb"
                      th:src="${s.imageUrl != null} ? @{${s.imageUrl}} : @{/images/product_null.png}"

@@ -3,69 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <title>물건 판매하기</title>
+
     <style>
+        /* 전체 폰트와 배경 */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* wrapper 중앙 배치 */
         .wrapper {
-        display: flex; /* 부모를 Flexbox 컨테이너로 만듦 */
-        flex-direction: column; /* 자식 요소들을 세로로 쌓음 (위에서 아래로) */
-        align-items: center;    /* 자식 요소들을 가로 방향 중앙 정렬 */
-        margin: 20px auto;      /* 화면 가운데 배치 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 40px auto;
+            max-width: 900px;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
+        /* 제출 버튼 */
         .container {
-        width: 100%;            /* 부모 전체 너비 사용 */
-        display: flex;
-        justify-content: flex-end; /* 오른쪽 끝으로 배치 */
-        margin-bottom: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end; /* 오른쪽 끝 정렬 */
+    margin-bottom: 20px;
+}
+
+.submit_btn {
+   width: 90px;
+    height: 45px;
+    border-radius: 50px;
+    padding: 10px 20px;
+    background-color: #ff9741;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+
+        /* 테이블 스타일 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
 
-        .submit_btn{
-        width: 100px;
-        height: 40px;
-        background-color: #fde067; /* 버튼 배경색 */
-        border: none;           /* 버튼 테두리 제거 */
-        border-radius: 20px;    /* 둥글게 */
-        justify-content: flex-end; /* 오른쪽 끝 정렬 */
+        /* td 여백 조절 */
+        td {
+            vertical-align: top;
+            padding: 10px;
+            font-size: 14px;
         }
 
-        input[type="text"], [type="number"] {
-        width: 250px;
-        height: 25px;
-        border: none; /* 모든 테두리 제거 */
-        border-bottom:1px solid #ccc; /*밑줄 라인*/
-        outline: none; /* 클릭 시 외곽선 제거 */
-        padding: 2px;
+        /* input, select, textarea */
+        input[type="text"], input[type="number"], select {
+            width: 250px;
+            padding: 6px 8px;
+            margin-top: 4px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
+            border-color: #fde067;
         }
 
-        input[type="radio"] {
-        width: 16px;   /* 버튼 가로 */
-        height: 16px;  /* 버튼 세로 */
-        margin: 0 5px 0 0; /* 오른쪽 간격 5px */
-        vertical-align: middle; /* 라벨과 세로 맞춤 */
-        }
 
+
+        /* 파일 업로드 */
         .file {
-        display: flex;               /* td를 플렉스 컨테이너로 변환 */
-        justify-content: flex-end;   /* 가로 방향 오른쪽 정렬 */
-        align-items: flex-end;       /* 세로 방향 아래 정렬 */
-        height: 200px;               /* td 높이 필요에 맞게 지정 */
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            height: 100%;
         }
 
-        #day{
-        width: 50px;
-        height: 25px;
-        border: none; /* 모든 테두리 제거 */
-        border-bottom:1px solid #ccc; /*밑줄 라인*/
-        outline: none; /* 클릭 시 외곽선 제거 */
-        padding: 2px;
+        /* 기간 input */
+        #day {
+            width: 60px;
+            margin-right: 6px;
         }
 
-    table{
-        border-collapse: collapse;
-    }
+        /* textarea 스타일 */
+        textarea {
+            resize: vertical;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 14px;
+            color: #333;
+        }
 
+        /* 소제목 강조 */
+        td:first-child {
+            font-weight: bold;
+            color: #333;
+        }
     </style>
-</head>
-<body>
+
+
+</head><body>
 <div class="wrapper">
     <form action="/products/post" method="post">
 
@@ -75,29 +126,24 @@
         <table>
             <tr>
                 <td>
-                    상품명<br><br>
-                    카테고리<br><br>
-                    최저가<br><br>
-                    거래방법<br><br>
-                    기간<br><br>
-                </td>
-
-                <td>
                     <div>
-                        <input type="text" name="postName" size="10"><br><br>
-                        <select name="category" style="width:250px;">
+                        상품명 <input type="text" name="postName" size="10"><br><br>
+                        카테고리<select name="category" style="width:250px;">
                             <option value="그림" selected>그림</option>
-                            <option value="뜨개">뜨개</option>
-                            <option value="자수" >자수</option>
-                            <option value="공예" >기타</option>
-                            <option value="기타" >기타</option>
+                            <option value="공예">공예</option>
+                            <option value="도서" >도서</option>
+                            <option value="의류/잡화" >의류/잡화</option>
+                            <option value="홈인테리어" >홈인테리어</option>
+                        <option value="문구류" >문구류</option>
+                        <option value="악기" >악기</option>
+                        <option value="기타" >기타</option>
                         </select><br><br>
-                        <input type="number" name="minPrice" size="10"> 원<br><br>
+                        최저가 <input type="number" name="minPrice" size="5"> 원<br><br>
 
-                        <input type="radio" name="deliveryMethod" value="일반택배" >일반 택배
+                        거래방법 <input type="radio" name="deliveryMethod" value="일반택배" >일반 택배
                         <input type="radio" name="deliveryMethod" value="편의점택배">편의점 택배<br><br>
 
-                        <input id="day" type="number" name="durationDays" size="3">일
+                        기간 <input id="day" type="number" name="durationDays" size="3">일
                         <input id="day" type="number" name="durationHours" size="3">시
                         <input id="day" type="number" name="durationMinutes" size="3">분 까지<br><br>
                     </div>
@@ -110,7 +156,7 @@
             </tr>
 
             <tr>
-                <td colspan="3">
+                <td colspan="2">
                     <div>
                         <textarea name="description" rows="30" cols="100" style="color: grey;"></textarea>
                     </div>
