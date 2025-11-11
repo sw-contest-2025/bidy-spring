@@ -60,6 +60,10 @@ dependencies {
 
     // Mokiko
     testImplementation 'org.mockito:mockito-core:5.11.0'
+
+    // PDF 생성
+    implementation 'com.itextpdf:kernel:7.2.6'
+    implementation 'com.itextpdf:layout:7.2.6'
 }
 
 tasks.named('test') {
@@ -67,4 +71,12 @@ tasks.named('test') {
 }
 tasks.withType(Test) {
     jvmArgs += "-javaagent:${classpath.find { it.name.contains("mockito-core") }.absolutePath}"
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs = ["src/main/resources"]
+        }
+    }
 }
