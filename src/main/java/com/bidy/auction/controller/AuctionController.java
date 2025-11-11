@@ -78,25 +78,20 @@ class AuctionController {
     }
 
     @PostMapping("/bid")
-    public String createBid(@ModelAttribute BidRequestDto bidRequestDto, RedirectAttributes rttr, HttpSession session, HttpServletResponse response) throws IOException {
-        // 로그인 여부 확인 및 리다이렉트
-        Member loginMember = (Member) session.getAttribute("loginMember");
-
+    public String createBid(
+            @ModelAttribute BidRequestDto bidRequestDto,
+            @ModelAttribute("loginMember") Member loginMember,
+            RedirectAttributes rttr) {
         if (loginMember == null) {
-            response.setContentType("text/html; charset=UTF-8");
-
-            String script = "<script>"
-                    + "alert('로그인이 필요합니다.');"
-                    + "window.location.href='/login';" // alert 후 로그인 페이지로 이동
-                    + "</script>";
-
-            response.getWriter().print(script);
-            return null;
+            rttr.addFlashAttribute("message", "로그인이 필요합니다.");
+            return "redirect:/login";
         }
+
+        Long bidderId = loginMember.getMemberId();
 
         try {
             // 1. Service 호출: 입찰 기록 저장 및 가격 갱신
-            String successMessage = auctionService.createBid(bidRequestDto, (HttpSession) loginMember);
+            String successMessage = auctionService.createBid(bidRequestDto, loginMember.getMemberId());
 
             rttr.addFlashAttribute("message", successMessage);
         }
