@@ -46,8 +46,30 @@ public class Notification {
     }
 
 
+    public boolean getIsRead() {
+        return isRead;
+    }
+    public void setIsRead(boolean isRead) {
+        this.isRead = isRead;
+    }
 
 
+    public Long getNotiId() { return notiId; }
+    public void setNotiId(Long notificationId) { this.notiId = notiId; }
 
+    public Member getRecipient() { return recipient; }
+    public void setRecipient(Member recipient) { this.recipient = recipient; }
+
+    public Product getProduct() { return product; }
+    public void setProduct(Product product) { this.product = product; }
+
+    public NotificationType getType() { return type; }
+    public void setType(NotificationType type) { this.type = type; }
+
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
 }
