@@ -118,7 +118,7 @@
 
 </head><body>
 <div class="wrapper">
-    <form action="/products/post" method="post">
+    <form action="/products/post" method="post" enctype="multipart/form-data">
 
         <div class="container">
             <input class="submit_btn" type = "submit" name="submit" value ="등록하기">
@@ -150,8 +150,7 @@
                 </td>
 
                 <td class="file">
-                    <input type="file" id="imgInput" name = "image_url">
-                    <!-- 파일을 올리면 페이지에 이미지가 바로 보일려면 자바스크립트 사용해야됨 jsp에서는 어렵 -->
+                    <input type="file" id="imgInput" name="imageFile">
                 </td>
             </tr>
 

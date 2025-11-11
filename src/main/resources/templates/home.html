@@ -170,6 +170,10 @@
 <!--하트 버튼 누르면 이미지 바꾸는 기능-->
 <script>
 document.querySelectorAll('.wishlist-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+        e.stopPropagation(); // 부모 이벤트 차단 아무때나 상세페이지 이동 막음
+        // AJAX로 위시리스트 토글
+    });
     btn.addEventListener('click', function() {
         const productId = this.dataset.productId;
         const img = this.querySelector('img');
