@@ -158,40 +158,40 @@
 
         <!-- 본문 -->
         <main class="content">
-            <h2>낙찰리스트</h2>
-            <div class="sub">내가 최종 낙찰한 상품 리스트</div>
+            <h2>입찰리스트</h2>
+            <div class="sub">내가 입찰한 상품 리스트</div>
             <div class="grid-wrapper">
 
-                <div class="grid" th:if="${purchases != null}">
-                    <a class="card" th:each="p : ${purchases}"
-                         th:href="@{/auction/auction_detail(productId=${p.productId})}">
+                <div class="grid" th:if="${bid != null}">
+                    <a class="card" th:each="b : ${bid}"
+                         th:href="@{/auction/auction_detail(productId=${b.productId})}">
                         <div class="thumb-wrapper">
                             <img class="thumb"
-                                             th:src="${p.imageUrl} ?: @{/images/product_null.png}"
-                                             alt="상품 이미지">
+                                 th:src="${b.imageUrl} ?: @{/images/product_null.png}"
+                                 alt="상품 이미지">
 
                         </div>
 
                         <div class="card-body">
-                            <p class="title" th:text="${p.postName}">상품명</p>
+                            <p class="title" th:text="${b.postName}">상품명</p>
                             <span class="price"
-                                  th:text="${#numbers.formatInteger(p.currentPrice, 3, 'COMMA')} + '원'">0원</span>
+                                  th:text="${#numbers.formatInteger(b.currentPrice, 3, 'COMMA')} + '원'">0원</span>
 
                             <!--타이머 + 상태 한 줄 배치-->
                             <div class="meta-timer">
-                                <div class="timer" th:attr="id='timer-' + ${p.productId}"
-                                     th:data-days="${p.durationDays}"
-                                     th:data-hours="${p.durationHours}"
-                                     th:data-minutes="${p.durationMinutes}">00:00:00</div>
+                                <div class="timer" th:attr="id='timer-' + ${b.productId}"
+                                     th:data-days="${b.durationDays}"
+                                     th:data-hours="${b.durationHours}"
+                                     th:data-minutes="${b.durationMinutes}">00:00:00</div>
                                 <span class="status"
-                                      th:text="${p.calculateEndTime() != null and p.calculateEndTime().isBefore(T(java.time.LocalDateTime).now()) ? '판매완료' : '판매중'}">
+                                      th:text="${b.calculateEndTime() != null and b.calculateEndTime().isBefore(T(java.time.LocalDateTime).now()) ? '판매완료' : '판매중'}">
                         상태
                     </span>
                             </div>
                         </div>
                     </a>
                 </div>
-                <div th:if="${purchases == null or #lists.isEmpty(purchases)}"
+                <div th:if="${bid == null or #lists.isEmpty(bid)}"
                      style="grid-column:1/-1; color:var(&#45;&#45;muted); text-align:center; padding:24px 0;">
                     아직 구매내역이 없습니다.
                 </div>
@@ -199,7 +199,7 @@
             </div>
 
 
-             <!--JS 파일 로드-->
+            <!--JS 파일 로드-->
             <script th:src="@{/js/timer.js}"></script>
             <script th:src="@{/js/wishlist.js}"></script>
 
