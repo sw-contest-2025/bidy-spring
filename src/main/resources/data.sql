@@ -99,7 +99,7 @@ INSERT INTO bid
     (product_id, bidder_id, bid_price, bid_time)
 VALUES (
     1,
-    1,
+    3,
     10000,
     CURRENT_TIMESTAMP
 );

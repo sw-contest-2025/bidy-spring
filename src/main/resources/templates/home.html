@@ -104,10 +104,8 @@
 
                 <!-- 타이머 + 상태 한 줄 배치 -->
                 <div class="meta-timer">
-                    <div class="timer" th:attr="id='timer-' + ${s.productId}"
-                         th:data-days="${s.durationDays}"
-                         th:data-hours="${s.durationHours}"
-                         th:data-minutes="${s.durationMinutes}">00:00:00</div>
+                    <div class="timer"
+                         th:attr="id='timer-' + ${s.productId}, data-end-time=${s.calculateEndTime() != null ? #temporals.format(s.calculateEndTime(), 'yyyy-MM-dd''T''HH:mm:ss') : ''}">00:00:00</div>
                     <span class="status"
                           th:text="${s.calculateEndTime() != null and s.calculateEndTime().isBefore(T(java.time.LocalDateTime).now()) ? '판매완료' : '판매중'}">
                         상태
@@ -127,43 +125,48 @@
 <!--타이머 기능 구현-->
 <script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', function() {
-     document.querySelectorAll('.timer').forEach(timerEl => {
-         const days = parseInt(timerEl.dataset.days);
-         const hours = parseInt(timerEl.dataset.hours);
-         const minutes = parseInt(timerEl.dataset.minutes);
+        document.querySelectorAll('.timer').forEach(timerEl => {
+            const endTimeStr = timerEl.dataset.endTime;
+            if (!endTimeStr) {
+                timerEl.textContent = '판매완료';
+                return;
+            }
 
-         const now = new Date().getTime();
-         const durationMs = (days*24*60*60*1000) + (hours*60*60*1000) + (minutes*60*1000);
-         const endTime = now + durationMs;
+            const endTime = new Date(endTimeStr.replace(' ', 'T'));
+            if (isNaN(endTime.getTime())) {
+                timerEl.textContent = '판매완료';
+                return;
+            }
 
-         startAuctionTimer(timerEl.id, endTime);
-     });
- });
+            startAuctionTimer(timerEl.id, endTime.getTime());
+        });
+    });
 
- function startAuctionTimer(timerId, endTime) {
-     const timerEl = document.getElementById(timerId);
-     if (!timerEl) return;
+    function startAuctionTimer(timerId, endTimestamp) {
+        const timerEl = document.getElementById(timerId);
+        if (!timerEl) return;
 
-     const interval = setInterval(() => {
-         const now = new Date().getTime();
-         const distance = endTime - now;
+        const interval = setInterval(() => {
+            const now = new Date().getTime();
+            const distance = endTimestamp - now;
 
-         if (distance <= 0) {
-             timerEl.textContent = '판매완료';
-             clearInterval(interval);
-             return;
-         }
+            if (distance <= 0) {
+                timerEl.textContent = '판매완료';
+                clearInterval(interval);
+                return;
+            }
 
-         const hours = Math.floor((distance / (1000*60*60)) % 24);
-         const minutes = Math.floor((distance / (1000*60)) % 60);
-         const seconds = Math.floor((distance / 1000) % 60);
+            const totalSeconds = Math.floor(distance / 1000);
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
 
-         timerEl.textContent =
-             (hours<10?'0'+hours:hours) + ':' +
-             (minutes<10?'0'+minutes:minutes) + ':' +
-             (seconds<10?'0'+seconds:seconds);
-     }, 1000);
- }
+            timerEl.textContent =
+                (hours < 10 ? '0' + hours : hours) + ':' +
+                (minutes < 10 ? '0' + minutes : minutes) + ':' +
+                (seconds < 10 ? '0' + seconds : seconds);
+        }, 1000);
+    }
 
 </script>
 
