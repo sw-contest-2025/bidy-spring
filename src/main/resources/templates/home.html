@@ -24,8 +24,8 @@
     <p class="slogan">당신의 일상을 더 가치있게,</p>
 
     <!-- 검색창 -->
-    <form class = "search-box" action="" method="get">
-        <input class="search-txt" type="text" name="" placeholder="  검색어를 입력하세요">
+    <form th:action="@{/search}" method="get" class = "search-box">
+        <input class="search-txt" type="text" name="keyword" th:value="${keyword}" placeholder="  검색어를 입력하세요">
         <button class="search-button" type="submit">
             <i class="fa-solid fa-magnifying-glass"></i>
         </button>
