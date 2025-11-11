@@ -48,6 +48,30 @@ public class EmailService {
         System.out.println("코드 : " + code);
         System.out.println("----------------------------------");
     }
+
+    public void sendTemporaryPassword(String email, String tempPassword) {
+        String subject = "[BIDY] 임시 비밀번호 발급 안내";
+        String body = """
+                요청하신 임시 비밀번호입니다.
+
+                임시 비밀번호: %s
+
+                로그인 후 반드시 비밀번호를 변경해주세요.
+                """.formatted(tempPassword);
+
+        if (mailSender != null) {
+            SimpleMailMessage msg = new SimpleMailMessage();
+            msg.setTo(email);
+            msg.setSubject(subject);
+            msg.setText(body);
+            mailSender.send(msg);
+        }
+
+        System.out.println("----------------------------------");
+        System.out.println("임시 비밀번호 전송!!! " + email);
+        System.out.println("임시 비밀번호 : " + tempPassword);
+        System.out.println("----------------------------------");
+    }
     
     //인증코드 일치 여부
     public boolean verify(String email, String inputCode) {

@@ -1,8 +1,9 @@
 package com.bidy.member.controller;
 
 import com.bidy.member.domain.Member;
+import com.bidy.member.dto.FindEmailRequest;
+import com.bidy.member.dto.FindPasswordRequest;
 import com.bidy.member.dto.MemberSignupDto;
-import com.bidy.member.service.EmailService;
 import com.bidy.member.service.MemberService;
 import com.bidy.session.SessionConst;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,18 +18,18 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @Controller
 public class MemberController {
 
     private static final String VERIFIED_EMAIL = "VERIFIED_EMAIL"; // 세션 키
 
     private final MemberService memberService;
-    private final EmailService emailService;
 
     @Autowired
-    public MemberController(MemberService memberService, EmailService emailService) {
+    public MemberController(MemberService memberService) {
         this.memberService = memberService;
-        this.emailService = emailService;
     }
 
     //회원가입 폼 페이지
@@ -64,7 +65,7 @@ public class MemberController {
 
         //이메일 인증 안됐을때
         HttpSession session = request.getSession(false); //세션 없으면 null반환
-        String verifiedEmail = (session != null) ? (String)session.getAttribute("VERIFIED_EMAIL") : null;
+        String verifiedEmail = (session != null) ? (String)session.getAttribute(VERIFIED_EMAIL) : null;
         if(verifiedEmail == null || !verifiedEmail.equals(memberSignupDto.getMemberEmail())){
             model.addAttribute("errorMessage", "이메일 인증을 완료해주세요");
             return "signup";
@@ -108,6 +109,59 @@ public class MemberController {
         }
         return "signup-success";
     }
+
+    //이메일 찾기
+    @GetMapping("/find-email")
+    public String findEmailForm(@ModelAttribute("req") FindEmailRequest req){
+        //model.addAttribute("req", new FindEmailRequest());
+        return "find_email";
+    }
+
+    @GetMapping({"/auth/find-email", "/auth/find/email", "/find_email"})
+    public String findEmailRedirect() {
+        return "redirect:/find-email";
+    }
+
+    @PostMapping("/find-email")
+    public String findEmailSubmit(@Valid @ModelAttribute("req") FindEmailRequest req,
+                                  BindingResult bindingResult,
+                                  Model model) {
+        if (bindingResult.hasErrors()) {
+            return "find_email";
+        }
+
+        List<String> results = memberService.findEmails(req);
+
+        model.addAttribute("results", results);
+        model.addAttribute("count", results.size());
+        return "find_email_result";
+    }
+
+    @GetMapping("/find-password")
+    public String findPasswordForm(@ModelAttribute("req") FindPasswordRequest req) {
+        return "find_password";
+    }
+
+    @PostMapping("/find-password")
+    public String findPasswordSubmit(@Valid @ModelAttribute("req") FindPasswordRequest req,
+                                     BindingResult bindingResult,
+                                     Model model) {
+        if (bindingResult.hasErrors()) {
+            return "find_password";
+        }
+
+        try {
+            memberService.resetPassword(req.getMemberEmail());
+            model.addAttribute("successMessage", "임시 비밀번호를 이메일로 전송했습니다");
+            model.addAttribute("req", new FindPasswordRequest());
+        } catch (IllegalArgumentException e) {
+            bindingResult.rejectValue("memberEmail", "notFound", e.getMessage());
+            return "find_password";
+        }
+
+        return "find_password";
+    }
+
 }
 
 
