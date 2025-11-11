@@ -115,101 +115,141 @@
 
 </div>
 
-
-<!-- JS 파일 로드 -->
-<script th:src="@{/js/timer.js}"></script>
-<script th:src="@{/js/wishlist.js}"></script>
-
-<!--타이머 기능 구현-->
 <script th:inline="javascript">
-    document.addEventListener('DOMContentLoaded', function() {
-     document.querySelectorAll('.timer').forEach(timerEl => {
-         const days = parseInt(timerEl.dataset.days);
-         const hours = parseInt(timerEl.dataset.hours);
-         const minutes = parseInt(timerEl.dataset.minutes);
+    // 1. 위시리스트 상태 동기화 함수 (페이지 로드 시 호출될 함수)
+    async function syncWishlistState(btn, productId) {
+        const imgElement = btn.querySelector('img');
+        if (!imgElement) return;
 
-         const now = new Date().getTime();
-         const durationMs = (days*24*60*60*1000) + (hours*60*60*1000) + (minutes*60*1000);
-         const endTime = now + durationMs;
+        try {
+            const checkRes = await fetch(`/api/wishlist/check/${productId}`);
 
-         startAuctionTimer(timerEl.id, endTime);
-     });
- });
+            if (checkRes.ok) {
+                const checkData = await checkRes.json();
 
- function startAuctionTimer(timerId, endTime) {
-     const timerEl = document.getElementById(timerId);
-     if (!timerEl) return;
-
-     const interval = setInterval(() => {
-         const now = new Date().getTime();
-         const distance = endTime - now;
-
-         if (distance <= 0) {
-             timerEl.textContent = '판매완료';
-             clearInterval(interval);
-             return;
-         }
-
-         const hours = Math.floor((distance / (1000*60*60)) % 24);
-         const minutes = Math.floor((distance / (1000*60)) % 60);
-         const seconds = Math.floor((distance / 1000) % 60);
-
-         timerEl.textContent =
-             (hours<10?'0'+hours:hours) + ':' +
-             (minutes<10?'0'+minutes:minutes) + ':' +
-             (seconds<10?'0'+seconds:seconds);
-     }, 1000);
- }
-
-</script>
-
-<!--하트 버튼 누르면 이미지 바꾸는 기능-->
-<script>
-document.querySelectorAll('.wishlist-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const productId = this.dataset.productId;
-        const img = this.querySelector('img');
-
-        // 현재 상태 확인
-        const isWishlisted = img.dataset.state === 'on';
-
-        let message;
-        // 상태 토글
-        if (isWishlisted) {
-            img.src = '/images/heart.png';
-            img.dataset.state = 'off';
-            message = '삭제되었습니다.';
-        } else {
-            img.src = '/images/click_heart.png';  // 클릭 후 이미지
-            img.dataset.state = 'on';
-            message = '추가되었습니다.';
-        }
-
-        fetch(`/api/wishlist/toggle/${productId}`, { method: 'POST' })
-        .then(res => {
-            if (res.status === 401) {
-                alert('로그인이 필요합니다.');
-                img.src = '/images/heart.png';
-                img.dataset.state = 'off';
-                throw new Error('Unauthorized');
+                if (checkData.isWishlisted) {
+                    imgElement.src = '/images/click_heart.png'; // 꽉 찬 하트
+                    imgElement.dataset.state = 'on';
+                } else {
+                    imgElement.src = '/images/heart.png'; // 빈 하트
+                    imgElement.dataset.state = 'off';
+                }
             }
-            return res.json();
-        })
-        .then(data => {
-            alert('위시리스트 ' + message );
-            console.log(data);
-        })
-        .catch(err => console.error(err));
-    });
-});
-</script>
+        } catch (e) {
+            console.error(`초기 위시리스트 상태 확인 실패 (ID: ${productId}):`, e);
+        }
+    }
 
-<script>
+    // 2. 타이머 시작 함수
+     function startAuctionTimer(timerId, endTime) {
+         const timerEl = document.getElementById(timerId);
+         if (!timerEl) return;
+
+         const interval = setInterval(() => {
+             const now = new Date().getTime();
+             const distance = endTime - now;
+
+             if (distance <= 0) {
+                 timerEl.textContent = '판매완료';
+                 clearInterval(interval);
+                 return;
+             }
+             const hours = Math.floor((distance / (1000*60*60)) % 24);
+             const minutes = Math.floor((distance / (1000*60)) % 60);
+             const seconds = Math.floor((distance / 1000) % 60);
+             timerEl.textContent =
+                 (hours<10?'0'+hours:hours) + ':' +
+                 (minutes<10?'0'+minutes:minutes) + ':' +
+                 (seconds<10?'0'+seconds:seconds);
+         }, 1000);
+     }
+
+
+    // 3. DOMContentLoaded 통합 (초기화 및 이벤트 리스너 설정)
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // --- 3.1 타이머 초기화 ---
+        document.querySelectorAll('.timer').forEach(timerEl => {
+            const days = parseInt(timerEl.dataset.days);
+            const hours = parseInt(timerEl.dataset.hours);
+            const minutes = parseInt(timerEl.dataset.minutes);
+
+            const now = new Date().getTime();
+            const durationMs = (days*24*60*60*1000) + (hours*60*60*1000) + (minutes*60*1000);
+            const endTime = now + durationMs;
+
+            startAuctionTimer(timerEl.id, endTime);
+        });
+
+        // --- 3.2 위시리스트 초기화 및 클릭 리스너 ---
+        document.querySelectorAll('.wishlist-btn').forEach(btn => {
+            const productId = btn.dataset.productId;
+
+            if (productId) {
+                syncWishlistState(btn, productId);
+            }
+
+            // 클릭 리스너 설정
+            btn.addEventListener('click', function(event) {
+                event.stopPropagation(); // 경매 페이지 이동 방지
+
+                const img = this.querySelector('img');
+                const isWishlisted = img.dataset.state === 'on';
+
+                let message;
+                // UI 즉시 토글
+                if (isWishlisted) {
+                    img.src = '/images/heart.png';
+                    img.dataset.state = 'off';
+                    message = '삭제되었습니다.';
+                } else {
+                    img.src = '/images/click_heart.png';
+                    img.dataset.state = 'on';
+                    message = '추가되었습니다.';
+                }
+
+                fetch(`/api/wishlist/toggle/${productId}`, { method: 'POST' })
+                .then(res => {
+                    if (res.status === 401) {
+                        alert('로그인이 필요합니다.');
+                        window.location.href = '/login';
+
+                        // 401 시, UI 상태를 클릭 전 상태로 되돌림
+                        if (isWishlisted) {
+                            img.src = '/images/click_heart.png';
+                            img.dataset.state = 'on';
+                        } else {
+                            img.src = '/images/heart.png';
+                            img.dataset.state = 'off';
+                        }
+                        throw new Error('Unauthorized');
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    alert('위시리스트 ' + message );
+                    console.log(data);
+                })
+                .catch(err => {
+                    console.error(err);
+                     // 통신 실패 시, UI를 클릭 전 상태로 되돌림
+                    if (isWishlisted) {
+                        img.src = '/images/click_heart.png';
+                        img.dataset.state = 'on';
+                    } else {
+                        img.src = '/images/heart.png';
+                        img.dataset.state = 'off';
+                    }
+                });
+            });
+        });
+    });
+
+    // 4. 검색 처리 함수 (기존 코드 유지)
     function handleSearch(event) {
         event.preventDefault();
         const searchTerm = document.getElementById('searchInput').value;
         if (searchTerm.trim()) {
-            // 검색 결과 페이지로 이동 (실제 구현 시 수정 필요)
             alert(`검색어: ${searchTerm}`);
             // window.location.href = `search.html?q=${encodeURIComponent(searchTerm)}`;
         }

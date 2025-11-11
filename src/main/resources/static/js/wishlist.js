@@ -16,18 +16,13 @@ async function initializeWishlistToggle(memberId, productId) {
     const imgElement = newWishButton.querySelector('img');
     if (!imgElement) return;
 
-    // **************************************************
-    // 💡 1. 찜 상태 동기화 로직 (페이지 로드 시 DB 상태 반영) 💡
-    // **************************************************
     if (memberId > 0) { // 로그인된 경우에만 실행 (memberId가 유효한 ID일 때)
         try {
-            // 서버에 현재 찜 상태를 확인하는 API 호출 (쿠키 자동 전송 가정)
             const checkRes = await fetch(`/api/wishlist/check/${productId}`);
 
             if (checkRes.ok) {
                 const checkData = await checkRes.json();
 
-                // DB 상태에 따라 이미지 동기화
                 if (checkData.isWishlisted) {
                     imgElement.src = '/images/click_heart.png'; // 꽉 찬 하트 (찜 완료)
                     imgElement.dataset.state = 'on';
@@ -45,16 +40,16 @@ async function initializeWishlistToggle(memberId, productId) {
     // **************************************************
 
 
-    // 2. 클릭 이벤트 리스너 설정 (기존 토글 로직 유지)
+    // 클릭 이벤트 리스너 설정
     newWishButton.addEventListener('click', async(event) => {
 
-        if (memberId <= 0) { // 💡 로그인 검사
+        if (memberId <= 0) {
             alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
             window.location.href = '/login';
             return;
         }
 
-        const imgElement = newWishButton.querySelector('img'); // imgElement를 여기서 다시 찾을 필요는 없지만, 안전을 위해 유지
+        const imgElement = newWishButton.querySelector('img');
         try {
             const response = await fetch(`/api/wishlist/toggle/${productId}`, {
                 method: 'POST',

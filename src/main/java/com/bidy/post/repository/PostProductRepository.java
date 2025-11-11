@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.awt.print.Pageable;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 @Repository
@@ -25,4 +25,6 @@ public interface PostProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByCategory(String category);
 
     List<Product> findByPostNameContainingIgnoreCase(String keyword);
+
+    List<Product> findByProductIdNotIn(List<Long> productIds, Pageable pageable);
 }

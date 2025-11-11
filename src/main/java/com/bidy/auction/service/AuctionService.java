@@ -13,6 +13,7 @@ import com.bidy.post.repository.PostProductRepository;
 import com.bidy.session.SessionConst;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -176,10 +177,30 @@ public class AuctionService {
 
             List<Product> topViewedProducts = productRepository.findByViewsExcludingIds(
                     excludedProductIds,
-                    (Pageable) PageRequest.of(0, needMore)
+                    PageRequest.of(0, needMore)
             );
             recommendedList.addAll(topViewedProducts);
         }
+
+        currentSize = recommendedList.size();
+
+        if (currentSize < RECOMMENDED_COUNT) {
+            int needMore = RECOMMENDED_COUNT - currentSize;
+
+            // 현재까지 추천 목록에 포함된 모든 ID를 다시 제외 목록에 넣습니다.
+            List<Long> allExcludedIds = recommendedList.stream()
+                    .map(Product::getProductId)
+                    .collect(Collectors.toList());
+            allExcludedIds.add(currentProductId); // 현재 상품 ID도 다시 추가 (중복 방지)
+
+            // DB에 있는 나머지 상품을 순서대로 (ID 순, 즉 등록 순) 가져옵니다.
+            List<Product> remainingProducts = productRepository.findByProductIdNotIn(
+                    allExcludedIds,
+                    PageRequest.of(0, needMore, Sort.by("productId").ascending())
+            );
+            recommendedList.addAll(remainingProducts);
+        }
+
         return recommendedList.stream()
                 .limit(RECOMMENDED_COUNT)
                 .collect(Collectors.toList());
