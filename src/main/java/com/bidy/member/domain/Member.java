@@ -42,4 +42,5 @@ public class Member {
     private LocalDate memberBirthday;
 
     private String profileImageUrl;
+
 }
