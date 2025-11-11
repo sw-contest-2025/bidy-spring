@@ -1,10 +1,14 @@
 package com.bidy.home.controller;
 
+import com.bidy.member.domain.Member;
 import com.bidy.post.domain.Product;
 import com.bidy.post.repository.PostProductRepository;
 import com.bidy.session.SessionConst;
+import com.bidy.wishlist.service.WishlistService;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.antlr.v4.runtime.tree.pattern.ParseTreePattern;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.ui.Model;
@@ -21,10 +25,12 @@ import java.util.List;
 @Controller
 public class controller {
     private final PostProductRepository postProductRepository;
+    private final WishlistService wishlistService;
 
     // 생성자 주입
-    public controller(PostProductRepository postProductRepository) {
+    public controller(PostProductRepository postProductRepository, WishlistService wishlistService) {
         this.postProductRepository = postProductRepository;
+        this.wishlistService = wishlistService;
     }
 
     //첫 화면으로 설정
@@ -47,10 +53,34 @@ public class controller {
         model.addAttribute("sales", products); // HTML에서 th:each="s : ${sales}" 사용 가능
 
         // 세션에서 로그인 정보 확인
-        Object loginMember = session.getAttribute(SessionConst.LOGIN_MEMBER);
+        Member loginMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
         boolean loggedIn = (loginMember != null); //로그인 여부 확인하기 (true면 마이페이지, false면 로그인회원가입)
         model.addAttribute("loggedIn", loggedIn);
 
+        //로그인한 경우 위시리스트 상품 ID 목록 조회
+        if (loggedIn) {
+            List<Long> wishlistProductIds = wishlistService.getWishlistProductIds(loginMember.getMemberId());
+            model.addAttribute("wishlistProductIds", wishlistProductIds);
+        }
+
         return "home"; // home.html
+    }
+
+    // postName에 따른 검색
+    @GetMapping("/search")
+    public String search(
+            @RequestParam(required = false) String keyword,
+            Model model) {
+        List<Product> searchResults;
+
+        if (keyword == null || keyword.trim().isEmpty()) { // 검색어 없음 -> 모두 반환
+            searchResults = postProductRepository.findAll();
+        } else { // 검색어 있음 -> 해당 키워드 들어간 상품 반환
+            searchResults = postProductRepository.findByPostNameContainingIgnoreCase(keyword);
+        }
+
+        model.addAttribute("products", searchResults);
+        model.addAttribute("keyword", keyword);
+        return "home";
     }
 }

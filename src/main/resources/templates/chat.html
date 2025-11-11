@@ -5,10 +5,13 @@
     <title>채팅방</title>
     <style>
         body {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .chat-wrapper {
+            margin: 50px auto;
+            max-width: 700px;
         }
         #chat-container {
             display: flex;
@@ -17,6 +20,7 @@
             border-radius: 10px;
             height: 400px;
             overflow-y: auto;
+            margin-top: 10px;
             padding: 10px;
             margin-bottom: 20px;
             background-color: #f9f9f9;
@@ -69,28 +73,35 @@
             background-color: #fff9c4;
         }
     </style>
+    <link rel="stylesheet" th:href="@{/css/header.css}">
 </head>
 <body>
-    <h2 th:text="${room.productPostName}"></h2>
+    <div th:replace="~{fragments/header :: header}"></div>
 
-    <!-- 이전 메시지 내역 -->
-    <div id="chat-container">
-        <div th:each="msg : ${messages}"
-             class="message"
-             th:classappend="${msg.senderId == loginId} ? 'my-message' : 'other-message'">
-            <div class="msg-upper">
-                <strong th:text="${msg.senderName}"></strong>
-                <span th:text="${#temporals.format(msg.createdAt, 'HH:mm')}"></span>
+    <div class="chat-wrapper">
+        <h2 th:text="${room.productPostName}"></h2>
+        <div>판매자: <span th:text="${room.sellerName}"></span></div>
+
+        <!-- 이전 메시지 내역 -->
+        <div id="chat-container">
+            <div th:each="msg : ${messages}"
+                 class="message"
+                 th:classappend="${msg.senderId == loginId} ? 'my-message' : 'other-message'">
+                <div class="msg-upper">
+                    <strong th:text="${msg.senderName}"></strong>
+                    <span th:text="${#temporals.format(msg.createdAt, 'HH:mm')}"></span>
+                </div>
+                <div class="msg-down" th:text="${msg.message}"></div>
             </div>
-            <div class="msg-down" th:text="${msg.message}"></div>
+        </div>
+
+        <!-- 메시지 입력 창 -->
+        <div class="input-container">
+            <input type="text" id="message-input" />
+            <button onclick="sendMessage()">전송</button>
         </div>
     </div>
 
-    <!-- 메시지 입력 창 -->
-    <div class="input-container">
-        <input type="text" id="message-input" />
-        <button onclick="sendMessage()">전송</button>
-    </div>
 
 
     <!-- WebSocket 라이브러리 -->

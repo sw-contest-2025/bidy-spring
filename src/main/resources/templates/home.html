@@ -24,8 +24,8 @@
     <p class="slogan">당신의 일상을 더 가치있게,</p>
 
     <!-- 검색창 -->
-    <form class = "search-box" action="" method="get">
-        <input class="search-txt" type="text" name="" placeholder="  검색어를 입력하세요">
+    <form th:action="@{/search}" method="get" class = "search-box">
+        <input class="search-txt" type="text" name="keyword" th:value="${keyword}" placeholder="  검색어를 입력하세요">
         <button class="search-button" type="submit">
             <i class="fa-solid fa-magnifying-glass"></i>
         </button>
@@ -89,7 +89,11 @@
                      alt="상품 이미지">
                 <!-- 찜 버튼 -->
                 <button class="wishlist-btn" th:attr="data-product-id=${s.productId}">
-                    <img th:src="@{/images/heart.png}" alt="찜" width="24" height="24" data-state="off">
+                    <img th:src="${#lists.contains(wishlistProductIds != null ? wishlistProductIds : {}, s.productId)} ?
+             @{/images/click_heart.png} :
+             @{/images/heart.png}"
+                         th:attr="data-state=${#lists.contains(wishlistProductIds != null ? wishlistProductIds : {}, s.productId)} ? 'on' : 'off'"
+                         alt="찜" width="24" height="24">
                 </button>
             </div>
 

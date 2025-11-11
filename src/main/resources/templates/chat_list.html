@@ -5,17 +5,31 @@
     <title>채팅방 목록</title>
     <style>
         body {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 0 20px 20px 20px;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f9fafb;
+            margin: 0;
+            padding: 0;
+        }
+        .chat-room-wrapper {
+            max-width: 700px;
+            margin: 40px auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 20px;
         }
         .chat-room-item {
-            width: 80%;
             border: 1px solid #ddd;
             border-radius: 10px;
             padding: 10px 30px;
             cursor: pointer;
             margin-bottom: 10px;
+        }
+        .no-chat {
+            text-align: center;
+            color: #aaa;
+            margin-top: 40px;
+            font-size: 15px;
         }
         h3, p {
             margin: 0;
@@ -30,13 +44,20 @@
 </head>
 <body>
     <div th:replace="~{fragments/header :: header}"></div>
+    <div class="chat-room-wrapper">
+        <h2>💬 내 채팅</h2>
 
-    <div th:each="room : ${rooms}" class="chat-room-item">
-        <a th:href="@{/chat/room/{roomId}(roomId=${room.id})}">
-            <h3 th:text="${room.productPostName}"></h3>
-            <p class="last-message" th:text="${room.lastMessage}"></p>
-            <small th:text="${#temporals.format(room.lastMessageTime, 'yyyy-MM-dd HH:mm')}"/></small>
-        </a>
+        <div th:if="${rooms.size() == 0}" class="no-chat">
+            아직 새로운 채팅이 없습니다.
+        </div>
+
+        <div th:each="room : ${rooms}" class="chat-room-item">
+            <a th:href="@{/chat/room/{roomId}(roomId=${room.id})}">
+                <h3 th:text="${room.productPostName}"></h3>
+                <p class="last-message" th:text="${room.lastMessage}"></p>
+                <small th:text="${#temporals.format(room.lastMessageTime, 'yyyy-MM-dd HH:mm')}"/></small>
+            </a>
+        </div>
     </div>
 </body>
 </html>
