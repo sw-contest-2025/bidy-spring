@@ -16,12 +16,10 @@ import java.util.Optional;
 @Transactional
 public class WishlistService {
     private final WishlistRepository wishlistRepository;
-    private final MemberRepository memberRepository;
     private final PostProductRepository postProductRepository;
 
-    public WishlistService(WishlistRepository wishlistRepository, MemberRepository memberRepository, PostProductRepository postProductRepository) {
+    public WishlistService(WishlistRepository wishlistRepository, PostProductRepository postProductRepository) {
         this.wishlistRepository = wishlistRepository;
-        this.memberRepository = memberRepository;
         this.postProductRepository = postProductRepository;
     }
 

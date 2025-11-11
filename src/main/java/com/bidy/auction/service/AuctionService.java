@@ -74,6 +74,7 @@ public class AuctionService {
     /**
      * 입찰하는 메서드
      * @param dto 입찰 요청 데이터
+     * @param bidderId  입찰자 아이디
      * @return 입찰 성공 메시지
      * @throws NoSuchElementException 상품 또는 입찰자 ID가 존재하지 않을 경우
      * @throws IllegalStateException 경매 종료, 입찰가 미달, 연속 입찰 시도, 혹은 100원 단위가 아닐 경우
@@ -260,5 +261,17 @@ public class AuctionService {
         notification.setMessage(message);
         notification.setCreatedAt(LocalDateTime.now());
         notificationRepository.save(notification);
+    }
+
+    @Transactional
+    public Product getProductDetailAndUpdateViews(Long productId) {
+        // 1. 상품 엔티티 조회
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 상품입니다. (ID: " + productId + ")"));
+
+        // 2. 조회수(Views) 1 증가
+        product.setViews(product.getViews() + 1);
+        // 3. 업데이트된 Product 객체를 반환
+        return product;
     }
 }

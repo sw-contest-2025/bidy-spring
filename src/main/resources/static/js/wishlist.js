@@ -3,38 +3,82 @@
  * @param {number} memberId
  * @param {number} productId - 관심 버튼이 눌린 상품 ID
  */
-function initializeWishlistToggle(memberId, productId) {
+async function initializeWishlistToggle(memberId, productId) {
     const wishButton = document.getElementById('interest-btn');
     if (!wishButton) return;
 
     // 중복 리스너 제거
-    wishButton.replaceWith(wishButton.cloneNode(true));
-    const newWishButton = document.getElementById('interest-btn');
+    const originalButton = wishButton;
+    const newWishButton = originalButton.cloneNode(true);
+    originalButton.replaceWith(newWishButton);
 
-        newWishButton.addEventListener('click', async () => {
+    // 이미지 요소 참조
+    const imgElement = newWishButton.querySelector('img');
+    if (!imgElement) return;
 
-        if (!memberId) {
-                alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
-                window.location.href = '/login';
-                return;
-            }
-
+    // **************************************************
+    // 💡 1. 찜 상태 동기화 로직 (페이지 로드 시 DB 상태 반영) 💡
+    // **************************************************
+    if (memberId > 0) { // 로그인된 경우에만 실행 (memberId가 유효한 ID일 때)
         try {
-        const response = await fetch(`/api/wishlist/toggle/${productId}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
-        });
+            // 서버에 현재 찜 상태를 확인하는 API 호출 (쿠키 자동 전송 가정)
+            const checkRes = await fetch(`/api/wishlist/check/${productId}`);
 
-        const result = await response.json();
+            if (checkRes.ok) {
+                const checkData = await checkRes.json();
 
-        if (result.success) {
-              const action = result.action === 'added' ? '추가됨' : '삭제됨';
-              alert('위시리스트 ' + action + '!');
-              newWishButton.textContent = result.action === 'added' ? '찜 해제' : '🤍 관심';
+                // DB 상태에 따라 이미지 동기화
+                if (checkData.isWishlisted) {
+                    imgElement.src = '/images/click_heart.png'; // 꽉 찬 하트 (찜 완료)
+                    imgElement.dataset.state = 'on';
+                } else {
+                    imgElement.src = '/images/heart.png'; // 빈 하트 (찜 안 됨)
+                    imgElement.dataset.state = 'off';
+                }
             } else {
-                alert('처리 실패: ' + result.message);
+                 console.error('초기 상태 확인 API 호출 실패:', checkRes.status);
             }
-          } catch (error) {
+        } catch (e) {
+            console.error('초기 위시리스트 상태 확인 실패:', e);
+        }
+    }
+    // **************************************************
+
+
+    // 2. 클릭 이벤트 리스너 설정 (기존 토글 로직 유지)
+    newWishButton.addEventListener('click', async(event) => {
+
+        if (memberId <= 0) { // 💡 로그인 검사
+            alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+            window.location.href = '/login';
+            return;
+        }
+
+        const imgElement = newWishButton.querySelector('img'); // imgElement를 여기서 다시 찾을 필요는 없지만, 안전을 위해 유지
+        try {
+            const response = await fetch(`/api/wishlist/toggle/${productId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                  const action = result.action === 'added' ? '추가됨' : '삭제됨';
+                  alert('위시리스트 ' + action + '!');
+
+                  // 클릭 시 이미지 변경 로직
+                  if (result.action === 'added') {
+                                  imgElement.src = '/images/click_heart.png';
+                                  imgElement.dataset.state = 'on';
+                              } else {
+                                  imgElement.src = '/images/heart.png';
+                                  imgElement.dataset.state = 'off';
+                              }
+                } else {
+                    alert('처리 실패: ' + result.message);
+                }
+            } catch (error) {
                 console.error('위시리스트 토글 오류:', error);
                 alert('위시리스트 통신 중 오류가 발생했습니다.');
             }
