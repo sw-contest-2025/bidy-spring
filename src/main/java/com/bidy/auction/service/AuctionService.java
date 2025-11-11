@@ -10,16 +10,12 @@ import com.bidy.post.domain.Product;
 import com.bidy.member.domain.Member;
 import com.bidy.member.repository.MemberRepository;
 import com.bidy.post.repository.PostProductRepository;
-import com.bidy.session.SessionConst;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-
-import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +67,11 @@ public class AuctionService {
      */
     public List<Bid> getRecentBids(Product product) {
         return bidRepository.findTop5ByProductOrderByBidTimeDesc(product);
+    }
+
+    public int getHighestBidPrice(Product product) {
+        int highestBid = bidRepository.findMaxBidPriceByProduct(product);
+        return Math.max(highestBid, product.getCurrentPrice());
     }
 
     /**
@@ -145,7 +146,6 @@ public class AuctionService {
         bidRepository.flush();
         return "입찰이 성공적으로 완료되었습니다! 현재 당신이 최고가입니다.";
     }
-
 
     /**
      * 관련 태그 기반 상품 3개를 추천하고, 부족하면 조회수 순으로 채우는 메서드

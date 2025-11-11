@@ -1,5 +1,6 @@
 package com.bidy.member.controller;
 
+import com.bidy.auction.domain.Bid;
 import com.bidy.auction.repository.BidRepository;
 import com.bidy.member.domain.Member;
 import com.bidy.member.dto.MemberUpdateDto;
@@ -18,13 +19,21 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import com.bidy.auction.domain.Bid;
 
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class MyPageController {
+
+    private static final ZoneId KST_ZONE = ZoneId.of("Asia/Seoul");
+    private static final DateTimeFormatter HOME_TIMER_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
 
     private final MemberRepository memberRepository;
     private final MemberService memberService;
@@ -66,10 +75,12 @@ public class MyPageController {
         }
 
         List<Product> salesList = postProductRepository.findByUser_MemberId(loginMember.getMemberId());
+        Map<Long, String> productEndTimes = buildProductEndTimes(salesList);
 
         //꺼낸거 보냄
         model.addAttribute("member", member);
         model.addAttribute("sales", salesList);
+        model.addAttribute("productEndTimes", productEndTimes);
         model.addAttribute("activeTab", "sales"); //현재 탭 어딘지 알려주는 용(View)
 
         return "mypage";
@@ -96,10 +107,12 @@ public class MyPageController {
         }
 
         List<Product> purchasesList = postProductRepository.findByWinner_MemberId(loginMember.getMemberId());
+        Map<Long, String> productEndTimes = buildProductEndTimes(purchasesList);
 
         //꺼낸거 보냄
         model.addAttribute("member", member);
         model.addAttribute("purchases", purchasesList);
+        model.addAttribute("productEndTimes", productEndTimes);
         model.addAttribute("activeTab", "purchases"); //현재 탭 어딘지 알려주는 용(View)
 
         return "mypage-purchases";
@@ -126,10 +139,15 @@ public class MyPageController {
         }
 
         List<Bid> bidList = bidRepository.findByBidder_MemberId(loginMember.getMemberId());
+        List<Product> bidProducts = bidList.stream()
+                .map(Bid::getProduct)
+                .collect(Collectors.toList());
+        Map<Long, String> productEndTimes = buildProductEndTimes(bidProducts);
 
         //꺼낸거 보냄
         model.addAttribute("member", member);
         model.addAttribute("bid", bidList);
+        model.addAttribute("productEndTimes", productEndTimes);
         model.addAttribute("activeTab", "bid"); //현재 탭 어딘지 알려주는 용(View)
 
         return "mypage-bid";
@@ -160,11 +178,12 @@ public class MyPageController {
         for (Wishlist wishlist : wishList) {
             wishlistProducts.add(wishlist.getProduct());
         }
+        Map<Long, String> productEndTimes = buildProductEndTimes(wishlistProducts);
 
         //꺼낸거 보냄
         model.addAttribute("member", member);
-        model.addAttribute("wish", wishList);
         model.addAttribute("wishlistProducts", wishlistProducts);
+        model.addAttribute("productEndTimes", productEndTimes);
         model.addAttribute("activeTab", "wishlist"); //현재 탭 어딘지 알려주는 용(View)
 
         return "mypage-wishlist";
@@ -249,5 +268,18 @@ public class MyPageController {
             model.addAttribute("activeTab", "edit");
             return "mypage-edit"; // 폼 다시 띄움
         }
+    }
+
+    private Map<Long, String> buildProductEndTimes(List<Product> products) {
+        Map<Long, String> productEndTimes = new HashMap<>();
+        for (Product product : products) {
+            if (product != null && product.calculateEndTime() != null) {
+                String formatted = product.calculateEndTime()
+                        .atZone(KST_ZONE)
+                        .format(HOME_TIMER_FORMATTER);
+                productEndTimes.put(product.getProductId(), formatted);
+            }
+        }
+        return productEndTimes;
     }
 }

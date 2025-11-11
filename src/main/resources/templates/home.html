@@ -104,10 +104,9 @@
 
                 <!-- 타이머 + 상태 한 줄 배치 -->
                 <div class="meta-timer">
-                    <div class="timer" th:attr="id='timer-' + ${s.productId}"
-                         th:data-days="${s.durationDays}"
-                         th:data-hours="${s.durationHours}"
-                         th:data-minutes="${s.durationMinutes}">00:00:00</div>
+                    <div class="timer"
+                         th:id="'timer-' + ${s.productId}"
+                         th:attr="data-end-time=${productEndTimes[s.productId]}">00:00:00</div>
                     <span class="status"
                           th:text="${s.calculateEndTime() != null and s.calculateEndTime().isBefore(T(java.time.LocalDateTime).now()) ? '판매완료' : '판매중'}">
                         상태
@@ -158,10 +157,13 @@
                  clearInterval(interval);
                  return;
              }
-             const hours = Math.floor((distance / (1000*60*60)) % 24);
-             const minutes = Math.floor((distance / (1000*60)) % 60);
-             const seconds = Math.floor((distance / 1000) % 60);
+             const totalSeconds = Math.floor(distance / 1000);
+             const days = Math.floor(totalSeconds / 86400);
+             const hours = Math.floor((totalSeconds % 86400) / 3600);
+             const minutes = Math.floor((totalSeconds % 3600) / 60);
+             const seconds = totalSeconds % 60;
              timerEl.textContent =
+                 days + '일:' +
                  (hours<10?'0'+hours:hours) + ':' +
                  (minutes<10?'0'+minutes:minutes) + ':' +
                  (seconds<10?'0'+seconds:seconds);
@@ -174,15 +176,20 @@
 
         // --- 3.1 타이머 초기화 ---
         document.querySelectorAll('.timer').forEach(timerEl => {
-            const days = parseInt(timerEl.dataset.days);
-            const hours = parseInt(timerEl.dataset.hours);
-            const minutes = parseInt(timerEl.dataset.minutes);
+            const endTimeStr = timerEl.dataset.endTime;
 
-            const now = new Date().getTime();
-            const durationMs = (days*24*60*60*1000) + (hours*60*60*1000) + (minutes*60*1000);
-            const endTime = now + durationMs;
+            if (!endTimeStr) {
+                timerEl.textContent = '판매완료';
+                return;
+            }
 
-            startAuctionTimer(timerEl.id, endTime);
+            const endTime = new Date(endTimeStr);
+            if (isNaN(endTime.getTime())) {
+                timerEl.textContent = '판매완료';
+                return;
+            }
+
+            startAuctionTimer(timerEl.id, endTime.getTime());
         });
 
         // --- 3.2 위시리스트 초기화 및 클릭 리스너 ---

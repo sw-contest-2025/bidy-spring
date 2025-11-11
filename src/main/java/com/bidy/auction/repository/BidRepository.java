@@ -4,6 +4,8 @@ import com.bidy.auction.domain.Bid;
 import com.bidy.member.domain.Member;
 import com.bidy.post.domain.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,5 +26,8 @@ public interface BidRepository extends JpaRepository<Bid, Long> {
 
     // 해당 상품에 입찰한 모든 회원을 중복 없이 조회
     List<Member> findDistinctBidderByProduct(Product product);
+
+    @Query("select coalesce(max(b.bidPrice), 0) from Bid b where b.product = :product")
+    int findMaxBidPriceByProduct(@Param("product") Product product);
 
 }
