@@ -38,7 +38,7 @@ class AuctionController {
         System.out.println("DEBUG: Incoming Request for Product ID: " + productId);
         try{
             // 로그인한 회원 정보 조회
-            Member loginMember = (Member) session.getAttribute("loginMember");
+            Member loginMember = (Member) session.getAttribute("member");
             if (loginMember != null) {
                 model.addAttribute("loginId", loginMember.getMemberId());
             }
