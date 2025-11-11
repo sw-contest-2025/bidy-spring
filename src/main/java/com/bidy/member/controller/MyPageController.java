@@ -65,14 +65,10 @@ public class MyPageController {
             member.setProfileImageUrl("/images/profile_temp.png"); // 임시 이미지
         }
 
-
-        //거래횟수 (판매 횟수+구매횟수)
-        int tradeCount = 3;  // TODO: <--- 계산해야함
         List<Product> salesList = postProductRepository.findByUser_MemberId(loginMember.getMemberId());
 
         //꺼낸거 보냄
         model.addAttribute("member", member);
-        model.addAttribute("tradeCount", tradeCount);
         model.addAttribute("sales", salesList);
         model.addAttribute("activeTab", "sales"); //현재 탭 어딘지 알려주는 용(View)
 
@@ -99,13 +95,10 @@ public class MyPageController {
             member.setProfileImageUrl("/images/profile_temp.png"); // 임시 이미지
         }
 
-        //거래횟수 (판매 횟수+구매횟수)
-        int tradeCount = 3;  // <--- 계산해야함
         List<Product> purchasesList = postProductRepository.findByWinner_MemberId(loginMember.getMemberId());
 
         //꺼낸거 보냄
         model.addAttribute("member", member);
-        model.addAttribute("tradeCount", tradeCount);
         model.addAttribute("purchases", purchasesList);
         model.addAttribute("activeTab", "purchases"); //현재 탭 어딘지 알려주는 용(View)
 
@@ -132,13 +125,10 @@ public class MyPageController {
             member.setProfileImageUrl("/images/profile_temp.png"); // 임시 이미지
         }
 
-        //거래횟수 (판매 횟수+구매횟수)
-        int tradeCount = 3;  // <--- 계산해야함
         List<Bid> bidList = bidRepository.findByBidder_MemberId(loginMember.getMemberId());
 
         //꺼낸거 보냄
         model.addAttribute("member", member);
-        model.addAttribute("tradeCount", tradeCount);
         model.addAttribute("bid", bidList);
         model.addAttribute("activeTab", "bid"); //현재 탭 어딘지 알려주는 용(View)
 
@@ -165,8 +155,6 @@ public class MyPageController {
             member.setProfileImageUrl("/images/profile_temp.png"); // 임시 이미지
         }
 
-        //거래횟수 (판매 횟수+구매횟수)
-        int tradeCount = 3;  // <--- 계산해야함
         List<Wishlist> wishList = wishlistRepository.findByMember_MemberId(loginMember.getMemberId());
         List<Product> wishlistProducts = new ArrayList<>();
         for (Wishlist wishlist : wishList) {
@@ -175,7 +163,6 @@ public class MyPageController {
 
         //꺼낸거 보냄
         model.addAttribute("member", member);
-        model.addAttribute("tradeCount", tradeCount);
         model.addAttribute("wish", wishList);
         model.addAttribute("wishlistProducts", wishlistProducts);
         model.addAttribute("activeTab", "wishlist"); //현재 탭 어딘지 알려주는 용(View)
@@ -207,13 +194,10 @@ public class MyPageController {
         MemberUpdateDto updateDto = new MemberUpdateDto();
         updateDto.setMemberNickname(member.getMemberNickname());
         updateDto.setProfileImageUrl(member.getProfileImageUrl());
-        
-        //거래횟수 (판매 횟수+구매횟수)
-        int tradeCount = 3;  // <--- 계산해야함
+
 
         model.addAttribute("member", member);
         model.addAttribute("updateDto", updateDto);
-        model.addAttribute("tradeCount", tradeCount);
         model.addAttribute("activeTab", "edit"); //현재 탭 어딘지 알려주는 용(View)
 
         return "mypage-edit";
@@ -262,7 +246,6 @@ public class MyPageController {
             // 오류 발생 시 레이아웃 정보 다시 추가
             Member member = memberRepository.findById(loginMember.getMemberId()).get();
             model.addAttribute("member", member);
-            model.addAttribute("tradeCount", 3); ///<----------
             model.addAttribute("activeTab", "edit");
             return "mypage-edit"; // 폼 다시 띄움
         }

@@ -9,6 +9,10 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 
@@ -43,7 +47,7 @@ public class ProductController {
     // 게시물 작성 처리
     @PostMapping("/post")
     public String submitPost(@ModelAttribute Product product, HttpSession session,
-                             @RequestParam String deliveryMethod) {
+                             @RequestParam String deliveryMethod, @RequestParam ("imageFile")MultipartFile file) throws IOException {
 
         Member loginMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
         if (loginMember == null) {
@@ -54,6 +58,21 @@ public class ProductController {
         user.setMemberId(loginMember.getMemberId());
         product.setUser(user);                  // Product에 작성자 자동 저장
         product.setDeliveryMethod(deliveryMethod); // 배송 방법 저장
+
+        if (file != null && !file.isEmpty()) {
+            String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+
+            // 서버 루트 기준 절대 경로
+            String uploadDir = System.getProperty("user.dir") + "/upload/";
+            File dest = new File(uploadDir + filename);
+            dest.getParentFile().mkdirs(); // 폴더 없으면 생성
+            file.transferTo(dest);
+
+            // DB에는 URL만 저장
+            product.setImageUrl("/upload/" + filename);
+        }
+
+
         postProductRepository.save(product);    // DB에 저장
         return "redirect:/";                // 홈으로 이동
     }

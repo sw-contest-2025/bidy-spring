@@ -136,10 +136,6 @@
                 <div class="email" th:text="${member.memberEmail}">email</div>
             </div>
 
-            <div class="stats">
-                <div class="num" th:text="${tradeCount}">0</div>
-                <div class="label">거래횟수</div>
-            </div>
             <ul class="menu">
                 <li><a th:href="@{/mypage}" th:classappend="${activeTab}=='sales' ? ' active'">판매리스트</a></li>
                 <li><a th:href="@{/mypage/purchases}" th:classappend="${activeTab}=='purchases' ? ' active'">낙찰리스트</a></li>
