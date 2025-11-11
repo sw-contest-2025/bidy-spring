@@ -54,6 +54,17 @@ VALUES
      '2004-02-07',
      '2025-11-10');
 
+INSERT INTO member
+(member_email, member_pw, member_name, member_nickname, member_role, member_birthday, member_create)
+VALUES
+    ('2039215k@naver.com',
+     '$2a$10$C0JicPjKICHa8lt6trbe/ukWhOynYA.yQp8IEOoiIlprWcgqk/jw2', -- qwer1234
+     '찬비',
+     '찬비',
+     'MEMBER',
+     '2025-11-22',
+     '2025-11-11');
+
      INSERT INTO member
 (member_email, member_pw, member_name, member_nickname, member_role, member_birthday, member_create)
 VALUES
