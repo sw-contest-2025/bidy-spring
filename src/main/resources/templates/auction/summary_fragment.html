@@ -1,5 +1,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
+
 <div th:fragment="productSummary" class="product-summary">
+
     <div class="summary-left">
         <div class="product-image">
             <img th:src="${product.imageUrl ?: '[https://placehold.co/600x450/fdd855/000?text=NO+IMAGE](https://placehold.co/600x450/fdd855/000?text=NO+IMAGE)'}" alt="상품 이미지">
@@ -13,7 +15,12 @@
             </button>
             <div>
                 <span th:text="|조회수: ${product.views} |">조회수: 0</span>
-                <button class="action-buttons interest-btn" id="interest-btn">찜</button>
+            <!--찜 버튼 -->
+                <button class="action-buttons interest-btn"
+                        id="interest-btn"
+                        th:attr="data-product-id=${product.productId}, data-member-id=${loginMember != null ? loginMember.memberId : 0}">
+                    <img th:src="@{/images/heart.png}" alt="찜" width="24" height="24" data-state="off">
+                </button>
             </div>
         </div>
     </div>

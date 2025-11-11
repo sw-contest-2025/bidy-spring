@@ -42,11 +42,13 @@ class AuctionController {
             if (loginMember != null) {
                 model.addAttribute("loginId", loginMember.getMemberId());
             }
-            // 1. 홈페이지에서 productId를 넘겨 받아 해당 상품을 조회
-            Product product = auctionService.findProductById(productId);
-            // 2. 최신 입찰 기록(가장 높은 입찰 가격) 5개 조회
+            // 홈페이지에서 productId를 넘겨 받아 해당 상품을 조회
+            Product product = auctionService.getProductDetailAndUpdateViews((long) productId);            // 2. 최신 입찰 기록(가장 높은 입찰 가격) 5개 조회
             List<Bid> recentBids = auctionService.getRecentBids(product);
             LocalDateTime calculatedTime = product.calculateEndTime();
+
+            // 태그 기반 추천
+            List<Product> recommendedProducts = auctionService.getRecommendProducts((long) productId);
 
             int maxBidPrice = recentBids.isEmpty()
                     ? product.getCurrentPrice()
@@ -64,11 +66,13 @@ class AuctionController {
             System.out.println("DEBUG: Formatted End Time (JS Target): " + formattedEndTime);
             System.out.println("DEBUG: Product Current Price: " + product.getCurrentPrice());
 
-            // 3. 데이터를 JSP로 전달
+            // 데이터를 JSP로 전달
             model.addAttribute("product", product);
             model.addAttribute("recentBids", recentBids);
             model.addAttribute("endTime", formattedEndTime);
             model.addAttribute("maxBidPrice", maxBidPrice);
+            model.addAttribute("recommendedProducts", recommendedProducts);
+
 
             return "auction/auction_detail";
 

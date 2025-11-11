@@ -1,11 +1,10 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <section th:fragment="recommendations" class="recommendations-section">
-    <h2>추천 경매 3개 (관련 태그 기반)</h2>
+    <h2>추천 경매</h2>
     <div class="recommendation-cards">
 
         <a th:each="recProduct : ${recommendedProducts}"
-           th:href="@{/auction/{id}(id=${recProduct.productId})}"
-           class="rec-card">
+           th:href="@{auction_detail(productId=${recProduct.productId})}" class="rec-card">
 
             <div class="rec-image-container">
                 <img th:src="${recProduct.imageUrl ?: 'https://placehold.co/300x200/f0f0f0/333?text=상품 이미지'}" alt="추천 이미지"
@@ -16,7 +15,11 @@
                 <div class="rec-title" th:text="${recProduct.postName}">추천 상품명</div>
                 <div class="rec-price" th:text="${#numbers.formatInteger(recProduct.currentPrice, 0, 'COMMA')} + '원'">100,000원</div>
 
-                <div class="rec-time">남은 시간: [타이머 자리]</div>
+                <div class="rec-time"
+                     th:if="${recProduct.calculateEndTime()}"
+                     th:text="|마감: ${#temporals.format(recProduct.calculateEndTime(), 'MM-dd HH:mm')}|">
+                    남은 시간: [타이머 자리]
+                </div>
             </div>
         </a>
 
