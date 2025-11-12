@@ -127,6 +127,7 @@
     <link rel="stylesheet" th:href="@{/css/mypage_product_grid.css}">
     <!--헤더 css-->
     <link rel="stylesheet" th:href="@{/css/header.css}">
+</head>
 <body>
 
 <!-- 헤더 포함 -->
@@ -155,36 +156,36 @@
         <main class="content">
             <h2>판매리스트</h2>
             <div class="sub">내가 등록한 상품 리스트</div>
-            <div class="grid-wrapper">
+                        <div class="grid-wrapper">
 
-                <div class="grid" th:if="${sales != null}">
-                    <!--해당 페이지로 이동-->
-                    <a class="card" th:each="s : ${sales}"
-                         th:href="@{/auction/auction_detail(productId=${s.productId})}">
-                        <div class="thumb-wrapper">
-                            <img class="thumb"
-                                 th:src="${s.imageUrl} ?: @{/images/product_null.png}"
-                                 alt="상품 이미지">
+                            <div class="grid" th:if="${sales != null}">
+                                <!--해당 페이지로 이동-->
+                                <a class="card" th:each="s : ${sales}"
+                                   th:href="@{/auction/auction_detail(productId=${s.productId})}">
+                                    <div class="thumb-wrapper">
+                                        <img class="thumb"
+                                             th:src="${s.imageUrl} ?: @{/images/product_null.png}"
+                                             alt="상품 이미지">
 
-                        </div>
+                                    </div>
 
-                        <div class="card-body">
-                            <p class="title" th:text="${s.postName}">상품명</p>
-                            <span class="price"
+                                    <div class="card-body">
+                                        <p class="title" th:text="${s.postName}">상품명</p>
+                                        <span class="price"
                                   th:text="${#numbers.formatInteger(s.currentPrice, 3, 'COMMA')} + '원'">0원</span>
 
                             <!-- 타이머 + 상태 한 줄 배치 -->
-                            <div class="meta-timer">
+                            <div class="meta-timer" style="margin-top:0;">
                                 <div class="timer"
-                                     th:id="'timer-' + ${s.productId}"
-                                     th:attr="data-end-time=${productEndTimes[s.productId]},
-                                              data-days=${s.durationDays},
-                                              data-hours=${s.durationHours},
+                                     th:attr="id=${'timer-' + s.productId},
+                                         data-end-time=${productEndTimes[s.productId]},
+                                          data-days=${s.durationDays},
+                                            data-hours=${s.durationHours},
                                               data-minutes=${s.durationMinutes}">0일:00:00:00</div>
                                 <span class="status"
                                       th:text="${s.calculateEndTime() != null and s.calculateEndTime().isBefore(T(java.time.LocalDateTime).now()) ? '판매완료' : '판매중'}">
-                                        상태
-                                </span>
+    상태
+  </span>
                             </div>
                         </div>
                     </a>

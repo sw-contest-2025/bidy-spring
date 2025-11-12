@@ -233,7 +233,7 @@ public class AuctionService {
 
             // 3. Product 엔티티의 finishAuction 비즈니스 메서드를 사용하여 상태 업데이트
             product.finishAuction(winner, finalPrice);
-            productRepository.saveAndFlush(product);
+            productRepository.save(product);
 
             // 낙찰자 알림
             createNotification(
