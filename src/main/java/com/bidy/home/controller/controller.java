@@ -80,6 +80,7 @@ public class controller {
     @GetMapping("/search")
     public String search(
             @RequestParam(required = false) String keyword,
+            HttpSession session,
             Model model) {
         List<Product> searchResults;
 
@@ -88,6 +89,17 @@ public class controller {
         } else { // 검색어 있음 -> 해당 키워드 들어간 상품 반환
             searchResults = postProductRepository.findByPostNameContainingIgnoreCase(keyword);
         }
+
+        Map<Long, String> productEndTimes = new HashMap<>();
+        for (Product product : searchResults) {
+            if (product.calculateEndTime() != null) {
+                String formatted = product.calculateEndTime()
+                        .atZone(KST_ZONE_ID)
+                        .format(HOME_TIMER_FORMATTER);
+                productEndTimes.put(product.getProductId(), formatted);
+            }
+        }
+        model.addAttribute("productEndTimes", productEndTimes);
 
         model.addAttribute("products", searchResults);
         model.addAttribute("keyword", keyword);

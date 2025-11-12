@@ -59,7 +59,7 @@ INSERT INTO member
 VALUES
     ('2039215k@naver.com',
      '$2a$10$C0JicPjKICHa8lt6trbe/ukWhOynYA.yQp8IEOoiIlprWcgqk/jw2', -- qwer1234
-     '찬비',
+     '김찬비',
      '찬비',
      'MEMBER',
      '2025-11-22',
@@ -131,17 +131,17 @@ VALUES
 INSERT INTO product (member_id, post_name, category, min_price, current_price, delivery_method, description, image_url,
                      duration_days, duration_hours, duration_minutes, views, created_at, is_ended, winner_id)
 VALUES
---- 채팅용: 타이머: 3분
-(1, '해질녘 풍경, 감성 담아 팝니다', '그림', 50000, 50000, '일반택배', '편안한 해질녘 풍경을 담은 수채화입니다. 거실이나 방에 두면 분위기 좋아요.', 'https://i.pinimg.com/1200x/34/7f/04/347f048c337b036726f4679af418da26.jpg', 0, 0, 1, 0, CURRENT_TIMESTAMP, FALSE, null),
+--- 채팅용: 타이머: 5분
+(1, '해질녘 풍경, 감성 담아 팝니다', '그림', 50000, 50000, '일반택배', '편안한 해질녘 풍경을 담은 수채화입니다. 거실이나 방에 두면 분위기 좋아요.', 'https://i.pinimg.com/1200x/34/7f/04/347f048c337b036726f4679af418da26.jpg', 0, 0, 5, 0, CURRENT_TIMESTAMP, FALSE, null),
 --- 입찰 종료: 입찰자: 사용자4
-(1, '컬러풀 추상화, 집안 포인트용 필요하신 분 들어오세요', '그림', 75000, 75000, '반값 택배', '다채로운 색감의 추상화 작품으로, 현대적인 공간에 잘 어울립니다.', 'https://i.pinimg.com/1200x/4e/58/c0/4e58c03b8e1152bb0605bd90e75a8ab8.jpg', 0, 0, 0, 0, CURRENT_TIMESTAMP, TRUE, 4);
+(5, '컬러풀 추상화, 집안 포인트용 필요하신 분 들어오세요', '그림', 75000, 75000, '반값 택배', '다채로운 색감의 추상화 작품으로, 현대적인 공간에 잘 어울립니다.', 'https://i.pinimg.com/1200x/4e/58/c0/4e58c03b8e1152bb0605bd90e75a8ab8.jpg', 0, 0, 0, 0, CURRENT_TIMESTAMP, TRUE, 4);
 
 -- 공예
 INSERT INTO product (member_id, post_name, category, min_price, current_price, delivery_method, description, image_url,
                      duration_days, duration_hours, duration_minutes, views, created_at, is_ended, winner_id)
 VALUES
-(1, '핸드메이드 머그컵, 커피 타임 필수템 팝니다', '공예', 12000, 12000, '일반택배', '직접 빚고 구운 세라믹 머그컵입니다. 따뜻한 커피와 함께 하세요.', 'https://i.pinimg.com/736x/33/01/7b/33017b30e9f56fdebdf324aedac93ed6.jpg', 1, 12, 30, 0, CURRENT_TIMESTAMP, FALSE, null),
-(1, '원목 소품, 책상 위 포인트용 필요하신 분 들어오세요', '공예', 20000, 20000, '반값 택배', '천연 원목으로 만든 작은 장식 소품입니다. 책상이나 선반 위에 놓으면 멋집니다.', 'https://i.pinimg.com/1200x/d2/9e/10/d29e10704687c6f60e0375bad29fb684.jpg', 2, 0, 0, 0, CURRENT_TIMESTAMP, FALSE, null);
+(5, '핸드메이드 머그컵, 커피 타임 필수템 팝니다', '공예', 12000, 12000, '일반택배', '직접 빚고 구운 세라믹 머그컵입니다. 따뜻한 커피와 함께 하세요.', 'https://i.pinimg.com/736x/33/01/7b/33017b30e9f56fdebdf324aedac93ed6.jpg', 1, 12, 30, 0, CURRENT_TIMESTAMP, FALSE, null),
+(5, '원목 소품, 책상 위 포인트용 필요하신 분 들어오세요', '공예', 20000, 20000, '반값 택배', '천연 원목으로 만든 작은 장식 소품입니다. 책상이나 선반 위에 놓으면 멋집니다.', 'https://i.pinimg.com/1200x/d2/9e/10/d29e10704687c6f60e0375bad29fb684.jpg', 2, 0, 0, 0, CURRENT_TIMESTAMP, FALSE, null);
 
 -- 도서
 INSERT INTO product (member_id, post_name, category, min_price, current_price, delivery_method, description, image_url,

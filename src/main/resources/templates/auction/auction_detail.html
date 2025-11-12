@@ -25,6 +25,9 @@
 </head>
 <body>
 
+<!-- JavaScript 파일 로드 및 실행 -->
+<script th:src="@{/js/timer.js}"></script>
+<script th:src="@{/js/wishlist.js}"></script>
 
 <div class="auction-header-wrapper" th:replace="fragments/header :: header"></div>
 <div class="container">
@@ -45,9 +48,6 @@
 
 </div>
 
-<!-- JavaScript 파일 로드 및 실행 -->
-<script th:src="@{/js/timer.js}"></script>
-<script th:src="@{/js/wishlist.js}"></script>
 
 <script th:inline="javascript">
     // 타이머용 문자열
@@ -55,8 +55,6 @@
     const currentProductId = /*[[${product.productId}]]*/ 1;
     const currentMemberId = /*[[${loginMember != null ? loginMember.memberId : null}]]*/ null;
 
-    // 타이머 시작
-    startAuctionFeatures(serverEndTimeStr, currentProductId);
 
     // 위시리스트 토글 기능 초기화
     initializeWishlistToggle(currentMemberId, currentProductId);

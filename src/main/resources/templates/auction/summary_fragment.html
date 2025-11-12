@@ -75,13 +75,21 @@
                 }
                 </script>
 
-                <button id="bidButton"
+                <button id="bid-button"
                         class="bid-button"
                         th:disabled="${product.calculateEndTime().isBefore(#temporals.createNow())}"
                         type="submit"> <span th:text="${product.calculateEndTime().isBefore(#temporals.createNow()) ? '경매 종료 (입찰 불가)' : '입찰 버튼'}">입찰 버튼</span>
                 </button>
+                <script src="/js/timer.js"></script>
+
+                <script th:inline="javascript">
+                    /*[# th:if="${product.calculateEndTime().isAfter(#temporals.createNow())}"]*/
+                    // 경매가 진행 중일 때만 함수를 호출합니다.
+                    startAuctionFeatures([[${product.calculateEndTime()}]], [[${product.productId}]]);
+                    /*[/]*/
+                </script>
             </form>
         </div>
         </div>
     </div>
-</div>
+</html>

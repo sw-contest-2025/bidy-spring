@@ -4,8 +4,11 @@
  * @param {number} productId - Ajax 요청에 사용할 상품 ID
  */
 function startAuctionFeatures(endTimeStr, productId) {
+
     const timerElement = document.getElementById('countdown-timer');
-        const endTime = new Date(endTimeStr);
+    const bidButton = document.getElementById('bid-button');
+    const currentPriceElement = document.getElementById('current-price-display');
+    const endTime = new Date(endTimeStr);
 
         // 경매 종료 확인
         if (isNaN(endTime.getTime()) || endTime.getTime() <= new Date().getTime()) {
@@ -54,7 +57,7 @@ function startAuctionFeatures(endTimeStr, productId) {
                 }
                 const bidInput = document.getElementById('bidAmount');
                 if (bidInput) {
-                    bidInput.min = newPrice + 1;
+                    bidInput.min = newPrice + 100;
                     bidInput.placeholder = `현재 최고가 ${newPrice}원보다 높게 입력`;
                 }
             })
@@ -69,7 +72,7 @@ function startAuctionFeatures(endTimeStr, productId) {
     timerInterval = setInterval(updateCountdown, 1000);
     updateCountdown();
 
-    // 5초마다 가격 갱신 API 호출 (폴링)
-    pricePollingInterval = setInterval(fetchCurrentPrice, 5000);
+    // 2초마다 가격 갱신 API 호출 (폴링)
+    pricePollingInterval = setInterval(fetchCurrentPrice, 2000);
     fetchCurrentPrice();
 }

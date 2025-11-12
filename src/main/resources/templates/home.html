@@ -106,7 +106,7 @@
                 <div class="meta-timer">
                     <div class="timer"
                          th:id="'timer-' + ${s.productId}"
-                         th:attr="data-end-time=${productEndTimes[s.productId]}">00:00:00</div>
+                         th:attr="data-end-time=${productEndTimes?.get(s.productId) ?: ''}">00:00:00</div>
                     <span class="status"
                           th:text="${s.calculateEndTime() != null and s.calculateEndTime().isBefore(T(java.time.LocalDateTime).now()) ? '판매완료' : '판매중'}">
                         상태
