@@ -40,10 +40,13 @@
             color: black;
         }
     </style>
+    <!--헤더 css-->
     <link rel="stylesheet" th:href="@{/css/header.css}">
 </head>
 <body>
-    <div th:replace="~{fragments/header :: header}"></div>
+
+<!-- 헤더 포함 -->
+<div th:replace="~{fragments/header :: header}"></div>
     <div class="chat-room-wrapper">
         <h2>💬 내 채팅</h2>
 

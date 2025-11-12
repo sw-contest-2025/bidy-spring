@@ -5,14 +5,12 @@ import com.bidy.auction.dto.BidRequestDto;
 import com.bidy.auction.service.AuctionService;
 import com.bidy.member.domain.Member;
 import com.bidy.post.domain.Product;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -42,18 +40,15 @@ class AuctionController {
             if (loginMember != null) {
                 model.addAttribute("loginId", loginMember.getMemberId());
             }
-            // 1. 홈페이지에서 productId를 넘겨 받아 해당 상품을 조회
-            Product product = auctionService.findProductById(productId);
-            // 2. 최신 입찰 기록(가장 높은 입찰 가격) 5개 조회
+            // 홈페이지에서 productId를 넘겨 받아 해당 상품을 조회
+            Product product = auctionService.getProductDetailAndUpdateViews((long) productId);
             List<Bid> recentBids = auctionService.getRecentBids(product);
             LocalDateTime calculatedTime = product.calculateEndTime();
 
-            int maxBidPrice = recentBids.isEmpty()
-                    ? product.getCurrentPrice()
-                    : recentBids.stream()
-                    .mapToInt(Bid::getBidPrice)
-                    .max()
-                    .orElse(product.getCurrentPrice());
+            // 태그 기반 추천
+            List<Product> recommendedProducts = auctionService.getRecommendProducts((long) productId);
+
+            int maxBidPrice = auctionService.getHighestBidPrice(product);
 
             String formattedEndTime = "";
             if (calculatedTime != null) {
@@ -64,11 +59,12 @@ class AuctionController {
             System.out.println("DEBUG: Formatted End Time (JS Target): " + formattedEndTime);
             System.out.println("DEBUG: Product Current Price: " + product.getCurrentPrice());
 
-            // 3. 데이터를 JSP로 전달
+            // 데이터를 JSP로 전달
             model.addAttribute("product", product);
             model.addAttribute("recentBids", recentBids);
             model.addAttribute("endTime", formattedEndTime);
             model.addAttribute("maxBidPrice", maxBidPrice);
+            model.addAttribute("recommendedProducts", recommendedProducts);
 
             return "auction/auction_detail";
 
@@ -87,10 +83,7 @@ class AuctionController {
             return "redirect:/login";
         }
 
-        Long bidderId = loginMember.getMemberId();
-
         try {
-            // 1. Service 호출: 입찰 기록 저장 및 가격 갱신
             String successMessage = auctionService.createBid(bidRequestDto, loginMember.getMemberId());
 
             rttr.addFlashAttribute("message", successMessage);
@@ -99,11 +92,9 @@ class AuctionController {
             rttr.addFlashAttribute("error", e.getMessage());
         }
         catch (NoSuchElementException e) {
-            // Service에서 상품을 못 찾았거나, 간혹 DB 회원 정보가 유효하지 않은 경우
             if (e.getMessage() != null && e.getMessage().contains("존재하지 않는 상품")) {
                 return "redirect:/error/404";
             }
-            // 그 외 NoSuchElementException (Service에서 Member를 못 찾은 경우)
             rttr.addFlashAttribute("error", "회원 정보가 유효하지 않습니다. 다시 로그인해주세요.");
             return "redirect:/login";
         }

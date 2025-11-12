@@ -59,7 +59,7 @@
         .label{font-size:13px; color:var(--muted);}
 
         .menu{
-           /* width: fit-content;*/
+            /* width: fit-content;*/
 
             margin: 14px auto 0;
 
@@ -84,24 +84,49 @@
         .menu a:hover{ }
 
         /* 본문 */
-        /*상품 하이퍼 링크 밑줄 생기는거 없애기*/
-        a.card {
-            display: block;
-            text-decoration: none; /* 밑줄 제거 */
-            color: inherit;
-        }
         .content{
             padding:24px 0 24px 24px;
         }
         .content h2{ margin:0 0 10px; }
         .sub{color:var(--muted); font-size:14px; margin-bottom:16px}
 
+        /*상품 하이퍼 링크 밑줄 생기는거 없애기*/
+        a.card {
+            display: block;
+            text-decoration: none; /* 밑줄 제거 */
+            color: inherit;
+        }
+
+        /* 카드 그리드 */
+        .grid{
+            display:grid; grid-template-columns: repeat(3, 1fr);
+            gap:16px;
+        }
+        .card{
+            border:1px solid var(--line); border-radius:10px; background:#fff;
+            overflow:hidden; display:flex; flex-direction:column;
+        }
+        .thumb{width:100%; aspect-ratio:1/1; object-fit:cover; background:#f3f3f3}
+        .card-body{padding:12px}
+        .title{font-weight:600; margin:0 0 6px}
+        .meta{display:flex; justify-content:space-between; align-items:center; font-size:14px}
+        .price{font-weight:700}
+        .status{font-size:14px; padding:0 0 0 10px; color:var(--muted)}
+
+        @media (max-width: 960px){
+            .layout{ grid-template-columns: 1fr; }
+            .sidebar{ position:static; border-right:none; border-bottom:1px solid var(--line); padding:16px 0; }
+            .content{ padding:16px 0; }
+            .grid{ grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 560px){
+            .grid{ grid-template-columns: 1fr; }
+        }
     </style>
     <!--상품 그리드 css-->
     <link rel="stylesheet" th:href="@{/css/mypage_product_grid.css}">
-<!--헤더 css-->
+    <!--헤더 css-->
     <link rel="stylesheet" th:href="@{/css/header.css}">
-</head>
 <body>
 
 <!-- 헤더 포함 -->
@@ -116,11 +141,6 @@
                 <img class="profile-img" th:src="${member.profileImageUrl} ?: @{/images/profile_temp.png}">
                 <div class="nick" th:text="${member.memberNickname} ?: ${member.memberName}">닉네임</div>
                 <div class="email" th:text="${member.memberEmail}">email</div>
-            </div>
-
-            <div class="stats">
-                <div class="num" th:text="${tradeCount}">0</div>
-                <div class="label">거래횟수</div>
             </div>
             <ul class="menu">
                 <li><a th:href="@{/mypage}" th:classappend="${activeTab}=='sales' ? ' active'">판매리스트</a></li>
@@ -153,15 +173,17 @@
                             <span class="price"
                                   th:text="${#numbers.formatInteger(s.currentPrice, 3, 'COMMA')} + '원'">0원</span>
 
-<!--                            타이머 + 상태 한 줄 배치-->
+                            <!-- 타이머 + 상태 한 줄 배치 -->
                             <div class="meta-timer">
-                                <div class="timer" th:attr="id='timer-' + ${s.productId}"
-                                     th:data-days="${s.durationDays}"
-                                     th:data-hours="${s.durationHours}"
-                                     th:data-minutes="${s.durationMinutes}">00:00:00</div>
+                                <div class="timer"
+                                     th:id="'timer-' + ${s.productId}"
+                                     th:attr="data-end-time=${productEndTimes[s.productId]},
+                                              data-days=${s.durationDays},
+                                              data-hours=${s.durationHours},
+                                              data-minutes=${s.durationMinutes}">0일:00:00:00</div>
                                 <span class="status"
                                       th:text="${s.calculateEndTime() != null and s.calculateEndTime().isBefore(T(java.time.LocalDateTime).now()) ? '판매완료' : '판매중'}">
-                                    상태
+                                        상태
                                 </span>
                             </div>
                         </div>
@@ -176,32 +198,44 @@
 
 
 <!--            JS 파일 로드-->
-            <script th:src="@{/js/timer.js}"></script>
             <script th:src="@{/js/wishlist.js}"></script>
 
             <!--타이머 기능 구현-->
             <script th:inline="javascript">
                 document.addEventListener('DOMContentLoaded', function() {
                     document.querySelectorAll('.timer').forEach(timerEl => {
-                        const days = parseInt(timerEl.dataset.days);
-                        const hours = parseInt(timerEl.dataset.hours);
-                        const minutes = parseInt(timerEl.dataset.minutes);
+                        const endTimeAttr = timerEl.dataset.endTime;
+                        let endTimestamp = null;
+                        if (endTimeAttr) {
+                            const parsed = Date.parse(endTimeAttr);
+                            if (!Number.isNaN(parsed)) {
+                                endTimestamp = parsed;
+                            }
+                        }
 
-                        const now = new Date().getTime();
-                        const durationMs = (days*24*60*60*1000) + (hours*60*60*1000) + (minutes*60*1000);
-                        const endTime = now + durationMs;
+                        if (!endTimestamp) {
+                            const days = parseInt(timerEl.dataset.days || '0', 10);
+                            const hours = parseInt(timerEl.dataset.hours || '0', 10);
+                            const minutes = parseInt(timerEl.dataset.minutes || '0', 10);
+                            const now = new Date().getTime();
+                            const durationMs =
+                                (days * 24 * 60 * 60 * 1000) +
+                                (hours * 60 * 60 * 1000) +
+                                (minutes * 60 * 1000);
+                            endTimestamp = now + durationMs;
+                        }
 
-                        startAuctionTimer(timerEl.id, endTime);
+                        startAuctionTimer(timerEl.id, endTimestamp);
                     });
                 });
 
-                function startAuctionTimer(timerId, endTime) {
+                function startAuctionTimer(timerId, endTimestamp) {
                     const timerEl = document.getElementById(timerId);
                     if (!timerEl) return;
 
                     const interval = setInterval(() => {
                         const now = new Date().getTime();
-                        const distance = endTime - now;
+                        const distance = endTimestamp - now;
 
                         if (distance <= 0) {
                             timerEl.textContent = '판매완료';
@@ -209,14 +243,17 @@
                             return;
                         }
 
-                        const hours = Math.floor((distance / (1000*60*60)) % 24);
-                        const minutes = Math.floor((distance / (1000*60)) % 60);
-                        const seconds = Math.floor((distance / 1000) % 60);
+                        const totalSeconds = Math.floor(distance / 1000);
+                        const days = Math.floor(totalSeconds / 86400);
+                        const hours = Math.floor((totalSeconds % 86400) / 3600);
+                        const minutes = Math.floor((totalSeconds % 3600) / 60);
+                        const seconds = totalSeconds % 60;
 
                         timerEl.textContent =
-                            (hours<10?'0'+hours:hours) + ':' +
-                            (minutes<10?'0'+minutes:minutes) + ':' +
-                            (seconds<10?'0'+seconds:seconds);
+                            days + '일:' +
+                            (hours < 10 ? '0' + hours : hours) + ':' +
+                            (minutes < 10 ? '0' + minutes : minutes) + ':' +
+                            (seconds < 10 ? '0' + seconds : seconds);
                     }, 1000);
                 }
             </script>

@@ -34,8 +34,7 @@
 
     <!-- 상품 요약 및 입찰 폼-->
     <h1 class="product-title" th:text="${product.postName}">경매 상품명</h1>
-    <div th:insert="auction/summary_fragment :: productSummary"></div>
-
+    <div th:insert="auction/summary_fragment :: productSummary(product=${product}, loginMember=${loginMember})"></div>
     <div style="clear: both;"></div>
 
     <!-- 상세 설명  -->
@@ -54,7 +53,7 @@
     // 타이머용 문자열
     const serverEndTimeStr = /*[[${endTime}]]*/ '2025-11-15T10:00:00+0900';
     const currentProductId = /*[[${product.productId}]]*/ 1;
-    const currentMemberId = /*[[${currentMemberId}]]*/ null;
+    const currentMemberId = /*[[${loginMember != null ? loginMember.memberId : null}]]*/ null;
 
     // 타이머 시작
     startAuctionFeatures(serverEndTimeStr, currentProductId);

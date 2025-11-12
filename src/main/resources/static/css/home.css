@@ -187,11 +187,35 @@
 }
 
 /* 타이머 + 판매 상태 한 줄 배치 */
+.card-body {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.title {
+    font-weight: 600;
+    margin: 0 0 6px;
+}
+
+.meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
+.price {
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
 .meta-timer {
     display: flex;
-    justify-content: space-between; /* 타이머 왼쪽, 상태 오른쪽 */
+    justify-content: space-between;
     align-items: center;
-    margin-top: 10px;
+    margin-top: auto;
 }
 
 .timer {
@@ -208,17 +232,8 @@
     font-size: 14px;
     font-weight: 600;
     color: #333;
+    padding-left: 10px;
 }
-
-  .card-body { padding: 12px; }
-
-  .title { font-weight: 600; margin: 0 0 6px; }
-
-  .meta { display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
-
-  .price { font-weight: 700; }
-
-  .status { font-size: 14px; padding-left: 10px; color: var(--muted); }
 
      /* 반응형: 화면이 좁아질수록 줄 개수 줄이기 */
     @media (max-width: 960px) {

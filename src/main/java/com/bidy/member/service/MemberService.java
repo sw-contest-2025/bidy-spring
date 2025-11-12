@@ -1,6 +1,7 @@
 package com.bidy.member.service;
 
 import com.bidy.member.domain.Member;
+import com.bidy.member.dto.FindEmailRequest;
 import com.bidy.member.dto.LoginDto;
 import com.bidy.member.dto.MemberSignupDto;
 import com.bidy.member.dto.MemberUpdateDto;
@@ -9,6 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,10 +20,16 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
+    private static final String TEMP_PASSWORD_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
-    public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder){
+    public MemberService(MemberRepository memberRepository,
+                         PasswordEncoder passwordEncoder,
+                         EmailService emailService){
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
     //회원가입
@@ -53,6 +62,26 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
+    //비밀번호 재발급!!
+    public void resetPassword(String email) {
+        Member member = memberRepository.findByMemberEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 이메일입니다."));
+
+        String tempPassword = generateTempPassword();
+        member.setMemberPw(passwordEncoder.encode(tempPassword));
+        emailService.sendTemporaryPassword(email, tempPassword);
+    }
+
+    private String generateTempPassword() {
+        int length = 12;
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            int index = SECURE_RANDOM.nextInt(TEMP_PASSWORD_CHARS.length());
+            sb.append(TEMP_PASSWORD_CHARS.charAt(index));
+        }
+        return sb.toString();
+    }
+
     //로그인
     public Member login(LoginDto loginDto){
 
@@ -73,10 +102,27 @@ public class MemberService {
         return member;
     }
 
-    //이메일 찾기(이름, 생년월일로)
+    //이메일 찾기
+    public List<String> findEmails(FindEmailRequest req) {
+        List<Member> members = memberRepository.findByMemberNameAndMemberBirthday(
+                req.getMemberName(),
+                req.getMemberBirthday()
+        );
 
-
-    //비밀번호 찾기 (이메일로 임시 비밀번호 전송)
+        // 이메일 리스트
+        //이메일 아이디 앞 4자리만 보이게 !!!!
+        return members.stream()
+                .map(Member::getMemberEmail)
+                .map(email -> {
+                    int atIndex = email.indexOf("@");
+                    if (atIndex > 3) {
+                        return email.substring(0, 3) + "****" + email.substring(atIndex);
+                    } else {
+                        return email.charAt(0) + "***" + email.substring(atIndex);
+                    }
+                })
+                .toList();
+    }
 
     //계정 정보 수정
     public Member updateMember(Long memberId, MemberUpdateDto updateDto) {

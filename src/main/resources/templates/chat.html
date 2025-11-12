@@ -76,7 +76,9 @@
     <link rel="stylesheet" th:href="@{/css/header.css}">
 </head>
 <body>
-    <div th:replace="~{fragments/header :: header}"></div>
+
+<!-- 헤더 포함 -->
+<div th:replace="~{fragments/header :: header}"></div>
 
     <div class="chat-wrapper">
         <h2 th:text="${room.productPostName}"></h2>

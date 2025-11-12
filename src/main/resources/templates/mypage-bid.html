@@ -143,10 +143,6 @@
                 <div class="email" th:text="${member.memberEmail}">email</div>
             </div>
 
-            <div class="stats">
-                <div class="num" th:text="${tradeCount}">0</div>
-                <div class="label">거래횟수</div>
-            </div>
             <ul class="menu">
                 <li><a th:href="@{/mypage}" th:classappend="${activeTab}=='sales' ? ' active'">판매리스트</a></li>
                 <li><a th:href="@{/mypage/purchases}" th:classappend="${activeTab}=='purchases' ? ' active'">낙찰리스트</a></li>
@@ -164,27 +160,29 @@
 
                 <div class="grid" th:if="${bid != null}">
                     <a class="card" th:each="b : ${bid}"
-                         th:href="@{/auction/auction_detail(productId=${b.productId})}">
+                         th:href="@{/auction/auction_detail(productId=${b.product.productId})}">
                         <div class="thumb-wrapper">
                             <img class="thumb"
-                                 th:src="${b.imageUrl} ?: @{/images/product_null.png}"
+                                 th:src="${b.product.imageUrl} ?: @{/images/product_null.png}"
                                  alt="상품 이미지">
 
                         </div>
 
                         <div class="card-body">
-                            <p class="title" th:text="${b.postName}">상품명</p>
+                            <p class="title" th:text="${b.product.postName}">상품명</p>
                             <span class="price"
-                                  th:text="${#numbers.formatInteger(b.currentPrice, 3, 'COMMA')} + '원'">0원</span>
+                                  th:text="${#numbers.formatInteger(b.bidPrice, 3, 'COMMA')} + '원'">0원</span>
 
                             <!--타이머 + 상태 한 줄 배치-->
-                            <div class="meta-timer">
-                                <div class="timer" th:attr="id='timer-' + ${b.productId}"
-                                     th:data-days="${b.durationDays}"
-                                     th:data-hours="${b.durationHours}"
-                                     th:data-minutes="${b.durationMinutes}">00:00:00</div>
+                            <div class="meta-timer" style="margin-top:0;">
+                                <div class="timer"
+                                     th:attr="id='timer-' + ${b.product.productId},
+                                              data-end-time=${productEndTimes[b.product.productId]},
+                                              data-days=${b.product.durationDays},
+                                              data-hours=${b.product.durationHours},
+                                              data-minutes=${b.product.durationMinutes}">0일:00:00:00</div>
                                 <span class="status"
-                                      th:text="${b.calculateEndTime() != null and b.calculateEndTime().isBefore(T(java.time.LocalDateTime).now()) ? '판매완료' : '판매중'}">
+                                      th:text="${b.product.calculateEndTime() != null and b.product.calculateEndTime().isBefore(T(java.time.LocalDateTime).now()) ? '판매완료' : '판매중'}">
                         상태
                     </span>
                             </div>
@@ -200,32 +198,44 @@
 
 
             <!--JS 파일 로드-->
-            <script th:src="@{/js/timer.js}"></script>
             <script th:src="@{/js/wishlist.js}"></script>
 
             <!--타이머 기능 구현-->
             <script th:inline="javascript">
                 document.addEventListener('DOMContentLoaded', function() {
                     document.querySelectorAll('.timer').forEach(timerEl => {
-                        const days = parseInt(timerEl.dataset.days);
-                        const hours = parseInt(timerEl.dataset.hours);
-                        const minutes = parseInt(timerEl.dataset.minutes);
+                        const endTimeAttr = timerEl.dataset.endTime;
+                        let endTimestamp = null;
+                        if (endTimeAttr) {
+                            const parsed = Date.parse(endTimeAttr);
+                            if (!Number.isNaN(parsed)) {
+                                endTimestamp = parsed;
+                            }
+                        }
 
-                        const now = new Date().getTime();
-                        const durationMs = (days*24*60*60*1000) + (hours*60*60*1000) + (minutes*60*1000);
-                        const endTime = now + durationMs;
+                        if (!endTimestamp) {
+                            const days = parseInt(timerEl.dataset.days || '0', 10);
+                            const hours = parseInt(timerEl.dataset.hours || '0', 10);
+                            const minutes = parseInt(timerEl.dataset.minutes || '0', 10);
+                            const now = new Date().getTime();
+                            const durationMs =
+                                (days * 24 * 60 * 60 * 1000) +
+                                (hours * 60 * 60 * 1000) +
+                                (minutes * 60 * 1000);
+                            endTimestamp = now + durationMs;
+                        }
 
-                        startAuctionTimer(timerEl.id, endTime);
+                        startAuctionTimer(timerEl.id, endTimestamp);
                     });
                 });
 
-                function startAuctionTimer(timerId, endTime) {
+                function startAuctionTimer(timerId, endTimestamp) {
                     const timerEl = document.getElementById(timerId);
                     if (!timerEl) return;
 
                     const interval = setInterval(() => {
                         const now = new Date().getTime();
-                        const distance = endTime - now;
+                        const distance = endTimestamp - now;
 
                         if (distance <= 0) {
                             timerEl.textContent = '판매완료';
@@ -233,11 +243,14 @@
                             return;
                         }
 
-                        const hours = Math.floor((distance / (1000*60*60)) % 24);
-                        const minutes = Math.floor((distance / (1000*60)) % 60);
-                        const seconds = Math.floor((distance / 1000) % 60);
+                        const totalSeconds = Math.floor(distance / 1000);
+                        const days = Math.floor(totalSeconds / 86400);
+                        const hours = Math.floor((totalSeconds % 86400) / 3600);
+                        const minutes = Math.floor((totalSeconds % 3600) / 60);
+                        const seconds = totalSeconds % 60;
 
                         timerEl.textContent =
+                            days + '일:' +
                             (hours<10?'0'+hours:hours) + ':' +
                             (minutes<10?'0'+minutes:minutes) + ':' +
                             (seconds<10?'0'+seconds:seconds);
