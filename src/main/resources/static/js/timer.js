@@ -3,6 +3,7 @@
  * @param {string} endTimeStr - 서버에서 받은 LocalDateTime.toString() 결과 문자열
  * @param {number} productId - Ajax 요청에 사용할 상품 ID
  */
+ //bid-history-container
 function startAuctionFeatures(endTimeStr, productId) {
 
     const timerElement = document.getElementById('countdown-timer');
@@ -18,6 +19,7 @@ function startAuctionFeatures(endTimeStr, productId) {
         }
 
     let timerInterval;
+    let historyPollingInterval;
 
     function updateCountdown() {
         const now = new Date();
@@ -37,6 +39,7 @@ function startAuctionFeatures(endTimeStr, productId) {
             // 경매 종료 처리
             clearInterval(timerInterval);
             if (pricePollingInterval) clearInterval(pricePollingInterval);
+            if (historyPollingInterval) clearInterval(historyPollingInterval);
             timerElement.innerHTML = "경매 종료";
             if (bidButton) bidButton.disabled = true;
         }
@@ -66,7 +69,23 @@ function startAuctionFeatures(endTimeStr, productId) {
             });
     }
 
-    // --- 3. 실행 영역 ---
+    const bidHistoryContainer = document.getElementById('bid-history-container');
+            const bidListContent = document.getElementById('bid-list-content');
+        function fetchBidHistory() {
+            fetch(`/auction/api/bid-history-fragment?productId=${productId}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('입찰 현황 API 오류');
+                    return response.text();
+                })
+                .then(html => {
+                    if (bidListContent) {
+                        bidListContent.innerHTML = html;
+                    }
+                })
+                .catch(error => {
+                    console.error('입찰 현황 갱신 오류:', error);
+                });
+        }
 
     // 1초마다 타이머 실행
     timerInterval = setInterval(updateCountdown, 1000);
@@ -75,4 +94,7 @@ function startAuctionFeatures(endTimeStr, productId) {
     // 2초마다 가격 갱신 API 호출 (폴링)
     pricePollingInterval = setInterval(fetchCurrentPrice, 2000);
     fetchCurrentPrice();
+
+    historyPollingInterval = setInterval(fetchBidHistory, 2000);
+        fetchBidHistory();
 }
