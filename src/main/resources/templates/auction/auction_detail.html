@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="content="width=device-width, initial-scale=1.0"">
+    <meta name="viewport" content="content=" width=device-width, initial-scale=1.0"">
     <title th:text="|경매 - ${product.postName}|">경매 상세 페이지</title>
 
     <!-- CSS 파일 로드 -->
@@ -25,10 +25,14 @@
 </head>
 <body>
 
+<!-- JavaScript 파일 로드 및 실행 -->
+<script th:src="@{/js/timer.js}"></script>
+<script th:src="@{/js/wishlist.js}"></script>
 
 <div class="auction-header-wrapper" th:replace="fragments/header :: header"></div>
 <div class="container">
-    <div th:if="${message}" class="alert alert-success" style="padding: 10px; background: #e6ffe6; color: green; text-align: center;">
+    <div th:if="${message}" class="alert alert-success"
+         style="padding: 10px; background: #e6ffe6; color: green; text-align: center;">
         <span th:text="${message}"></span>
     </div>
 
@@ -45,9 +49,6 @@
 
 </div>
 
-<!-- JavaScript 파일 로드 및 실행 -->
-<script th:src="@{/js/timer.js}"></script>
-<script th:src="@{/js/wishlist.js}"></script>
 
 <script th:inline="javascript">
     // 타이머용 문자열
@@ -55,11 +56,11 @@
     const currentProductId = /*[[${product.productId}]]*/ 1;
     const currentMemberId = /*[[${loginMember != null ? loginMember.memberId : null}]]*/ null;
 
-    // 타이머 시작
-    startAuctionFeatures(serverEndTimeStr, currentProductId);
 
     // 위시리스트 토글 기능 초기화
     initializeWishlistToggle(currentMemberId, currentProductId);
+
+    startAuctionFeatures(serverEndTimeStr, currentProductId);
 </script>
 </body>
 </html>

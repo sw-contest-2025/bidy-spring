@@ -111,4 +111,37 @@ class AuctionController {
         Product product = auctionService.findProductById(productId);
         return product.getCurrentPrice();
     }
+
+    /**
+     * AJAX 요청에 대한 입찰 현황 HTML 조각을 반환
+     * @param productId 경매 상품 ID
+     * @param model
+     * @return Thymeleaf 템플릿의 경로
+     */
+    @GetMapping("/api/bid-history-fragment")
+    public String getBidHistoryFragment(@RequestParam("productId") int productId, Model model) {
+        System.out.println("DEBUG: AJAX Bid History Request for ID: " + productId);
+        try {
+            // 1. 상품 정보 조회
+            Product product = auctionService.findProductById(productId);
+
+            // 2. 최신 입찰 목록 조회
+            List<Bid> recentBids = auctionService.getRecentBids(product);
+
+            // 3. 최고 입찰가 조회
+            int maxBidPrice = auctionService.getHighestBidPrice(product);
+
+            // 4. 데이터를 모델에 담아 Thymeleaf 조각으로 전달
+            model.addAttribute("recentBids", recentBids);
+            model.addAttribute("maxBidPrice", maxBidPrice);
+
+            // Thymeleaf 프래그먼트 경로를 반환합니다.
+            return "auction/description_fragment :: bidHistoryContent";
+
+        } catch (NoSuchElementException e) {
+            System.err.println("ERROR: Product ID not found for fragment request: " + productId);
+            return null; // 빈 응답을 반환하도록 처리
+        }
+    }
 }
+

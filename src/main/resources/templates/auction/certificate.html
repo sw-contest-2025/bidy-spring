@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>낙찰 완료 증명서</title>
+    <style>
+        @font-face {
+            font-family: 'NanumGothic';
+            src: url('classpath:fonts/NanumGothic.ttf') format('truetype');
+        }
+        body {
+            font-family: 'NanumGothic', sans-serif;
+            margin: 50px;
+            color: #333;
+        }
+        h1 {
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .content {
+            margin-top: 30px;
+            line-height: 1.8;
+            font-size: 14pt;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #d9534f;
+            font-size: 16pt;
+        }
+    </style>
+</head>
+<body>
+<h1>Auction Completion Certificate (경매 낙찰 완료 증명서)</h1>
+
+<div class="content">
+    <p>안녕하세요, <span th:text="${winnerNickname}" class="highlight"></span>님.</p>
+    <p>귀하께서는 아래 상품에 최종 낙찰되셨음을 증명합니다.</p>
+
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+        <tr>
+            <td style="width: 30%; border: 1px solid #ccc; padding: 8px; background-color: #f8f8f8;">상품명</td>
+            <td style="width: 70%; border: 1px solid #ccc; padding: 8px;" th:text="${postName}"></td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid #ccc; padding: 8px; background-color: #f8f8f8;">낙찰 가격</td>
+            <td style="border: 1px solid #ccc; padding: 8px;"><span class="highlight" th:text="${currentPrice}"></span> KRW</td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid #ccc; padding: 8px; background-color: #f8f8f8;">낙찰 일자</td>
+            <td style="border: 1px solid #ccc; padding: 8px;" th:text="${#temporals.format(currentDate, 'yyyy년 MM월 dd일')}"></td>
+        </tr>
+    </table>
+
+    <p style="margin-top: 40px; text-align: right;">BiDY Auction Service</p>
+</div>
+</body>
+</html>
