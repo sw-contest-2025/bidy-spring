@@ -146,11 +146,11 @@
     // 2. 타이머 시작 함수
      function startAuctionTimer(timerId, endTime) {
          const timerEl = document.getElementById(timerId);
-         if (!timerEl) return;
+         if (!timerEl) return; //(null 체크)
 
-         const interval = setInterval(() => {
-             const now = new Date().getTime();
-             const distance = endTime - now;
+         const interval = setInterval(() => { //setInterval()은 1초마다 특정 코드를 반복 실행
+             const now = new Date().getTime(); //지금 시간을 가져옴
+             const distance = endTime - now; //distance 에 끝나는 시간 - 지금 시간을 계산
 
              if (distance <= 0) {
                  timerEl.textContent = '판매완료';

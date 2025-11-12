@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.List;
 
 
+
 import java.security.Principal;
 
 @Controller
@@ -60,7 +61,7 @@ public class ProductController {
         product.setDeliveryMethod(deliveryMethod); // 배송 방법 저장
 
         if (file != null && !file.isEmpty()) {
-            String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+            String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename(); //원본 파일명 앞에 현재 밀리초를 붙여 파일명 충돌(덮어쓰기) 가능성을 낮춤
 
             // 서버 루트 기준 절대 경로
             String uploadDir = System.getProperty("user.dir") + "/upload/";
